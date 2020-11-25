@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+	<title>超级管理员</title>
+	
+	<!-- Google font file. If you want you can change. -->
+	<link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,900" rel="stylesheet">
+	<!-- Fontawesome font file css -->
+	<link rel="stylesheet" href="https://www.jq22.com/jquery/font-awesome.4.7.0.css">
+	<!-- Template global css file. Requared all pages -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/global.style.css}">
+	<link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
+	<link rel="stylesheet" th:href="@{/css/mescroll.min.css}">
+</head>
+
+<body>
+	<div class="wrapper">
+		<div class="nav-menu">
+			<nav class="menu">
+			<!-- Menu navigation start -->
+				<div class="nav-container menu-container">
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">姓名</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">张三</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">性别</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">男</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">手机</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">18888888888</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">角色</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">区域管理员</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">机构</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">上海市-市辖区-徐汇区夙呈医生集团</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">区域</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">上海市-市辖区-徐汇区</h6>
+						</div>
+					</div>
+					
+					<button class="button circle red block menu-logout">登出</button>
+				</div>
+				
+				<!-- Menu navigation end -->
+			</nav>
+		</div>
+		
+		<div class="wrapper-inline">
+			<!-- Header area start -->
+			<header class="no-background"> <!-- extra class no-background -->
+				<div class="navi-menu-button">
+					<em></em>
+					<em></em>
+					<em></em>
+				</div>
+			</header>
+			<!-- Header area end -->
+			
+			<!-- Page content start -->
+			<main id="mescroll" class="margin mt-0 mescroll">
+				<div class="dash-balance">
+					<div class="dash-content relative">
+						<h3 class="w-text">SuCheng</h3>
+					</div>
+				</div>
+				
+				<!-- charts start -->
+				<section class="bal-section container">
+					<div class="coin-box">
+						<div class="trader-info">
+							<ul class="trader-info-list list-unstyled">
+								<li>
+									<div class="profile1"></div>
+									<h2>2</h2> <small class="txt-muted">今日</small>
+								</li>
+								<li>
+									<div class="profile2"></div>
+									<h2>31</h2> <small class="txt-muted">本月</small>
+								</li>
+								<li>
+									<div class="profile3"></div>
+									<h2>456</h2> <small class="txt-muted">当年</small>
+								</li>
+							</ul>
+						</div>
+						<div class="row align-items-center">
+							<div class="col-12">
+								<div class="advertising-wrapper">
+									<canvas id="stackedBarGraph" style="width: 100%; height: 260px;"></canvas>
+								</div>
+							</div>
+	
+						</div>
+					</div>
+				</section>
+				
+				<!-- charts area end -->
+				
+			</main>
+			<!-- Page content end -->
+		</div>
+	</div>
+	<!--Page loader DOM Elements. Requared all pages-->
+	<div class="sweet-loader">
+		<div class="box">
+		  	<div class="circle1"></div>
+		  	<div class="circle2"></div>
+		  	<div class="circle3"></div>
+		</div>
+	</div>
+	
+	<!-- JQuery library file. requared all pages -->
+	<script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+	<!-- Template global script file. requared all pages -->
+	<script th:src="@{/js/global.script.js}"></script>
+	<!-- 下拉刷新 下拉加载插件 -->
+	<script th:src="@{/js/mescroll.min.js}"></script>
+	<!-- 日期选择插件 -->
+	<script th:src="@{/js/iScroll.js}"></script>
+	<script th:src="@{/js/Mdate.js}"></script>
+	<!-- F2 阿里可视化插件 -->
+	<script src="https://gw.alipayobjects.com/os/lib/antv/f2/3.7.0/dist/f2.min.js"></script>
+	
+	<script type="text/javascript">
+		const data = [{
+			name: 'week',
+			value: 3,
+			year: 11.17
+		}, {
+			name : 'week',
+			value : 4,
+			year : 11.18
+		}, {
+			name : 'week',
+			value : 6,
+			year : 11.19
+		}, {
+			name : 'week',
+			value : 7,
+			year : 11.20
+		}, {
+			name : 'week',
+			value : 2,
+			year : 11.21
+		}, {
+			name : 'week',
+			value : 2,
+			year : 11.22
+		}, {
+			name : 'week',
+			value : 4,
+			year : 11.23
+		}, {
+			name : 'month',
+			value : 36,
+			year : 1
+		}, {
+			name : 'month',
+			value : 33,
+			year : 2
+		}, {
+			name : 'month',
+			value : 41,
+			year : 3
+		}, {
+			name : 'month',
+			value : 76,
+			year : 4
+		}, {
+			name : 'month',
+			value : 56,
+			year : 5
+		}, {
+			name : 'month',
+			value : 42,
+			year : 6
+		}, {
+			name : 'month',
+			value : 81,
+			year : 7
+		}, {
+			name : 'month',
+			value : 105,
+			year : 8
+		}, {
+			name : 'month',
+			value : 90,
+			year : 9
+		}, {
+			name : 'month',
+			value : 77,
+			year : 10
+		}, {
+			name : 'month',
+			value : 41,
+			year : 11
+		}, {
+			name : 'month',
+			value : null,
+			year : 12
+		}];
+
+		const chart = new F2.Chart({
+			id : 'stackedBarGraph',
+			pixelRatio : window.devicePixelRatio,
+			padding : 'auto'
+		});
+
+		chart.source(data, {
+			value : {
+				tickCount : 5
+			}
+		});
+
+		// 默认只勾选一个图例
+		chart.filter('name', function(val) {
+			return val === 'month';
+		});
+
+		chart.legend({
+			position : 'bootom',
+			align : "center",
+			selectedMode : 'single', // 设置图例单选模式
+		});
+		chart.tooltip({
+			custom : true, // 自定义 tooltip 内容框
+			onChange : function onChange(obj) {
+				const legend = chart.get('legendController').legends.right[0];
+				const tooltipItems = obj.items;
+				const legendItems = legend.items;
+				const map = {};
+				legendItems.forEach(function(item) {
+					map[item.name] = _.clone(item);
+				});
+				tooltipItems.forEach(function(item) {
+					const name = item.name;
+					const value = item.value;
+					if (map[name]) {
+						map[name].value = value;
+					}
+				});
+				legend.setItems(_.values(map));
+			},
+			onHide : function onHide() {
+				const legend = chart.get('legendController').legends.right[0];
+				legend.setItems(chart.getLegendItems().country);
+			}
+		});
+		chart.axis('value', {
+			labelOffset : 0,
+			label : {
+				top : true,
+				textAlign : 'start',
+				textBaseline : 'bottom'
+			}
+		});
+		chart.axis('year', {
+			label : {
+				textAlign : 'end',
+				textBaseline : 'middle'
+			}
+		});
+		chart.interval().position('year*value').color('name');
+		chart.render();
+	</script>
+</body>
+
+</html>
