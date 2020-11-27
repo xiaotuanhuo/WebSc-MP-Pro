@@ -1,6 +1,13 @@
-server:
+﻿server:
     port: 80
-    
+    session-timeout: 3600	#用户回话session过期时间，以秒为单位
+    tomcat.uri-encoding: UTF-8	#配置Tomcat编码，默认为UTF-8
+    tomcat.compression: on		#Tomcat是否开启压缩，默认为关闭
 spring:
-    thymeleaf:
-        cache: false
+    profiles:
+        active: dev
+mybatis:
+    mapper-locations: classpath:mapping/*.xml
+    type-aliases-package: com.sc.mp.model
+logging:
+    config: classpath:log4j.properties

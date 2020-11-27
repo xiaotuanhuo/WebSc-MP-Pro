@@ -1,0 +1,26 @@
+spring:
+    datasource:
+        name: mysql
+        url: jdbc:mysql://47.100.162.75:3310/MYSQL-SC?characterEncoding=UTF-8
+        username: root
+        password: Root@1234
+        # 使用druid数据源
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        filters: stat
+        maxActive: 20
+        initialSize: 1
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxPoolPreparedStatementPerConnectionSize: 20
+    http: 
+        multipart: 
+            max-file-size: 100MB
+            max-request-size: 200MB

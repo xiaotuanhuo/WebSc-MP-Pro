@@ -1,18 +1,26 @@
 package com.sc.mp.controller;
 
+import javax.annotation.Resource;
+import javax.jws.soap.SOAPBinding.Use;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
+import com.sc.mp.service.UserService;
 
 @Controller
-@RequestMapping(value="mp")
+@RequestMapping(value="/mp")
 public class IndexController {
+	
+	@Resource
+	private UserService userService;
 	
 	@GetMapping(value="/area")
 	public String index() {
+		System.out.println(userService.test());
 		return "super";
 	}
 	
