@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sc.system.mapper.DocMapper">
+
+    <resultMap id="BaseResultMap" type="sc.system.model.WebScDoc">
+    	<id column="document_id" jdbcType="VARCHAR" property="documentId"/>
+    	<result column="operative_id" jdbcType="VARCHAR" property="operativeId"/>
+    	<result column="operative_name" jdbcType="VARCHAR" property="operativeName"/>
+    	<result column="anesthetic_id" jdbcType="VARCHAR" property="anestheticId"/>
+    	<result column="anesthetic_name" jdbcType="VARCHAR" property="anestheticName"/>
+    	<result column="patient_name" jdbcType="VARCHAR" property="patientName"/>
+    	<result column="patient_age" jdbcType="INTEGER" property="patientAge"/>
+    	<result column="patient_sex" jdbcType="VARCHAR" property="patientSex"/>
+    	<result column="patient_num" jdbcType="VARCHAR" property="patientNum"/>
+    	<result column="patient_bednum" jdbcType="VARCHAR" property="patientBednum"/>
+    	<result column="patienttype_id" jdbcType="VARCHAR" property="patienttypeId"/>
+    	<result column="operationtype_id" jdbcType="VARCHAR" property="operationtypeId"/>
+    	<result column="document_title" jdbcType="VARCHAR" property="documentTitle"/>
+    	<result column="document_type" jdbcType="VARCHAR" property="documentType"/>
+    	<result column="operate_user" jdbcType="VARCHAR" property="operateUser"/>
+    	<result column="operate_aide" jdbcType="VARCHAR" property="operateQide"/>
+    	<result column="apply_user_id" jdbcType="VARCHAR" property="applyUserId"/>
+    	<result column="admin_user_id" jdbcType="VARCHAR" property="adminUserId"/>
+    	<result column="qa_user_id" jdbcType="VARCHAR" property="qaUserId"/>
+    	<result column="qa_user_name" jdbcType="VARCHAR" property="qaUserName"/>
+    	<result column="qa_team_id" jdbcType="VARCHAR" property="qaTeamId"/>
+    	<result column="hospital_memo" jdbcType="VARCHAR" property="hospitalMemo"/>
+    	<result column="qa_memo" jdbcType="VARCHAR" property="qaMemo"/>
+    	<result column="admin_memo" jdbcType="VARCHAR" property="adminMemo"/>
+    	<result column="memo" jdbcType="VARCHAR" property="memo"/>
+    	<result column="document_state" jdbcType="VARCHAR" property="documentState"/>
+    	<result column="operate_start_time" jdbcType="VARCHAR" property="operateStartTime"/>
+    	<result column="operate_end_time" jdbcType="VARCHAR" property="operateEndTime"/>
+    	<result column="create_date" jdbcType="VARCHAR" property="createDate"/>
+    	<result column="hospital_evaluate" jdbcType="INTEGER" property="hospitalEvaluate"/>
+    	<result column="hospital_evaluate_memo" jdbcType="VARCHAR" property="hospitalEvaluateMemo"/>
+    	<result column="doctor_evaluate" jdbcType="INTEGER" property="doctorEvaluate"/>
+    	<result column="doctor_evaluate_memo" jdbcType="VARCHAR" property="doctorEvaluateMemo"/>
+    	<result column="old_document_state" jdbcType="VARCHAR" property="oldDocumentState"/>
+    	<result column="delete_reason" jdbcType="VARCHAR" property="deleteReason"/>
+    	<result column="transfer_user_id" jdbcType="VARCHAR" property="transferUserId"/>
+    	
+    	
+    	<result column="org_id" jdbcType="VARCHAR" property="orgId"/>
+    	<result column="org_name" jdbcType="VARCHAR" property="orgName"/>
+    	<result column="org_address" jdbcType="VARCHAR" property="orgAddress"/>
+    	<result column="org_tel" jdbcType="VARCHAR" property="orgTel"/>
+    	<result column="leader_name" jdbcType="VARCHAR" property="leaderName"/>
+    	<result column="leader_tel" jdbcType="VARCHAR" property="leaderTel"/>
+    	<result column="org_province" jdbcType="VARCHAR" property="orgProvince"/>
+    	<result column="org_city" jdbcType="VARCHAR" property="orgCity"/>
+    	<result column="org_area" jdbcType="VARCHAR" property="orgArea"/>
+    	
+    	<result column="tmp_operative_id" jdbcType="VARCHAR" property="tmpOperativeId"/>
+    	<result column="tmp_operative_name" jdbcType="VARCHAR" property="tmpOperativeName"/>
+    	<result column="tmp_anesthetic_id" jdbcType="VARCHAR" property="tmpAnestheticId"/>
+    	<result column="tmp_anesthetic_name" jdbcType="VARCHAR" property="tmpAnestheticName"/>
+    	<result column="tmp_patient_name" jdbcType="VARCHAR" property="tmpPatientName"/>
+    	<result column="tmp_patient_age" jdbcType="NUMERIC" property="tmpPatientAge"/>
+    	<result column="tmp_patient_sex" jdbcType="VARCHAR" property="tmpPatientSex"/>
+    	
+    	<result column="height" jdbcType="NUMERIC" property="height"/>
+    	<result column="weight" jdbcType="NUMERIC" property="weight"/>
+    	<result column="asa" jdbcType="VARCHAR" property="asa"/>
+    	<result column="xtbs" jdbcType="VARCHAR" property="xtbs"/>
+    	<result column="shs" jdbcType="VARCHAR" property="shs"/>
+    	<result column="shcs" jdbcType="NUMERIC" property="shcs"/>
+    	<result column="sskssj" jdbcType="VARCHAR" property="sskssj"/>
+    	<result column="ssjssj" jdbcType="VARCHAR" property="ssjssj"/>
+    	<result column="sssc" jdbcType="NUMERIC" property="sssc"/>
+    	<result column="jmjs" jdbcType="VARCHAR" property="jmjs"/>
+    	<result column="ywsj_hxxt" jdbcType="VARCHAR" property="ywsjHxxt"/>
+    	<result column="ywsj_hxxt_qt" jdbcType="VARCHAR" property="ywsjHxxtQt"/>
+    	<result column="ywsj_xhxt" jdbcType="VARCHAR" property="ywsjXhxt"/>
+    	<result column="ywsj_xhxt_qt" jdbcType="VARCHAR" property="ywsjXhxtQt"/>
+    	<result column="ywsj_gm" jdbcType="VARCHAR" property="ywsjGm"/>
+    	<result column="ywsj_gm_socre" jdbcType="VARCHAR" property="ywsjGmAocre"/>
+    	<result column="ywsj_qt" jdbcType="VARCHAR" property="ywsjQt"/>
+    	<result column="shbl_zw" jdbcType="VARCHAR" property="shblZw"/>
+    	<result column="shbl_hbtt" jdbcType="VARCHAR" property="shblHbtt"/>
+    	<result column="shbl_ex" jdbcType="VARCHAR" property="shblEx"/>
+    	<result column="shbl_xy" jdbcType="VARCHAR" property="shblXy"/>
+    	<result column="shbl_ot" jdbcType="VARCHAR" property="shblOt"/>
+    	<result column="shbl_ot_score" jdbcType="NUMERIC" property="shblOtScore"/>
+    	<result column="shttzl" jdbcType="VARCHAR" property="shttzl"/>
+    	<result column="photo_1" jdbcType="VARCHAR" property="photo_1"/>
+    	<result column="photo_2" jdbcType="VARCHAR" property="photo_2"/>
+    	<result column="photo_3" jdbcType="VARCHAR" property="photo_3"/>
+    	<result column="photo_4" jdbcType="VARCHAR" property="photo_4"/>
+    	<result column="photo_5" jdbcType="VARCHAR" property="photo_5"/>
+    	<result column="status" jdbcType="VARCHAR" property="status"/>
+    </resultMap>
+    
+    <resultMap id="BaseResultMap_Fp" type="sc.system.model.WebScUser_Distribution">
+    	<result column="user_id" jdbcType="VARCHAR" property="userId"/>
+    	<result column="user_name" jdbcType="VARCHAR" property="userName"/>
+    	<result column="isrecord" jdbcType="VARCHAR" property="isrecord"/>
+    	<result column="iscalendar" jdbcType="VARCHAR" property="iscalendar"/>
+    	<result column="province" jdbcType="VARCHAR" property="province"/>
+    	<result column="city" jdbcType="VARCHAR" property="city"/>
+    	<result column="area" jdbcType="VARCHAR" property="area"/>
+    	<result column="patient_type" jdbcType="VARCHAR" property="patient_type"/>
+    	<result column="operation_type" jdbcType="VARCHAR" property="operation_type"/>
+    </resultMap>
+    
+    <resultMap id="BaseResultMap_Org" type="sc.system.model.WebScOrganization">
+    	<result column="org_id" jdbcType="VARCHAR" property="orgId"/>
+    	<result column="org_pid" jdbcType="VARCHAR" property="orgPid"/>
+    	<result column="org_name" jdbcType="VARCHAR" property="orgName"/>
+    	<result column="org_address" jdbcType="VARCHAR" property="orgAddress"/>
+    	<result column="org_tel" jdbcType="VARCHAR" property="orgTel"/>
+    	<result column="leader_name" jdbcType="VARCHAR" property="leaderName"/>
+    	<result column="leader_tel" jdbcType="VARCHAR" property="leaderTel"/>
+    	<result column="province" jdbcType="VARCHAR" property="province"/>
+    	<result column="city" jdbcType="VARCHAR" property="city"/>
+    	<result column="area" jdbcType="VARCHAR" property="area"/>
+    </resultMap>
+    
+    <resultMap id="BaseResultMap_TransferUser" type="sc.system.model.WebScUser">
+    	<result column="user_id" jdbcType="NUMERIC" property="userId"/>
+    	<result column="user_name" jdbcType="VARCHAR" property="userName"/>
+    	<result column="sex" jdbcType="VARCHAR" property="sex"/>
+    	<result column="age" jdbcType="NUMERIC" property="age"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        document_id,
+		operative_id,
+		anesthetic_id,
+		patient_name,
+		patient_age,
+		patient_sex,
+		patient_num,
+		patient_bednum,
+		patienttype_id,
+		operationtype_id,
+		document_title,
+		document_type,
+		operate_user,
+		operate_aide,
+		apply_user_id,
+		admin_user_id,
+		qa_user_id,
+		qa_team_id,
+		org_id,
+		hospital_memo,
+		qa_memo,
+		admin_memo,
+		memo,
+		document_state,
+		operate_start_time,
+		operate_end_time,
+		DATE_FORMAT(create_date, '%Y-%m-%d %H:%k:%s') as create_date,
+		hospital_evaluate,
+		hospital_evaluate_memo,
+		doctor_evaluate,
+		doctor_evaluate_memo
+    </sql>
+    
+    <select id="selectImportDocsByConditions" resultMap="BaseResultMap" parameterType="hashmap">
+	  	select 
+	    <include refid="Base_Column_List" />
+	    from 
+	    WSC_DOCUMENT doc 
+	    where 
+	    apply_user_id = #{userId,jdbcType=VARCHAR}
+	    <if test="doctorName != null and doctorName != ''" >
+	    	and operate_user = #{doctorName,jdbcType=VARCHAR}
+	    </if>
+	    <if test="orgId != null and orgId != ''" >
+	    	and org_id = #{orgId,jdbcType=VARCHAR}
+	    </if>
+	    <if test="startDate != null and startDate != ''" >
+	    	<![CDATA[
+	    		and operate_start_time >= #{startDate,jdbcType=VARCHAR}
+	    	]]>
+	    </if>
+	    <if test="endDate != null and endDate != ''" >
+	    	<![CDATA[
+	    		and operate_start_time <= #{endDate,jdbcType=VARCHAR}
+	    	]]>
+	    </if>
+	</select>
+    
+    <insert id="insert" parameterType="sc.system.model.WebScDoc">
+    	insert into WSC_DOCUMENT(document_id,
+								operative_id,
+								anesthetic_id,
+								patient_name,
+								patient_age,
+								patient_sex,
+								patient_num,
+								patient_bednum,
+								patienttype_id,
+								operationtype_id,
+								document_title,
+								document_type,
+								operate_user,
+								operate_aide,
+								apply_user_id,
+								memo,
+								document_state,
+								operate_start_time,
+								org_id)
+					values(#{documentId,jdbcType=VARCHAR},
+							#{operativeId,jdbcType=VARCHAR},
+							#{anestheticId,jdbcType=VARCHAR},
+							#{patientName,jdbcType=VARCHAR},
+							#{patientAge,jdbcType=INTEGER},
+							#{patientSex,jdbcType=VARCHAR},
+							#{patientNum,jdbcType=VARCHAR},
+							#{patientBednum,jdbcType=VARCHAR},
+							#{patienttypeId,jdbcType=VARCHAR},
+							#{operationtypeId,jdbcType=VARCHAR},
+							#{documentTitle,jdbcType=VARCHAR},
+							#{documentType,jdbcType=VARCHAR},
+							#{operateUser,jdbcType=VARCHAR},
+							#{operateQide,jdbcType=VARCHAR},
+							#{applyUserId,jdbcType=VARCHAR},
+							#{memo,jdbcType=VARCHAR},
+							#{documentState,jdbcType=VARCHAR},
+							#{operateStartTime,jdbcType=VARCHAR},
+							#{orgId,jdbcType=VARCHAR})
+    </insert>
+    
+    <update id="updateByPrimaryKey" parameterType="sc.system.model.WebScDoc">
+    	update WSC_DOCUMENT 
+    	<set>
+            <if test="operativeId != null">
+                operative_id = #{operativeId,jdbcType=VARCHAR},
+            </if>
+            <if test="anestheticId != null">
+                anesthetic_id = #{anestheticId,jdbcType=VARCHAR},
+            </if>
+            <if test="patientName != null">
+                patient_name = #{patientName,jdbcType=VARCHAR},
+            </if>
+            <if test="patientAge != null">
+                patient_age = #{patientAge,jdbcType=INTEGER},
+            </if>
+            <if test="patientSex != null">
+                patient_sex = #{patientSex,jdbcType=VARCHAR},
+            </if>
+            <if test="patientNum != null">
+                patient_num = #{patientNum,jdbcType=VARCHAR},
+            </if>
+            <if test="patientBednum != null">
+                patient_bednum = #{patientBednum,jdbcType=VARCHAR},
+            </if>
+            <if test="patienttypeId != null">
+                patienttype_id = #{patienttypeId,jdbcType=VARCHAR},
+            </if>
+            <if test="operationtypeId != null">
+                operationtype_id = #{operationtypeId,jdbcType=VARCHAR},
+            </if>
+            <if test="documentTitle != null">
+                document_title = #{documentTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="documentType != null">
+                document_type = #{documentType,jdbcType=VARCHAR},
+            </if>
+            <if test="operateUser != null">
+                operate_user = #{operateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="operateQide != null">
+                operate_aide = #{operateQide,jdbcType=VARCHAR},
+            </if>
+            <if test="applyUserId != null">
+                apply_user_id = #{applyUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="adminUserId != null">
+                admin_user_id = #{adminUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="qaUserId != null">
+                qa_user_id = #{qaUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="qaTeamId != null">
+                qa_team_id = #{qaTeamId,jdbcType=VARCHAR},
+            </if>
+            <if test="hospitalMemo != null">
+                hospital_memo = #{hospitalMemo,jdbcType=VARCHAR},
+            </if>
+            <if test="qaMemo != null">
+                qa_memo = #{qaMemo,jdbcType=VARCHAR},
+            </if>
+            <if test="adminMemo != null">
+                admin_memo = #{adminMemo,jdbcType=VARCHAR},
+            </if>
+            <if test="memo != null">
+                memo = #{memo,jdbcType=VARCHAR},
+            </if>
+            <if test="documentState != null">
+                document_state = #{documentState,jdbcType=VARCHAR},
+            </if>
+            <if test="operateStartTime != null">
+                operate_start_time = #{operateStartTime,jdbcType=VARCHAR},
+            </if>
+            <if test="operateEndTime != null">
+                operate_end_time = #{operateEndTime,jdbcType=VARCHAR},
+            </if>
+            <if test="hospitalEvaluate != null">
+                hospital_evaluate = #{hospitalEvaluate,jdbcType=INTEGER},
+            </if>
+            <if test="hospitalEvaluateMemo != null">
+                hospital_evaluate_memo = #{hospitalEvaluateMemo,jdbcType=VARCHAR},
+            </if>
+            <if test="doctorEvaluate != null">
+                doctor_evaluate = #{doctorEvaluate,jdbcType=INTEGER},
+            </if>
+            <if test="doctorEvaluateMemo != null">
+                doctor_evaluate_memo = #{doctorEvaluateMemo,jdbcType=VARCHAR},
+            </if>
+            <if test="transferUserId != null">
+                transfer_user_id = #{transferUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="oldDocumentState != null">
+                old_document_state = #{oldDocumentState,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteReason != null">
+                delete_reason = #{deleteReason,jdbcType=VARCHAR},
+            </if>
+		</set>
+        where document_id = #{documentId,jdbcType=VARCHAR}
+    </update>
+    
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    	delete from WSC_DOCUMENT where document_id = #{documentId,jdbcType=VARCHAR}
+    </delete>
+    
+    <select id="selectByPrimaryKey"  parameterType="java.lang.String">
+    	select 
+    	<include refid="Base_Column_List"/>
+    	from WSC_DOCUMENT 
+    	where document_id = #{documentId,jdbcType=VARCHAR}
+    </select>
+    
+    <select id="selectWebScDocList" parameterType="sc.system.model.WebScDoc" resultMap="BaseResultMap">
+    select * from (
+    <![CDATA[
+    	select 
+    		doc.document_id,
+    		doc.operative_id,
+			(select GROUP_CONCAT(operative_name) 
+			from WSC_OPERATIVE 
+			where operative_id in (
+				(
+					select 
+					substring_index(substring_index(doc.operative_id, ',' , help_topic_id + 1), ',' , -1) 
+					from mysql.help_topic 
+					where help_topic_id < (length(doc.operative_id) - length(REPLACE(doc.operative_id, ',', '')) + 1 )
+				)
+			)) as operative_name,
+			doc.anesthetic_id,
+			(select anesthetic_name from WSC_ANESTHETIC where anesthetic_id = doc.anesthetic_id) as anesthetic_name,
+			doc.patient_name,
+			doc.patient_age,
+			doc.patient_sex,
+    		
+            doctmp.operative_id as tmp_operative_id,
+			(select GROUP_CONCAT(operative_name) 
+			from WSC_OPERATIVE 
+			where operative_id in (
+				(
+					select 
+					substring_index(substring_index(doctmp.operative_id, ',' , help_topic_id + 1), ',' , -1) 
+					from mysql.help_topic 
+					where help_topic_id < (length(doctmp.operative_id) - length(REPLACE(doctmp.operative_id, ',', '')) + 1 )
+				)
+			)) as tmp_operative_name,
+			doctmp.anesthetic_id as tmp_anesthetic_id,
+			(select anesthetic_name from WSC_ANESTHETIC where anesthetic_id = doctmp.anesthetic_id) as tmp_anesthetic_name,
+			doctmp.patient_name as tmp_patient_name,
+			doctmp.patient_age as tmp_patient_age,
+			doctmp.patient_sex as tmp_patient_sex,
+			
+			doc.patient_num,
+			doc.patient_bednum,
+			doc.patienttype_id,
+			doc.operationtype_id,
+			doc.document_title,
+			doc.document_type,
+			doc.operate_user,
+			doc.operate_aide,
+			doc.apply_user_id,
+			doc.admin_user_id,
+			doc.qa_user_id,
+			(select user_name from WSC_USER where user_id = doc.qa_user_id) as qa_user_name,
+			doc.qa_team_id,
+			doc.hospital_memo,
+			doc.qa_memo,
+			doc.admin_memo,
+			doc.memo,
+			doc.document_state,
+			doc.operate_start_time,
+			doc.operate_end_time,
+			DATE_FORMAT(doc.create_date, '%Y-%m-%d %H:%k:%s') as create_date,
+			doc.hospital_evaluate,
+			doc.hospital_evaluate_memo,
+			doc.doctor_evaluate,
+			doc.doctor_evaluate_memo,
+			doc.old_document_state,
+			doc.delete_reason,
+			doc.transfer_user_id,
+			
+			doc.org_id,
+			org.org_name,
+			org.org_address,
+			org.org_tel,
+			org.leader_name,
+			org.leader_tel,
+			org.province as org_province,
+			org.city as org_city,
+			org.area as org_area,
+			
+			doctmp.height,
+			doctmp.weight,
+			doctmp.asa,
+			doctmp.xtbs,
+			doctmp.shs,
+			doctmp.shcs,
+			doctmp.sskssj,
+			doctmp.ssjssj,
+			doctmp.sssc,
+			doctmp.jmjs,
+			doctmp.ywsj_hxxt,
+			doctmp.ywsj_hxxt_qt,
+			doctmp.ywsj_xhxt,
+			doctmp.ywsj_xhxt_qt,
+			doctmp.ywsj_gm,
+			doctmp.ywsj_gm_socre,
+			doctmp.ywsj_qt,
+			doctmp.shbl_zw,
+			doctmp.shbl_hbtt,
+			doctmp.shbl_ex,
+			doctmp.shbl_xy,
+			doctmp.shbl_ot,
+			doctmp.shbl_ot_score,
+			doctmp.shttzl,
+			doctmp.photo_1,
+			doctmp.photo_2,
+			doctmp.photo_3,
+			doctmp.photo_4,
+			doctmp.photo_5,
+			doctmp.status 
+    	from WSC_DOCUMENT doc 
+    	left join WSC_DOCUMENT_TMP doctmp on doc.document_id = doctmp.document_id 
+    	left join WSC_ORGANIZATION org on doc.org_id = org.org_id 
+    	where 1=1 
+    	]]>	
+      	<if test="roleId != null and roleId == '2' and applyUserId != null">
+    		<![CDATA[
+      			and (	
+      					org.org_id in (
+	      					select org_id 
+	      					from WSC_USER t_u 
+	      					left join WSC_ORGANIZATION t_o on t_u.role_type_id = t_o.org_pid 
+	      					where t_u.user_id = #{applyUserId,jdbcType=VARCHAR} 
+	      				) or org.org_id in (
+	      					select role_type_id from WSC_USER where user_id = #{applyUserId,jdbcType=VARCHAR} 
+	      				)
+      				)
+      		]]>		
+    	</if>
+    	<if test="roleId != null and roleId == '4' and qaUserId != null">
+    		<![CDATA[
+      			and (
+      					doc.qa_user_id = #{qaUserId,jdbcType=VARCHAR} 
+      					or 
+      					doc.document_id in
+      					(
+	      					select doc.document_id 
+	      					from WSC_QATEAM wq 
+	      					where wq.user_id = #{qaUserId,jdbcType=VARCHAR} 
+	      					and wq.team_id = doc.qa_team_id 
+      					)
+      				)
+      		]]>		
+    	</if>
+    	<if test="province != null">
+      		and org.province = #{province,jdbcType=VARCHAR} 
+      	</if>
+      	<if test="city != null and city != ''">
+      		and org.city = #{city,jdbcType=VARCHAR} 
+      	</if>
+   		<if test="area != null and area != ''">
+      		and org.area = #{area,jdbcType=VARCHAR} 
+      	</if>
+      	<if test="qaUserId != null and qaUserId != ''">
+      		and doc.qa_user_id = #{qaUserId,jdbcType=VARCHAR} 
+      	</if>
+      	<if test="documentState != null">
+      		and doc.document_state in (${documentState}) 
+      	</if>
+      	<if test="documentId != null">
+      		and doc.document_id = #{documentId,jdbcType=VARCHAR} 
+      	</if>
+      	
+      	<if test="operateStartTime != null and operateStartTime != ''">
+      		<![CDATA[
+      		and doc.operate_start_time >= #{operateStartTime,jdbcType=VARCHAR} 
+      		]]>	
+      	</if>
+      	<if test="operateEndTime != null and operateEndTime != ''">
+      		<![CDATA[
+      		and doc.operate_start_time <= #{operateEndTime,jdbcType=VARCHAR} 
+      		]]>	
+      	</if>
+      	<if test="patientName != null and patientName != ''">
+      		and doc.patient_name like concat(#{patientName,jdbcType=VARCHAR}, '%')
+      	</if>
+      	) tmpTab 
+      	where 1=1 
+      	<if test="qaUserName != null and qaUserName != ''">
+      		and qa_user_name like concat(#{qaUserName,jdbcType=VARCHAR}, '%')
+      	</if>
+      	order by operate_start_time desc
+    </select>
+    
+    <select id="findWebScDocOrg" parameterType="java.lang.String" resultType="sc.system.model.WebScOrganization">
+    	select org_id as orgId,
+    		   org_pid as orgPid,
+    		   org_name as orgName,
+    		   org_address as orgAddress,
+    		   org_tel as orgTel,
+    		   leader_name as leaderName,
+    		   leader_tel as leaderTel,
+    		   province,
+    		   city,
+    		   area 
+    	from WSC_ORGANIZATION 
+    	where org_id in (
+    		select org_id from WSC_DOCUMENT where document_id = #{documentId,jdbcType=VARCHAR} 
+    	)
+    </select>
+    
+    <select id="getWorkDr" parameterType="java.lang.String" resultType="java.lang.String">
+    	select qa_user_id 
+    	from WSC_DOCUMENT 
+    	where qa_user_id is not null
+    	and operate_start_time between str_to_date(#{operate_start_time,jdbcType=VARCHAR}, '%Y-%m-%d') 
+		and date_add(str_to_date(#{operate_start_time,jdbcType=VARCHAR}, '%Y-%m-%d'), interval 1 day) 
+    </select>
+    
+    <select id="getDistributionDrGridList" parameterType="java.util.Map" resultMap="BaseResultMap_Fp">
+    <![CDATA[
+    	select wu.user_id,
+    		   wu.user_name,
+    		   (select DISTINCT(1) 
+    		   	from WSC_RECORD wr
+    		   	where wr.user_id = wu.user_id 
+    		   	and date_format(wr.record_date, '%Y-%m-%d %h:%i:%s') <= #{operate_start_time,jdbcType=VARCHAR} 
+    		   	and date_format(wr.end_date, '%Y-%m-%d %h:%i:%s') >= #{operate_start_time,jdbcType=VARCHAR} 
+   		   		and org_id = #{org_id,jdbcType=VARCHAR}
+    			) as isrecord,
+    		   (
+				select DISTINCT(1) 
+				from WSC_CALENDAR wc 
+				where wc.user_id = wu.user_id 
+				and date_format(wc.start_time, '%Y-%m-%d %h:%i:%s') <= #{operate_start_time,jdbcType=VARCHAR} 
+				and date_format(wc.end_time, '%Y-%m-%d %h:%i:%s') >= #{operate_start_time,jdbcType=VARCHAR} 
+			   ) as iscalendar,
+    		   wu.province,
+    		   wu.city,
+    		   wu.area,
+    		   wu.patient_type,
+    		   wu.operation_type
+    	from WSC_USER wu
+    	where role_id = '5'
+    	and province = #{province,jdbcType=VARCHAR} 
+    ]]>	
+    	<if test="qaName != null">
+    		<![CDATA[
+    		and wu.user_name like concat(#{qaName,jdbcType=VARCHAR}, '%')
+    		]]>
+  		</if>
+    </select>
+    
+    <select id="getTransferUser" parameterType="java.util.Map" resultMap="BaseResultMap_TransferUser">
+    	<![CDATA[
+    	select distinct wd.qa_user_id as user_id,
+    		   wu.user_name,
+    		   wu.sex,
+    		   wu.age
+    	from WSC_DOCUMENT wd 
+    	left join WSC_USER wu on wd.qa_user_id = wu.user_id 
+    	where str_to_date(wd.operate_start_time, '%Y-%m-%d') = str_to_date(#{operateStartTime,jdbcType=VARCHAR}, '%Y-%m-%d') 
+    	and wd.org_id = #{orgId,jdbcType=VARCHAR} 
+    	and wd.qa_user_id is not null 
+    	and wd.qa_user_id <> #{NoUserId,jdbcType=VARCHAR}
+    	]]>
+    	<if test="userName != null and userName != ''">
+      		and wu.user_name = #{userName,jdbcType=VARCHAR} 
+      	</if>
+    </select>
+    
+    <select id="getQaUserInfo" parameterType="java.util.Map" resultMap="BaseResultMap_TransferUser">
+    	<![CDATA[
+    	select user_id,
+    		   user_name,
+    		   sex,
+    		   age
+    	from WSC_USER
+    	where 1=1 
+    	and user_id <> #{NoUserId,jdbcType=VARCHAR}
+    	and province = #{province,jdbcType=VARCHAR}
+    	and role_id = #{roleId,jdbcType=VARCHAR}
+    	]]>
+    	<if test="userName != null and userName != ''">
+      		and user_name = #{userName,jdbcType=VARCHAR} 
+      	</if>
+    </select>
+</mapper>

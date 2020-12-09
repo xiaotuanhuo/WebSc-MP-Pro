@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+	<title>订单列表</title>
+	
+	<!-- Google font file. If you want you can change. -->
+	<link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,900" rel="stylesheet">
+	<!-- Fontawesome font file css -->
+	<link rel="stylesheet" href="https://www.jq22.com/jquery/font-awesome.4.7.0.css">
+	<!-- Template global css file. Requared all pages -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/global.style.css}">
+	<link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
+	<link rel="stylesheet" th:href="@{/css/mescroll.min.css}">
+</head>
+
+<body>
+	<div class="wrapper">
+		<div class="nav-menu">
+			<nav class="menu">
+			<!-- Menu navigation start -->
+				<div class="nav-container menu-container">
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">姓名</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">张三</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">性别</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">男</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">手机</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">18888888888</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">角色</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">区域管理员</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">机构</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">上海市-市辖区-徐汇区夙呈医生集团</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">区域</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">上海市-市辖区-徐汇区</h6>
+						</div>
+					</div>
+					
+					<button class="button circle red block menu-logout">登出</button>
+				</div>
+				
+				<!-- Menu navigation end -->
+			</nav>
+		</div>
+		
+		<div class="wrapper-inline">
+			<!-- Header area start -->
+			<header class="no-background"> <!-- extra class no-background -->
+				<div class="navi-menu-button">
+					<em></em>
+					<em></em>
+					<em></em>
+				</div>
+			</header>
+			<!-- Header area end -->
+			
+			<!-- Page content start -->
+			<main id="mescroll" class="margin mt-0 mescroll">
+				<div class="dash-balance">
+					<div class="dash-content relative">
+						<h3 class="w-text">SuCheng</h3>
+					</div>
+				</div>
+				
+				<!-- Order area start -->
+				<section class="bal-section container">
+					<div id="content">
+					    <div id="content-body">
+					    	<div class="content-head">
+								<div class="d-flex align-items-center">
+								    <div class="d-flex flex-grow">
+								        <div class="mr-auto">
+								            <p class="mb-0">我的订单</p>
+								        </div>
+								    </div>
+								</div>
+							</div>
+					        <div class="content-row">
+					            <div class="content-col">
+					                <img src="/img/p1.png" alt="">
+					                <span>已完成</span>
+					            </div>
+					            <div class="content-col">
+					                <img src="/img/p2.png" alt="">
+					                <span>历史订单</span>
+					            </div>
+					            <div class="content-col">
+					                <img src="/img/p3.png" alt="">
+					                <span>已取消</span>
+					            </div>
+					        </div>
+					    </div>
+					</div>
+				</section>
+				<!-- Order area end -->
+				
+				<!-- 订单列表 start -->
+<!-- 				<section class="container d-flex" style="padding: 30px 15px 15px;"> -->
+<!-- 					<h4 class="fm-auto" style="font-size: 16px;">备休情况</h4> -->
+<!-- 					<div class="form-group"> -->
+<!-- 						<span>备休情况</span> -->
+<!-- 						<input type="text" id="dateSelector" class="form-field"> -->
+<!-- 					</div> -->
+<!-- 					<input type="text" id="dateSelector" class="" placeholder="选择日期"> -->
+<!-- 				</section> -->
+				<section id="" class="container">
+					<ul id="doclist" class="transaction-list list-unstyled"></ul>
+				</section>
+				<!-- 订单列表 end -->
+				
+			</main>
+			<!-- Page content end -->
+		</div>
+	</div>
+	<!--Page loader DOM Elements. Requared all pages-->
+	<div class="sweet-loader">
+		<div class="box">
+		  	<div class="circle1"></div>
+		  	<div class="circle2"></div>
+		  	<div class="circle3"></div>
+		</div>
+	</div>
+	
+	<!-- JQuery library file. requared all pages -->
+	<script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+	<!-- Template global script file. requared all pages -->
+	<script th:src="@{/js/global.script.js}"></script>
+	<!-- 下拉刷新 下拉加载插件 -->
+	<script th:src="@{/js/mescroll.min.js}"></script>
+	<!-- 日期选择插件 -->
+	<script th:src="@{/js/iScroll.js}"></script>
+	<script th:src="@{/js/Mdate.js}"></script>
+	
+	<script type="text/javascript">
+		var state = 1;
+		$(function() {
+			var mescroll = new MeScroll("mescroll", {
+				down: {
+					auto: false,
+					callback: downCallback
+				},
+				up: {
+					use: true,
+					auto: true,
+					callback: upCallback
+				}
+			});
+			
+			//下拉刷新的回调
+			function downCallback() {
+			alert(1);
+				$.ajax({
+					url: '/doc/toDocListInit',
+					success: function(data) {
+						//联网成功的回调,隐藏下拉刷新的状态;
+						mescroll.endSuccess(); //无参
+						//设置数据
+						//setXxxx(data);//自行实现 TODO
+					},
+					error: function(data) {
+						//联网失败的回调,隐藏下拉刷新的状态
+						mescroll.endErr();
+					}
+				});
+			}
+			
+			//上拉加载的回调 page = {num:1, size:10}; num:当前页 默认从1开始, size:每页数据条数,默认10
+			function upCallback(page) {
+				alert(2);
+				console.log("page.num = " + page.num);
+				getDataList(page.num, page.size, function(data) {
+					//成功的回调,隐藏上拉加载的状态
+					mescroll.endSuccess(data.length);
+					//设置列表数据
+					setListData(data, true);
+				}, function() {
+					//失败的回调,隐藏上拉加载的状态
+					mescroll.endErr();
+				});
+			}
+			
+			var downIndex=0;
+			/*加载订单数据*/
+			function getDataList(pageNum, pageSize, successCallback, errorCallback) {
+				//延时一秒
+                setTimeout(function () {
+                	$.ajax({
+    					url: 'mescroll?num=' + pageNum + "&size=" + pageSize,
+    					success : function(data) {
+    						setTimeout(successCallback&&successCallback(data.detail), 1000);
+    					},
+    					error : function() {
+    						errorCallback&&errorCallback();
+    					}
+    				});
+                }, 1000);
+			}
+
+			/*设置列表数据*/
+			function setListData(data, isAppend) {
+				var listDom = $("#doclist");
+				for (var i = 0; i < data.length; i++) {
+					var newObj = data[i];
+					
+					var str = '<div class="d-flex align-items-center justify-content-between">';
+					str += '<div class="fl-100 align-items-center">';
+					str += '<div class="ml-10">';
+					str += '<h5 class="coin-name">' + newObj.name + '</h5>';
+					str += '<small class="text-muted">' + newObj.phone + '</small>';
+					str += '</div>';
+					str += '</div>';
+					str += '<div class="fm-auto align-items-center mr-10">';
+					str += '<div class="ml-10">';
+					str += '<small class="text-muted">' + newObj.org + '</small>';
+					str += '</div>';
+					str += '</div>';
+					str += '<div class="fr-70">';
+					str += '<small class="d-block mb-0 txt-green">' + newObj.time + '</small>';
+					str += '<small class="text-muted d-block">' + newObj.date + '</small>';
+					str += '</div>';
+					str += '</div>';
+					var liDom = document.createElement("li");
+					liDom.innerHTML = str;
+					
+					if (isAppend) {
+						listDom.appendChild(liDom);//加在列表的后面,上拉加载
+					} else {
+						listDom.insertBefore(liDom, liDom.firstChild);//加在列表的前面,下拉刷新
+					}
+				}
+			}
+			
+			$("#dateSelector").focus(function() {
+				document.activeElement.blur();
+			});
+			new Mdate("dateSelector", null, dateCallback);
+			
+			//日期选择的回调
+			function dateCallback(data) {
+				alert(data);
+			};
+		});
+	</script>
+</body>
+
+</html>

@@ -20,8 +20,12 @@ public class IndexController {
 	
 	@GetMapping(value="/area")
 	public String index() {
+<<<<<<< Updated upstream
 		System.out.println(userService.test());
 		return "super";
+=======
+		return "index";
+>>>>>>> Stashed changes
 	}
 	
 	@GetMapping(value="/mescroll")
