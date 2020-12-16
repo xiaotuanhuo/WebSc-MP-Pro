@@ -1,4 +1,4 @@
-package com.sc.mp.bean;
+package com.sc.mp.model;
 
 import java.io.Serializable;
 
@@ -26,7 +26,9 @@ public class WebScDoc implements Serializable {
 	private String operateUser;
 	private String operateQide;
 	private String applyUserId;
+	private String applyUserName;
 	private String adminUserId;
+	private String adminUserName;
 	private String qaUserId;
 	private String qaTeamId;
 	private String hospitalMemo;
@@ -800,5 +802,21 @@ public class WebScDoc implements Serializable {
 
 	public void setPhoto(String photo) {
 		this.photo = photo;
+	}
+
+	public String getApplyUserName() {
+		return applyUserName;
+	}
+
+	public void setApplyUserName(String applyUserName) {
+		this.applyUserName = applyUserName;
+	}
+
+	public String getAdminUserName() {
+		return adminUserName;
+	}
+
+	public void setAdminUserName(String adminUserName) {
+		this.adminUserName = adminUserName;
 	}
 }

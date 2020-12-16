@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.sc.mp.mapper.UserMapper;
-import com.sc.mp.model.User;
+import com.sc.mp.model.WebScUser;
 
 @Service
 public class UserService {
@@ -18,7 +18,11 @@ public class UserService {
 	
 	public String test() {
 		log.info("test......");
-		User user = userMapper.selectByPrimaryKey(1);
+		WebScUser user = userMapper.selectByPrimaryKey(1);
 		return user.getLoginName();
+	}
+	
+	public WebScUser selectUserInfo(WebScUser user){
+		return userMapper.selectUserInfo(user);
 	}
 }

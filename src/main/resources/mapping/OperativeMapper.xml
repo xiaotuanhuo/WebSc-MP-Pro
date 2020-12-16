@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sc.mp.mapper.OperativeMapper">
+  <resultMap id="BaseResultMap" type="com.sc.mp.model.WebScOperative">
+    <id column="operative_id" jdbcType="VARCHAR" property="operativeId" />
+    <result column="operative_name" jdbcType="VARCHAR" property="operativeName" />
+    <result column="urgenttime" jdbcType="INTEGER" property="urgenttime" />
+  </resultMap>
+  
+  <select id="getWebScOperativeList" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select operative_id,
+  		   operative_name,
+  		   urgenttime
+  	from WSC_OPERATIVE 
+  	where 1=1 
+  	<if test="operativeName != null">
+  		and operative_name like concat(#{operativeName,jdbcType=VARCHAR}, '%')
+ 	</if>
+  </select>
+</mapper>

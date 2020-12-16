@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="sc.system.mapper.DocMapper">
+<mapper namespace="com.sc.mp.mapper.DocMapper">
 
-    <resultMap id="BaseResultMap" type="sc.system.model.WebScDoc">
+    <resultMap id="BaseResultMap" type="com.sc.mp.model.WebScDoc">
     	<id column="document_id" jdbcType="VARCHAR" property="documentId"/>
     	<result column="operative_id" jdbcType="VARCHAR" property="operativeId"/>
     	<result column="operative_name" jdbcType="VARCHAR" property="operativeName"/>
@@ -20,7 +20,9 @@
     	<result column="operate_user" jdbcType="VARCHAR" property="operateUser"/>
     	<result column="operate_aide" jdbcType="VARCHAR" property="operateQide"/>
     	<result column="apply_user_id" jdbcType="VARCHAR" property="applyUserId"/>
+    	<result column="apply_user_name" jdbcType="VARCHAR" property="applyUserName"/>
     	<result column="admin_user_id" jdbcType="VARCHAR" property="adminUserId"/>
+    	<result column="admin_user_name" jdbcType="VARCHAR" property="adminUserName"/>
     	<result column="qa_user_id" jdbcType="VARCHAR" property="qaUserId"/>
     	<result column="qa_user_name" jdbcType="VARCHAR" property="qaUserName"/>
     	<result column="qa_team_id" jdbcType="VARCHAR" property="qaTeamId"/>
@@ -91,7 +93,7 @@
     	<result column="status" jdbcType="VARCHAR" property="status"/>
     </resultMap>
     
-    <resultMap id="BaseResultMap_Fp" type="sc.system.model.WebScUser_Distribution">
+    <resultMap id="BaseResultMap_Fp" type="com.sc.mp.model.WebScUser_Distribution">
     	<result column="user_id" jdbcType="VARCHAR" property="userId"/>
     	<result column="user_name" jdbcType="VARCHAR" property="userName"/>
     	<result column="isrecord" jdbcType="VARCHAR" property="isrecord"/>
@@ -103,7 +105,7 @@
     	<result column="operation_type" jdbcType="VARCHAR" property="operation_type"/>
     </resultMap>
     
-    <resultMap id="BaseResultMap_Org" type="sc.system.model.WebScOrganization">
+    <resultMap id="BaseResultMap_Org" type="com.sc.mp.model.WebScOrganization">
     	<result column="org_id" jdbcType="VARCHAR" property="orgId"/>
     	<result column="org_pid" jdbcType="VARCHAR" property="orgPid"/>
     	<result column="org_name" jdbcType="VARCHAR" property="orgName"/>
@@ -116,7 +118,7 @@
     	<result column="area" jdbcType="VARCHAR" property="area"/>
     </resultMap>
     
-    <resultMap id="BaseResultMap_TransferUser" type="sc.system.model.WebScUser">
+    <resultMap id="BaseResultMap_TransferUser" type="com.sc.mp.model.WebScUser">
     	<result column="user_id" jdbcType="NUMERIC" property="userId"/>
     	<result column="user_name" jdbcType="VARCHAR" property="userName"/>
     	<result column="sex" jdbcType="VARCHAR" property="sex"/>
@@ -182,7 +184,7 @@
 	    </if>
 	</select>
     
-    <insert id="insert" parameterType="sc.system.model.WebScDoc">
+    <insert id="insert" parameterType="com.sc.mp.model.WebScDoc">
     	insert into WSC_DOCUMENT(document_id,
 								operative_id,
 								anesthetic_id,
@@ -223,7 +225,7 @@
 							#{orgId,jdbcType=VARCHAR})
     </insert>
     
-    <update id="updateByPrimaryKey" parameterType="sc.system.model.WebScDoc">
+    <update id="updateByPrimaryKey" parameterType="com.sc.mp.model.WebScDoc">
     	update WSC_DOCUMENT 
     	<set>
             <if test="operativeId != null">
@@ -334,7 +336,7 @@
     	where document_id = #{documentId,jdbcType=VARCHAR}
     </select>
     
-    <select id="selectWebScDocList" parameterType="sc.system.model.WebScDoc" resultMap="BaseResultMap">
+    <select id="selectWebScDocList" parameterType="com.sc.mp.model.WebScDoc" resultMap="BaseResultMap">
     select * from (
     <![CDATA[
     	select 
@@ -382,7 +384,9 @@
 			doc.operate_user,
 			doc.operate_aide,
 			doc.apply_user_id,
+			(select user_name from WSC_USER where user_id = doc.apply_user_id) as apply_user_name,
 			doc.admin_user_id,
+			(select user_name from WSC_USER where user_id = doc.apply_user_id) as admin_user_name,
 			doc.qa_user_id,
 			(select user_name from WSC_USER where user_id = doc.qa_user_id) as qa_user_name,
 			doc.qa_team_id,
@@ -513,10 +517,11 @@
       	<if test="qaUserName != null and qaUserName != ''">
       		and qa_user_name like concat(#{qaUserName,jdbcType=VARCHAR}, '%')
       	</if>
-      	order by operate_start_time desc
+      	order by operate_start_time desc 
+      	limit 100
     </select>
     
-    <select id="findWebScDocOrg" parameterType="java.lang.String" resultType="sc.system.model.WebScOrganization">
+    <select id="findWebScDocOrg" parameterType="java.lang.String" resultType="com.sc.mp.model.WebScOrganization">
     	select org_id as orgId,
     		   org_pid as orgPid,
     		   org_name as orgName,

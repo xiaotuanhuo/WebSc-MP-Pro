@@ -1,4 +1,4 @@
-package com.sc.mp.bean;
+package com.sc.mp.model;
 
 import java.io.Serializable;
 

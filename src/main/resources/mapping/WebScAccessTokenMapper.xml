@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sc.mp.mapper.AccessTokenMapper" >
+  <resultMap id="BaseResultMap" type="com.sc.mp.model.WebScAccessToken" >
+    <id column="accesstoken" property="accesstoken" jdbcType="VARCHAR" />
+    <result column="overtime" property="overtime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    accesstoken, TIMESTAMPDIFF(SECOND, overtime, current_timestamp) as overtime
+  </sql>
+  
+  <select id="getWebScAccessToken" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from WSC_ACCESSTOKEN
+  </select>
+  
+  <delete id="deleteWebScAccessToken">
+  	delete from WSC_ACCESSTOKEN
+  </delete>
+  
+  <insert id="updateWebScAccessToken" parameterType="java.lang.String">
+  	insert into WSC_ACCESSTOKEN(accesstoken, overtime) values(#{accesstoken,jdbcType=VARCHAR}, current_timestamp)
+  </insert>
+ </mapper>

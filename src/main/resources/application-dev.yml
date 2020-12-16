@@ -24,3 +24,10 @@ spring:
         multipart: 
             max-file-size: 100MB
             max-request-size: 200MB
+
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: com.sc.mp.model
+
+logging:
+  config: classpath:log4j2.xml

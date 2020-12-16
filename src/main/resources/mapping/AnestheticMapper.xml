@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sc.mp.mapper.AnestheticMapper">
+  <resultMap id="BaseResultMap" type="com.sc.mp.model.WebScAnesthetic">
+    <id column="anesthetic_id" jdbcType="VARCHAR" property="anestheticId" />
+    <result column="anesthetic_name" jdbcType="VARCHAR" property="anestheticName" />
+  </resultMap>
+  
+  <select id="getWebScAnestheticList" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select anesthetic_id,
+  		   anesthetic_name
+  	from WSC_ANESTHETIC 
+  	where 1=1 
+  	<if test="anestheticName != null">
+  		and anesthetic_name like concat(#{anestheticName,jdbcType=VARCHAR}, '%')
+ 	</if>
+  </select>
+</mapper>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sc.mp.mapper.UserMapper" >
-  <resultMap id="BaseResultMap" type="com.sc.mp.model.User" >
+  <resultMap id="BaseResultMap" type="com.sc.mp.model.WebScUser" >
     <id column="user_id" property="userId" jdbcType="INTEGER" />
     <result column="user_name" property="userName" jdbcType="VARCHAR" />
     <result column="login_name" property="loginName" jdbcType="VARCHAR" />
@@ -47,7 +47,7 @@
     delete from WSC_USER
     where user_id = #{userId,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.sc.mp.model.User" >
+  <insert id="insert" parameterType="com.sc.mp.model.WebScUser" >
     insert into WSC_USER (user_id, user_name, login_name, 
       login_pwd, salt, sex, 
       age, phone, email, 
@@ -69,7 +69,7 @@
       #{modifyTime,jdbcType=TIMESTAMP}, #{photo,jdbcType=VARCHAR}, #{wxOpenid,jdbcType=VARCHAR}, 
       #{wxUserid,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.sc.mp.model.User" >
+  <insert id="insertSelective" parameterType="com.sc.mp.model.WebScUser" >
     insert into WSC_USER
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="userId != null" >
@@ -244,7 +244,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.sc.mp.model.User" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.sc.mp.model.WebScUser" >
     update WSC_USER
     <set >
       <if test="userName != null" >
@@ -331,7 +331,7 @@
     </set>
     where user_id = #{userId,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.sc.mp.model.User" >
+  <update id="updateByPrimaryKey" parameterType="com.sc.mp.model.WebScUser" >
     update WSC_USER
     set user_name = #{userName,jdbcType=VARCHAR},
       login_name = #{loginName,jdbcType=VARCHAR},
@@ -362,4 +362,14 @@
       wx_userid = #{wxUserid,jdbcType=VARCHAR}
     where user_id = #{userId,jdbcType=INTEGER}
   </update>
+
+  <select id="selectUserInfo" resultMap="BaseResultMap" parameterType="com.sc.mp.model.WebScUser">
+  	select 
+  	<include refid="Base_Column_List" />
+    from WSC_USER 
+    where 1=1 
+    <if test="userId != null" >
+        and user_id = #{userId,jdbcType=INTEGER} 
+	</if>
+  </select>
 </mapper>

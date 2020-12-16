@@ -1,0 +1,1639 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1.0, maximum-scale=1.0,user-scalable=no" />
+    <title></title>
+	<link rel="stylesheet" th:href="@{/css/mzui.min.css}">
+    <link th:href="@{/css/common.css}" rel="stylesheet">
+    <link th:href="@{/css/datePlugin/mobiscroll_002.css}" rel="stylesheet">
+    <link th:href="@{/css/datePlugin/mobiscroll.css}" rel="stylesheet">
+    <link th:href="@{/css/datePlugin/mobiscroll_003.css}" rel="stylesheet">
+    <!-- <link th:href="@{css/bootstrap-datetimepicker.min.css}" rel="stylesheet"> -->
+    <link th:href="@{/css/star.css}" rel="stylesheet">
+
+    <style type="text/css">
+    	.scroll-wrapper {  
+		    -webkit-overflow-scrolling: touch;  
+		    overflow-y: scroll;  
+		}
+    </style>
+</head>
+<body class="bodgray">
+	<div class="heading">
+		<nav class="nav" style="width: 100%;padding-right: 10px;background-color: #5E787E; color:white;padding-top: 4px;">
+			<div class="cell">
+				<a href="toWebScDocList" style="color: #5E787E;">
+					<span style="font-size: 15px;font-weight: bold;color: white;"><i class="icon icon-chevron-left"></i>&nbsp;&nbsp;订单详情</span>
+				</a>	
+			</div>
+		</nav>
+	</div>
+	
+	<div id="navDoc" class="container display fade in" data-display-name="navs">
+		<input id="docId" type="hidden" th:value="${doc.documentId}"></input>
+		<input id="documentState" type="hidden" th:value="${doc.documentState}"></input>
+		<input id="oldDocumentState" type="hidden" th:value="${doc.oldDocumentState}"></input>
+		
+		<!-- 基本信息   -->
+		<div class='heading'>
+			<div class='title'><strong>基本信息</strong></div>
+	  	</div>
+		<div class="list section rounded-lg">
+			<div class="row" style="padding: 20px 20px 0 20px;">
+				<div class="row" style="padding: 0 20px 0 20px;">
+					<div class="cell-9"><h2><span th:text="${doc.patientName}"></span></h2></div>
+				</div>
+				<div class="cell-3 row-reverse" style="text-align: right;">
+					<div class="pull-right label red-pale text-tint" th:if="${doc.documentState=='0'}">待审核</div>
+					<div class="pull-right label red-pale text-tint" th:if="${doc.documentState=='1'}">待分配</div>
+					<div class="pull-right label red-pale text-tint" th:if="${user.roleId=='2' && doc.documentState=='2'}">已匹配</div>
+					<div class="pull-right label red-pale text-tint" th:if="${user.roleId=='2' && doc.documentState=='2'}">待接单</div>
+					<div class="pull-right label red-pale text-tint" th:if="${doc.documentState=='4'}">待完成</div>
+					<div class="pull-right label green-pale text-tint" th:if="${doc.documentState=='5'}">已完成</div>
+					<div class="pull-right label red-pale text-tint" th:if="${doc.documentState=='9'}">待取消</div>
+				</div>
+			</div>
+			<div class="row" style="padding: 0 25px 0 25px;">
+				<span class="small" th:text="${doc.operateStartTime}" style="margin-right: 20px;"></span>
+			</div>
+			<div class="row" style="padding: 0 	25px 10px 25px;">
+				<input id="title_applyUserId" type="hidden" th:value="${doc.applyUserId}">
+				<span class="small" th:text="${doc.applyUserName}"></span>
+			</div>
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">手术名称:</div>
+				<div class="cell-9"><span th:text="${doc.operativeName}"></span></div>
+			</div>
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">性别:</div>
+				<div class="cell-3"><span th:text="${doc.patientSex == '0'? '男':'女'}"></span></div>
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">年龄:</div>
+				<div class="cell-3"><span th:text="${doc.patientAge}"></span></div>
+			</div>
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">诊断:</div>
+				<div class="cell-9 text-ellipsis"><span th:text="${doc.documentTitle}"></span></div>
+			</div>
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">手术医生:</div>
+				<div class="cell-9"><span th:text="${doc.operateUser}"></span></div>
+			</div>
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">手术助手:</div>
+				<div class="cell-9"><span th:text="${doc.operateQide}"></span></div>
+			</div>
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">麻醉医生:</div>
+				<div class="cell-9"><span th:text="${doc.qaUserName}"></span></div>
+			</div>
+			<div class="row" style="padding: 0 20px 0 20px;" th:if="${user.roleId=='1' && doc.documentState=='3'}">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">手术团队:</div>
+				<div class="cell-9">
+					<input id="TeamFpId" type="hidden" th:value="${doc.qaTeamId}"></input>
+					<span th:if="${doc.qaTeamId!=null && doc.qaTeamId!=''}"><a style="cursor: pointer;color: blue;" onclick="openTeamView()">团队信息</a>&nbsp;<i class="icon icon-times text-red" onclick="clearTeam()" style="cursor: pointer;"></i></span>
+					<span th:if="${doc.qaTeamId==null || doc.qaTeamId==''}"><a style="cursor: pointer;color: blue;" onclick="openTeamPage()">分配团队</a></span>
+				</div>
+			</div>
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">麻醉方法:</div>
+				<div class="cell-9"><span th:text="${doc.anestheticName}"></span></div>
+			</div>
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">医院备注:</div>
+				<div class="cell-9"><textarea class="textarea disabled" rows="2" th:text="${doc.hospitalMemo}" style="border: 0"></textarea></div>
+			</div>
+		</div>
+		
+		<!-- 手术详情   -->
+		<div class="heading"  th:if="${doc.documentState>='4'}">
+			<div class="title"><strong>手术详情</strong></div>
+	  	</div>
+		<div class="list section rounded-lg" th:if="${doc.documentState>='4'}">
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-2" style="font-size: .7rem;font-weight: 700;">身高:</div>
+				<div class="cell-2"><span th:text="${doc.height}"></span></div>
+				<div class="cell-2" style="font-size: .7rem;font-weight: 700;">体重:</div>
+				<div class="cell-2"><span th:text="${doc.weight}"></span></div>
+				<div class="cell-2" style="font-size: .7rem;font-weight: 700;">ASA:</div>
+				<div class="cell-2">
+					<span th:if="${doc.asa=='0'}">I 级</span>
+					<span th:if="${doc.asa=='1'}">II 级</span>
+					<span th:if="${doc.asa=='2'}">III 级</span>
+					<span th:if="${doc.asa=='3'}">IV 级</span>
+					<span th:if="${doc.asa=='4'}">V 级</span>
+					<span th:if="${doc.asa=='5'}">E 级</span>
+					
+				</div>
+			</div>
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">系统病史:</div>
+				<div class="cell-9"><span th:text="${doc.xtbs}"></span></div>
+			</div>
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">手术史:</div>
+				<div class="cell-9">
+					<span th:if="${doc.shs=='1'}" th:text="${doc.shcs}"></span>
+					<span th:if="${doc.shs=='0'}">无</span>
+				</div>
+			</div>
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">开始时间:</div>
+				<div class="cell-9"><span th:text="${doc.sskssj}"></span></div>
+			</div>
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">结束时间:</div>
+				<div class="cell-9"><span th:text="${doc.ssjssj}"></span></div>
+			</div>
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">时长(分):</div>
+				<div class="cell-3"><span th:text="${doc.sssc}"></span></div>
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">局麻技术:</div>
+				<div class="cell-3">
+					<span th:if="${doc.jmjs=='0'}">好</span>
+					<span th:if="${doc.jmjs=='1'}">一般</span>
+					<span th:if="${doc.jmjs=='2'}">差</span>
+					<span th:if="${doc.jmjs=='3'}">拒绝实施局麻</span>
+				</div>
+			</div>
+			<div class="row" style="padding: 20px 20px 0 20px;">
+				<div class="cell-9">
+				<h3><span style="font-size: .7rem;font-weight: 700;">手术意外事件</span></h3>
+				</div>
+			</div>
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">呼吸系统:</div>
+				<div class="cell-9"><span th:text="${doc.ywsjHxxt}"></span></div>
+			</div>
+			<div class="row" th:if="${doc.ywsjHxxtQt}!='' and ${doc.ywsjHxxtQt}!=null" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">呼吸系统(其它):</div>
+				<div class="cell-9"><span th:text="${doc.ywsjHxxtQt}"></span></div>
+			</div>
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">循环系统:</div>
+				<div class="cell-9"><span th:text="${doc.ywsjXhxt}"></span></div>
+			</div>
+			<div class="row" th:if="${doc.ywsjXhxtQt}!='' and ${doc.ywsjXhxtQt}!=null" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">循环系统(其它):</div>
+				<div class="cell-9"><span th:text="${doc.ywsjXhxtQt}"></span></div>
+			</div>
+			<div class="row" th:if="${doc.ywsjGm}=='2'" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">过敏原:</div>
+				<div class="cell-9">
+					<span th:text="${doc.ywsjGmAocre}"></span>
+				</div>
+			</div>
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">其它:</div>
+				<div class="cell-9"><span th:text="${doc.ywsjQt}"></span></div>
+			</div>
+			<div class="row" style="padding: 20px 20px 0 20px;">
+				<div class="cell-9">
+				<h3><span style="font-size: .7rem;font-weight: 700;">术后</span></h3>
+				</div>
+			</div>
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">不良反应:</div>
+				<div class="cell-9">
+					<span th:if="${doc.shblZw}=='on'">谵妄&nbsp;&nbsp;</span>
+					<span th:if="${doc.shblHbtt}=='on'">喉部疼痛&nbsp;&nbsp;</span>
+					<span th:if="${doc.shblXy}=='on'">眩晕&nbsp;&nbsp;</span>
+					<span th:if="${doc.shblOt}=='on'">呕吐</span>
+				</div>
+			</div>
+<!-- 			<div class="row" th:if="${doc.shbl_ot}=='on'" style="padding: 0 20px 0 20px;"> -->
+				
+<!-- 				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">呕吐详情:</div> -->
+<!-- 				<div class="cell-9"> -->
+<!-- 					<span th:if="${doc.shbl_ot}=='on'" th:text="${doc.shbl_ot_score}"></span> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">疼痛治疗:</div>
+				<div class="cell-9">
+					<span th:if="${doc.shttzl}=='0'"></span>
+					<span th:if="${doc.shttzl}=='1'">口服药</span>
+					<span th:if="${doc.shttzl}=='2'">静脉推注</span>
+					<span th:if="${doc.shttzl}=='3'">静脉镇痛泵</span>
+					<span th:if="${doc.shttzl}=='4'">椎管内镇痛泵</span>
+					<span th:if="${doc.shttzl}=='5'">无镇痛</span>
+				</div>
+			</div>
+			<div class="row" style="padding: 20px 20px 0 20px;">
+				<div class="cell-9">
+					<h3><span style="font-size: .7rem;font-weight: 700;">上传图片</span></h3>&nbsp;&nbsp;&nbsp;<a id="docPhotoTip" class="small" onclick="opDocPhoto()">（展开）</a>
+				</div>
+			</div>
+			<div class="row" style="padding: 20px 0 20px 20px;text-align: center;">
+				<img id="docPhoto" class="hidden" src="">
+			</div>
+		</div>
+		
+		<!-- 评分    -->
+		<div class='heading' th:if="${doc.documentState=='5'}">
+			<div class='title'><strong>评分</strong></div>
+	  	</div>
+	  	<div class="list section rounded-lg" th:if="${doc.documentState=='5'}" style="margin-bottom: 50px;">
+	  		<div class="row" style="padding: 0 20px 0 20px;" th:if="${user.roleId=='1' || user.roleId=='3'}">
+	  			<div class="cell-3" style="font-size: .7rem;font-weight: 700;padding-top: 8px;">机构评分:</div>
+				<div class="cell-9">
+					<input id="jg_score" type="hidden" th:value="${doc.jg_score}"></input>
+					<ul class="star_ul fl" style="margin:0;">
+						<li><a id="jg-star-1" class="one-star" title="很差"></a></li>
+						<li><a id="jg-star-2" class="two-star" title="差"></a></li>
+						<li><a id="jg-star-3" class="three-star" title="还行"></a></li>
+						<li><a id="jg-star-4" class="four-star" title="好"></a></li>
+						<li><a id="jg-star-5" class="five-star" title="很好"></a></li>
+					</ul>
+				</div>
+	  		</div>
+	  		<div class="row" style="padding: 0 20px 0 20px;" th:if="${user.roleId=='1' || user.roleId=='3'}">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">机构评价:</div>
+				<div class="cell-9"><span th:text="${doc.jg_score_reason}"></span></div>
+			</div>
+	  		<div class="row" style="padding: 0 20px 0 20px;" th:if="${user.roleId=='1' || user.roleId=='2'}">
+	  			<div class="cell-3" style="font-size: .7rem;font-weight: 700;padding-top: 8px;">医生评分:</div>
+				<div class="cell-9">
+					<input id="dr_score" type="hidden" th:value="${doc.dr_score}"></input>
+					<ul class="star_ul fl" style="margin:0;">
+						<li><a id="dr-star-1" class="one-star" title="很差"></a></li>
+						<li><a id="dr-star-2" class="two-star" title="差"></a></li>
+						<li><a id="dr-star-3" class="three-star" title="还行"></a></li>
+						<li><a id="dr-star-4" class="four-star" title="好"></a></li>
+						<li><a id="dr-star-5" class="five-star" title="很好"></a></li>
+					</ul>
+				</div>
+	  		</div>
+	  		<div class="row" style="padding: 0 20px 0 20px;" th:if="${user.roleId=='1' || user.roleId=='2'}">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">医生评价:</div>
+				<div class="cell-9"><span th:text="${doc.dr_score_reason}"></span></div>
+			</div>
+	  	</div>
+	</div>
+	
+	<nav class="nav nav-auto affix dock-bottom justified">
+<!-- 		<button type="button" class="btn info outline">返回</button> -->
+		<button id="btnQx" type="button" class="btn danger outline" th:if="${user.roleId=='1' && doc.documentState!='0' and doc.documentState!='3' and doc.documentState!='9' and doc.documentState!='5'}">取消订单</button>
+		<button id="btnSh" type="button" class="btn primary" th:if="${user.roleId=='1' && doc.documentState=='0'}">确认订单</button>
+		<button id="btnFp" type="button" class="btn primary" th:if="${user.roleId=='1' && doc.documentState=='1'}">订单分配</button>
+		<button id="btnQxFp" type="button" class="btn danger" th:if="${user.roleId=='1' && doc.documentState=='2'}">取消分配</button>
+		<button id="btnDoctorQx" type="button" class="btn danger" th:if="${user.roleId=='2' && doc.documentState=='2'}">取消订单</button>
+		<button id="btnDoctorJd" type="button" class="btn primary" th:if="${user.roleId=='2' && doc.documentState=='2'}">确认订单</button>
+		<button id="btnDoctorQr" type="button" class="btn info" th:if="${user.roleId=='2' && doc.documentState=='3'}">确认订单</button>
+		<button id="btnDoctorZd" type="button" class="btn primary" th:if="${user.roleId=='2' && doc.documentState=='3'}">转单</button>
+		<button id="btnDoctorCx" type="button" class="btn danger" th:if="${user.roleId=='2' && doc.documentState=='3'}">撤销订单</button>
+		<button id="btnQrWc" type="button" class="btn primary" th:if="${user.roleId=='1' && doc.documentState=='4'}">确认完成</button>
+		<button id="btnQxJj" type="button" class="btn danger" th:if="${user.roleId=='1' && doc.documentState=='9'}">拒绝撤销</button>
+		<button id="btnQxTy" type="button" class="btn primary" th:if="${user.roleId=='1' && doc.documentState=='9'}">同意撤销</button>
+		<button id="btnDocDf" type="button" class="btn primary" th:if="${user.roleId=='2' && doc.documentState=='5' && doc.dr_score==null}">评价打分</button>
+<!-- 		<button id="btnTeamFp" type="button" class="btn primary" th:if="${doc.documentState=='2'}">团队分配</button> -->
+	</nav>
+	
+	<!-- 分配 -->
+	<div id="pnlFp" class="panel" style="display: none;">
+		<div class="panel-body" style="margin-top: -10px;">
+			<nav class="nav gray justified">
+        		<a id="btnTj" class="btnTj active">推荐</a>
+       			<a id="btnZx" class="btnZx">自选</a>
+      		</nav>
+      		
+      		<div id="tjPage" class="tjPage">
+      			<div id="tjPageList" class="tjPageList list with-divider">
+				</div>
+      		</div>
+      		
+      		<div id="zxPage" class="zxPage hidden">
+      			<div id="zxPageList" class="zxPageList list with-divider">
+				</div>
+      		</div>
+		</div>
+<!-- 		<nav id="FpNav" class="nav nav-auto affix dock-bottom justified"> -->
+<!-- 			<button id="btnClose" type="button" class="btn info outline">返回</button> -->
+<!-- 			<button id="btnPp" type="button" class="btn primary">保存</button> -->
+<!-- 		</nav> -->
+		<footer>
+			<button id="btnClose" type="button" class="btn info outline" style="padding:0 0;margin:0 0;width:49%;float:left;">返回</button>
+			<button id="btnPp" type="button" class="btn primary" style="padding:0 0;margin:0 0;width:49%;float:left;">保存</button>
+		</footer>
+	</div>
+	
+	<!-- 转单(医生) -->
+	<div id="pnlDoctorZd" class="panel" style="display: none;">
+		<div class="panel-body">
+      		<div id="tjPage" class="tjPage">
+      			<div id="tjPageList" class="tjPageList list with-divider">
+				</div>
+      		</div>
+		</div>
+		<nav class="nav nav-auto affix dock-bottom justified">
+			<button id="btnClose" type="button" class="btn info outline">返回</button>
+			<button id="btnDoctorZdSave" type="button" class="btn primary">保存</button>
+		</nav>
+	</div>
+	
+	<!-- 确认订单(医生) -->
+	<div id="pnlDoctorQr" class="panel" style="display: none;">
+		<div class="panel-body">
+			<div id="partial" class="container display fade in"
+				data-display-name="navs">
+				<section class="section">
+					<form id="realOderForm" class="box">
+						<div class="control has-error">
+							<label for="height">麻醉方法</label>
+							<div class="select">
+								<select name="anesthetic" id="anesthetic" style="padding-right: 5px;" th:field="${doc.anestheticValue}">
+									<option th:if="${doc.anestheticValue eq al.anestheticName}" th:selected="selected"  th:each="al,alStat : ${anestheticls}" th:value="${al.anestheticId}" th:text="${al.anestheticName}"></option>
+									<option th:if="${doc.anestheticValue ne al.anestheticName}" th:each="al,alStat : ${anestheticls}" th:value="${al.anestheticId}" th:text="${al.anestheticName}"></option>
+								</select>
+							</div>
+						</div>
+						
+						
+						<div class="control has-error">
+							<label for="height">身高</label>
+							<input id="height" name="height" type="text" class="input" placeholder="身高">
+						</div>
+						<div class="control has-error">
+							<label for="weight">体重</label>
+							<input id="weight" name="weight"	type="text" class="input" placeholder="体重">
+						</div>
+						<div class="control has-warning">
+							<label for="asa">ASA</label>
+							<div class="select">
+								<select name="asa" id="asa" style="padding-right: 5px;">
+									<option value="0">I</option>
+									<option value="1">II</option>
+									<option value="2">III</option>
+									<option value="3">IV</option>
+									<option value="4">V</option>
+									<option value="5">E</option>
+								</select>
+							</div>
+						</div>
+						
+						<div class="control has-error">
+							<label for="xtbs">系统病史</label>
+							<input id="xtbs" name="xtbs"	type="text" class="input" placeholder="系统病史">
+						</div>
+						<div class="control has-warning">
+							<label for="shs">手术史</label>
+							<div class="select">
+								<select name="shs" id="shs" style="padding-right: 5px;">
+									<option value="0">无</option>
+									<option value="1">有</option>
+								</select>
+							</div>
+						</div>
+						<div class="control has-error">
+							<label for="shcs">手术史次数</label>
+							<input id="shcs" name="shcs"	type="text" class="input" placeholder="手术史次数" disabled="disabled" >
+						</div>
+						<div class="control has-error">
+							<label for="sskssj">手术开始时间</label>
+							<input id="sskssj" name="sskssj"	type="text" class="input form-datetime" placeholder="手术开始时间">
+						</div>
+						<div class="control has-error">
+							<label for="ssjssj">手术结束时间</label>
+							<input id="ssjssj" name="ssjssj"	type="text" class="input form-datetime" placeholder="手术结束时间">
+						</div>
+						<div class="control has-warning">
+							<label for="jmjs">局麻技术</label>
+							<div class="select">
+								<select name="jmjs" id="jmjs" style="padding-right: 5px;">
+									<option value="0">好</option>
+									<option value="1">一般</option>
+									<option value="2">差</option>
+									<option value="3">拒绝实施局麻</option>
+								</select>
+							</div>
+						</div>
+						<div class="heading"><div class="title"><strong>手术意外事件</strong></div></div>
+						<div class="control has-warning">
+							<label for="ywsjHxxt">呼吸系统</label>
+							<div class="select multiple">
+								<select name="ywsjHxxt" id="ywsjHxxt" multiple="multiple">
+									<option value="0">频繁舌后坠（≥3次）</option>
+									<option value="1">喉痉挛</option>
+									<option value="2">返流</option>
+									<option value="3">误吸</option>
+									<option value="4">支气管痉挛</option>
+									<option value="5">计划外插管</option>
+									<option value="6">其他</option>
+								</select>
+							</div>
+						</div>
+						<div class="control has-error">
+							<label for="ywsjHxxtQt">呼吸系统(其它)</label>
+							<input id="ywsjHxxtQt" name="ywsjHxxtQt"	type="text" class="input" placeholder="呼吸系统(其它)" disabled="disabled" >
+						</div>
+						<div class="control has-warning">
+							<label for="ywsjXhxt">循环系统</label>
+							<div class="select multiple">
+								<select name="gifts" id="ywsjXhxt" multiple="multiple">
+									<option value="0">需纠正的低血压</option>
+									<option value="1">需纠正的高血压</option>
+									<option value="2">肺动脉栓塞</option>
+									<option value="3">心梗</option>
+									<option value="4">脑梗</option>
+									<option value="5">其他</option>
+								</select>
+							</div>
+						</div>
+						<div class="control has-error">
+							<label for="ywsjXhxtQt">循环系统(其它)</label>
+							<input id="ywsjXhxtQt" name="ywsjXhxtQt"	type="text" class="input" placeholder="循环系统(其它)" disabled="disabled" >
+						</div>
+						<div class="control has-warning">
+							<label for="ywsjGm">过敏原</label>
+							<div class="select">
+								<select name="ywsjGm" id="ywsjGm"
+									style="padding-right: 5px;">
+									<option value="0"></option>
+									<option value="1">no</option>
+									<option value="2">yes</option>
+								</select>
+							</div>
+						</div>
+						<div class="control has-error">
+							<label for="ywsjGmSocre">过敏原详情</label>
+							<input id="ywsjGmSocre" name="ywsjGmSocre"	type="text" class="input" placeholder="过敏原详情" disabled="disabled" >
+						</div>
+						
+						<div class="control has-error">
+							<label for="ywsjQt">其它</label>
+							<input id="ywsjQt" name="ywsjQt"	type="text" class="input" placeholder="其它">
+						</div>
+						<div class="heading"><div class="title"><strong>术后不良</strong></div></div>
+						
+						<div class="control flex">
+							<div class="checkbox" style="margin-right:10px;">
+								<input id="shblZw" type="checkbox" name="shblZw">
+								<label for="shblZw"> 谵妄</label>
+							</div>
+							<div class="checkbox" style="margin-right:10px;">
+								<input id="shblHbtt" type="checkbox" name="shblHbtt">
+								<label for="shblHbtt"> 喉部疼痛</label>
+							</div>
+							<div class="checkbox" style="margin-right:10px;">
+								<input id="shblEx" type="checkbox" name="shblEx">
+								<label for="shblEx"> 恶心</label>
+							</div>
+							<div class="checkbox" style="margin-right:10px;">
+								<input id="shblXy" type="checkbox" name="shblXy">
+								<label for="shblXy"> 眩晕</label>
+							</div>
+							<div class="checkbox" style="width:18%">
+								<input id="shblOt" type="checkbox" name="shblOt">
+								<label for="shblOt"> 呕吐</label>
+							</div>
+						</div>
+						<div class="control has-error">
+							<label for="shblOtScore">呕吐详情</label>
+							<input id="shblOtScore" name="shblOtScore"	type="text" class="input" placeholder="呕吐详情"  disabled="disabled" >
+						</div>
+						<div class="control has-error">
+							<label for="shttzl">术后疼痛治疗</label>
+							<div class="select">
+								<select name="shttzl" id="shttzl"
+									style="padding-right: 5px;">
+									<option value="0"></option>
+									<option value="1">口服药</option>
+									<option value="2">静脉推注</option>
+									<option value="3">静脉镇痛泵</option>
+									<option value="4">椎管内镇痛泵</option>
+									<option value="5">无镇痛</option>
+								</select>
+							</div>
+						</div>
+						<div class="control has-error">
+							<label for="doctorMemo">麻醉医生备注</label>
+							<textarea class="textarea" name="doctorMemo" id="doctorMemo" rows="3"  placeholder="麻醉医生备注"></textarea>
+						</div>
+						<!-- <div class="control has-error" style="margin-left:35%;">
+							<img src="" id="pic" alt="请选择图片" style="width:100px;height:100px;">
+						</div> -->
+						<!-- <div class="control has-error"  style="margin-left:36%;">
+							<button type="button" class="btn info" th:onclick="'imgUpload();'" >
+							<i class="icon icon-plus"></i> 选择文件</button>
+						</div> -->
+						<div class="control">
+							<div class="form-group">
+							    <div style="width:90%;height: 120px;padding:8px 10px;border:0px solid #CECECE;">
+									<input type="hidden" id="mediaId" name="mediaId" value=''/>
+									<button type="button" class="btn btn-info" th:onclick="'imgUpload();'" style="margin-right:45px;width:100px;height:100px;background-color:#FFFFFF;border:1px solid #CECECE">
+									<i class="icon icon-plus"></i> 选择文件</button>
+									<img src="" id="pic" class="imglist" style="margin-top:10px;width:100px;height:100px;">
+								</div>
+					  		</div>
+						</div>
+					</form>
+				</section>
+			</div>
+			<div>
+				<button id="btnClose" type="button" style="padding:0 0;margin:0 0;width:49%;float:left;" class="btn info outline">返回</button>
+				<button id="btnDoctorQrSave" type="button" style="padding:0 0;margin:0 0;width:49%;float:left;" class="btn primary">保存</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- 团队分配 -->
+	<div id="pnlTeamFp" class="panel" style="display: none;">
+		<div class="panel-body" style="margin-top: -10px;">
+			<nav class="nav gray justified">
+        		<a id="btnFm" class="btnFm active">副麻</a>
+       			<a id="btnHs" class="btnHs">护士</a>
+      		</nav>
+      		
+      		<div id="FmPage" class="FmPage">
+      			<div id="FmPageList" class="FmPageList list with-divider">
+				</div>
+      		</div>
+      		
+      		<div id="HsPage" class="HsPage hidden">
+      			<div id="HsPageList" class="HsPageList list with-divider">
+				</div>
+      		</div>
+		</div>
+		<nav class="nav nav-auto affix dock-bottom justified" style="position:fixed;bottom:0;">
+			<button id="btnClose" type="button" class="btn info outline">返回</button>
+			<button id="btnTeamFp" type="button" class="btn primary">保存</button>
+		</nav>
+	</div>
+	<!-- 团队信息 -->
+	<div id="pnlTeamInfo" class="panel" style="display: none;">
+		<div id="TeamInfoForm" class="panel-body TeamInfoForm">
+			
+		</div>
+		<nav class="nav nav-auto affix dock-bottom justified">
+			<button id="btnClose" type="button" class="btn info outline">返回</button>
+		</nav>
+	</div>
+	
+	<!-- 取消订单 -->
+	<div id="pnlCannel" class="panel" style="display: none;">
+		<div class="panel-body">
+			<div class="control has-success">
+	      		<label for="desc">取消原因</label>
+	      		<textarea class="textarea" name="desc" id="desc" rows="3"></textarea>
+	   		</div>
+   		</div>
+		<nav class="nav nav-auto affix dock-bottom justified">
+			<button id="btnClose" type="button" class="btn info outline">返回</button>
+			<button id="btnQxSave" type="button" class="btn primary">保存</button>
+		</nav>
+	</div>
+	
+	<div id="pnlDocDrDf" class="panel" style="display: none;">
+		<div class="panel-body" style="margin-top: -10px;">
+			<div class="row" style="padding: 0 20px 0 20px;">
+	  			<div class="cell-3" style="font-size: .7rem;font-weight: 700;padding-top: 8px;">医生评分:</div>
+				<div class="cell-9">
+					<input type="hidden" id="drstar" value="-1">
+					<ul class="star_ul fl" style="margin:0;">
+						<li><a id="df-dr-star-1" class="one-star" title="很差" onclick="changeStar(1)"></a></li>
+						<li><a id="df-dr-star-2" class="two-star" title="差" onclick="changeStar(2)"></a></li>
+						<li><a id="df-dr-star-3" class="three-star" title="还行" onclick="changeStar(3)"></a></li>
+						<li><a id="df-dr-star-4" class="four-star" title="好" onclick="changeStar(4)"></a></li>
+						<li><a id="df-dr-star-5" class="five-star" title="很好" onclick="changeStar(5)"></a></li>
+					</ul>
+				</div>
+	  		</div>
+	  		<div class="row" style="padding: 0 20px 0 20px;">
+				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">医生评价:</div>
+				<div class="cell-9">
+					<textarea class="textarea" id="drreason" rows="3"></textarea>
+				</div>
+			</div>
+			<nav class="nav nav-auto affix dock-bottom justified">
+				<button id="btnClose" type="button" class="btn info outline">返回</button>
+				<button id="btnDrDf" type="button" class="btn primary">保存</button>
+			</nav>
+		</div>
+	</div>
+<script th:src="@{js/datePlugin/jquery-1.10.0.min.js}"></script>
+<script th:src="@{js/jweixin-1.2.0.js}"></script>
+<script th:src="@{js/wxImage.js}"></script>
+<script th:src="@{js/layer.js}"></script>
+<script th:src="@{js/mzui.js}"></script>
+<script th:src="@{js/jquery.serializejson.min.js}"></script>
+<script th:src="@{js/datePlugin/mobiscroll_002.js}"></script>
+<script th:src="@{js/datePlugin/mobiscroll_004.js}"></script>
+<script th:src="@{js/datePlugin/mobiscroll.js}"></script>
+<script th:src="@{js/datePlugin/mobiscroll_003.js}"></script>
+<script th:src="@{js/datePlugin/mobiscroll_005.js}"></script>
+<!-- <script th:src="@{js/bootstrap-datetimepicker.min.js}"></script>
+<script th:src="@{js/bootstrap-datetimepicker.zh-CN.js}"></script> -->
+<script  th:inline="javascript">
+	//console.log(location.href.split('#')[0])
+	var docment = [[${doc}]];
+	console.log(docment);
+	var appId = [[${appId}]];//公众号的唯一标识
+	var timestamp = [[${timestamp}]];//生成签名的时间戳
+	var nonceStr = [[${nonceStr}]];//生成签名的随机串
+	var signature = [[${signature}]];//签名 
+	wx.config({
+	   debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+	   beta: true,  // 对于没有公开的接口
+	   appId: appId, // 必填，公众号的唯一标识
+	   timestamp: timestamp, // 必填，生成签名的时间戳
+	   nonceStr: nonceStr, // 必填，生成签名的随机串
+	   signature: signature,// 必填，签名，见附录1
+	   jsApiList: ['chooseImage',
+	               'previewImage',
+	               'uploadImage',
+	               'downloadImage'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+	});	
+	
+	var docId = $("#docId").val();
+	//【按钮】确认订单
+	$("#btnSh").on("click", function(){
+		if(docId != ''){
+			var dataJson = "{'documentId': '" + docId + "', 'documentState': '1', 'oldDocumentState':'0'}";
+		
+// 			$("#btnSh").attr("disabled",true);
+			
+ 			$.ajax({
+				type: "POST",
+		 		url: "updateOrderInfo",
+		  		data: "jsondata=" + dataJson,
+				dataType: "json",
+				success: function(data){
+					if(data.code == 1){
+						alert("确认订单成功!");
+						location.reload();
+// 						$("#btnSh").attr("disabled", false);
+					}else{
+						alert("网络失败,请重试!");
+// 						$("#btnSh").attr("disabled", false);
+					}
+		       	},
+		     	error: function () {
+		     		alert("网络异常,请重试!");
+			 	}
+			});
+		}
+	});
+	
+	//【按钮】订单分配
+	$("#btnFp").on("click", function(){
+		var dataJson = "{'documentId': '" + docId + "', 'userType': '2'}";
+		
+		var pageFp = layer.open({
+		  type: 1,
+		  title: ['订单分配', 'background-color: #5E787E; color:white;'],
+		  content: $("#pnlFp").html(),
+		  anim: 'scale',
+		  scrollbar: false,
+		  style: 'position:fixed; left:0; top:0;-webkit-overflow-scrolling: touch;overflow-y: scroll; width:100%; height:100%; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+		});
+		
+		//推荐医生查询
+		$.ajax({
+			type: "POST",
+	 		url: "selDocRecommendDr",
+	 		data: "jsondata=" + dataJson,
+			dataType: "json",
+			success: function(data){
+				if(data.rtdata != null){
+					var sHtml = "";
+					for(var i = 0; i < data.rtdata.length;i++){
+						 var dr = data.rtdata[i];
+						 sHtml += "<a id='tjitem_" + i + "' class='item' onclick='selPpDor(this, \"" + dr.userId + "\")'><div class='title'>" + dr.userName + "</div><i class='icon icon-check muted hidden ppitem tjitem_" + i + "'></i></a>";
+					}
+					$(".tjPageList").html(sHtml);
+	             }
+	       	},
+	     	error: function () {
+		   		alert("网络异常,请重试!");
+		 	}
+		});
+		
+		//自选医生查询
+		$.ajax({
+			type: "POST",
+	 		url: "selAllDr",
+	 		data: "jsondata=" + dataJson,
+			dataType: "json",
+			success: function(data){
+	             if(data.rtdata != null){
+					var sHtml = "";
+					for(var i = 0; i < data.rtdata.length;i++){
+						 var dr = data.rtdata[i];
+						 sHtml += "<a id='zxitem_" + i + "' class='item' onclick='selPpDor(this, \"" + dr.userId + "\")'><div class='title'>" + dr.userName + "</div><i class='icon icon-check muted hidden ppitem zxitem_" + i + "'></i></a>";
+					}
+					$(".zxPageList").html(sHtml);
+	             }
+	       	},
+	     	error: function () {
+		   		alert("网络异常,请重试!");
+		 	}
+		});
+// 		$('#layui-m-layer0').on('listenScroll', function(isInScroll, scrollDirection, scrollTop) {
+// 		    alert("1");
+// 		});
+	});
+	
+	//【按钮】医生：确认订单
+	$("#btnDoctorQr").on("click", function(){
+		var pageFp = layer.open({
+		  type: 1,
+		  title: ['确认订单', 'background-color: #5E787E; color:white;'],
+		  content: $("#pnlDoctorQr").html(),
+		  anim: 'scale',
+		  style: 'position:fixed; left:0; top:0;-webkit-overflow-scrolling: touch;overflow-y: scroll; width:100%; height:100%; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+		});
+		/* $(".layui-m-layercont .form-datetime").datetimepicker({
+            language: "zh-CN",
+            autoclose: true,//选中之后自动隐藏日期选择框
+            format: "yyyy-mm-dd hh:ii"//日期格式
+        }); */
+		var currYear = (new Date()).getFullYear();	
+		var opt={};
+		opt.date = {preset : 'date'};
+		opt.datetime = {preset : 'datetime'};
+		opt.time = {preset : 'time'};
+		opt.default = {
+			theme: 'android-ics light', //皮肤样式
+	        display: 'modal', //显示方式 
+	        mode: 'scroller', //日期选择模式
+			dateFormat: 'yyyy-mm-dd',
+			lang: 'zh',
+			showNow: true,
+			nowText: "今天",
+	        startYear: currYear - 10, //开始年份
+	        endYear: currYear + 80 //结束年份
+		};
+
+		$(".layui-m-layercont .form-datetime").css({"background-color":'white'});
+        //$("#EndDate").mobiscroll($.extend(opt['date'], opt['default']));//年月日型
+        var optDateTime = $.extend(opt['datetime'], opt['default']);
+   		//var optTime = $.extend(opt['time'], opt['default']);
+        $(".layui-m-layercont .form-datetime").mobiscroll(optDateTime).datetime(optDateTime);//年月日时分型
+		//$("#EndTime").mobiscroll(optTime).time(optTime);//时分型
+
+		
+	});
+	
+	//【按钮】医生：转单
+	$("#btnDoctorZd").on("click", function(){
+		var dataJson = "{'documentId':'"+docment.documentId+"', 'operateStartTime' : '"+docment.operateStartTime+"'}";
+		
+		var pageFp = layer.open({
+		  type: 1,
+		  title: ['转单', 'background-color: #5E787E; color:white;'],
+		  content: $("#pnlDoctorZd").html(),
+		  anim: 'scale',
+		  style: 'position:fixed; left:0; top:0;-webkit-overflow-scrolling: touch;overflow-y: scroll; width:100%; height:100%; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+		});
+		
+		//可转单医生查询
+		$.ajax({
+			type: "POST",
+	 		url: "getDocMemo",
+	  		data: "jsondata=" + dataJson,
+			dataType: "json",
+			success: function(data){
+				var zhuandan = data.zhuanDan;
+				var sHtml = "";
+				for(var i = 0; i < zhuandan.length;i++){
+					 sHtml += "<a id='tjitem_" + i + "' class='item' onclick='selZdDor(this, \"" + zhuandan[i].userId + "\", \"" + zhuandan[i].userName + "\")'><div class='title'>" + zhuandan[i].userName + "</div><i class='icon icon-check muted hidden ppitem tjitem_" + i + "'></i></a>";
+				}
+				$(".tjPageList").html(sHtml);
+	       	},
+	     	error: function () {
+		 	}
+		});
+	});
+	
+	$(document).on('click', '#btnZx', function() {
+		$(".btnTj").removeClass("active");
+		$(".btnZx").addClass("active");
+		
+		$(".tjPage").addClass("hidden");
+		$(".zxPage").removeClass("hidden");
+		
+	});
+	$(document).on('click', '#btnTj', function() {
+		$(".btnZx").removeClass("active");
+		$(".btnTj").addClass("active");
+		
+		$(".zxPage").addClass("hidden");
+		$(".tjPage").removeClass("hidden");
+		
+	});
+	
+	$(document).on('click', '#btnClose', function() {
+		layer.closeAll();
+	});
+	
+	$(document).on('click', '.imglist', function(event) {
+        previewImg();
+	});
+	
+	var Ppid = "";
+	function selPpDor(obj, sid){
+		$(".ppitem").addClass("hidden");
+		$("." + obj.id).removeClass("hidden");
+		Ppid = sid;
+	}
+	
+	//转单医生选择
+	var zdDocid = "";
+	var zdDocName = ""
+	function selZdDor(obj, sid,sName ){
+		$(".ppitem").addClass("hidden");
+		$("." + obj.id).removeClass("hidden");
+		zdDocid = sid;
+		zdDocName  = sName;
+	}
+	
+	$(document).on('click', '#btnPp', function() {
+		if(Ppid == ''){
+			alert("请选择麻醉医生！");
+			return;
+		}
+		var dataJson = "{'documentId': '" + docId + "', 'qaUserId': '" + Ppid + "'}";
+		
+		$.ajax({
+			type: "POST",
+	 		url: "updateDocPpState",
+	 		data: "jsondata=" + dataJson,
+			dataType: "json",
+			success: function(data){
+				if(data.code == 1){
+					alert("订单匹配成功!");
+					//刷新列表
+					location.reload();
+				}else{
+					alert("订单匹配失败,请重试!");
+				}
+	       	},
+	     	error: function () {
+		   		alert("网络异常,请重试!");
+		 	}
+		});
+	});
+	
+	//【按钮】取消分配订单
+	$("#btnQxFp").on("click", function(){
+		layer.open({
+		    content: '请问是否确定取消订单匹配?'
+		    ,btn: ['确定', '取消']
+		    ,yes: function(index){
+		    	
+		    	dataJson = "{'documentId': '" + docId + "', 'qaTeamId' : '" + $("#qaTeamId").val() + "'}";
+	    		
+	    		$.ajax({
+  				type: "POST",
+  		 		url: "updateDocRetPpState",
+  		  		data: "jsondata=" + dataJson,
+  				dataType: "json",
+  				success: function(data){
+  					if(data.code == 1){
+  						alert("取消订单匹配成功!");
+  						//刷新列表
+  						location.reload();
+  					}else{
+  						alert("取消订单匹配失败,请重试!");
+  					}
+  		       	},
+  		     	error: function () {
+  		     		alert("网络异常,请重试!");
+  			 	}
+  			});
+		    }
+		});
+	});
+	
+	var teamHs = new Array();
+	var teamHsCount = 0;
+	var teamFm = new Array();
+	var teamFmCount = 0;
+	//团队分配
+	function openTeamPage(){
+		var pageFp = layer.open({
+		  type: 1,
+		  title: ['团队匹配', 'background-color: #5E787E; color:white;'],
+		  content: $("#pnlTeamFp").html(),
+		  anim: 'scale',
+		  style: 'position:fixed; left:0; top:0; width:100%; height:100%; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+		});
+		
+		var dataJson = "{'documentId': '" + docId + "'}";
+		//团队已选查询
+		$.ajax({
+			type: "POST",
+	 		url: "selTeamUserInfo",
+	 		data: "jsondata=" + dataJson,
+			dataType: "json",
+			success: function(data){
+				if(data.rtdata != null){
+					var sHtml = "";
+					for(var i = 0; i < data.rtdata.length;i++){
+						var user = data.rtdata[i];
+						if(user.roleId == '2'){
+							teamFm[teamFmCount] = user.userId;
+							teamFmCount++;
+						}else{
+							teamHs[teamHsCount] = user.userId;
+							teamHsCount++;
+						}
+					}
+	             }
+	       	},
+	     	error: function () {
+		   		alert("网络异常,请重试!");
+		 	}
+		});
+		
+		var TeamFpId = $("#TeamFpId").val();
+		//副麻
+		dataJson = "{'documentId': '" + docId + "', 'teamId':'" + TeamFpId + "', 'userRole':'2'}";
+		$.ajax({
+			type: "POST",
+	 		url: "selTeamUser",
+	 		data: "jsondata=" + dataJson,
+			dataType: "json",
+			success: function(data){
+	    		if(data.rtdata != null){
+	    			var sHtml = '';
+	          		for(var i = 0; i < data.rtdata.length;i++){
+		            	 var dr = data.rtdata[i];
+		            	 var bFlag = false;
+		            	 for(var j = 0; j < teamFm.length; j++){
+		            	 	if(dr.userId == teamFm[j]){
+		            	 		bFlag = true;
+		            	 		break;
+		            	 	}
+		            	 }
+		            	 if(bFlag)
+		            		sHtml += "<a id='Fmitem_" + i + "' class='item' onclick='selTeamFm(this, \"" + dr.userId + "\")'><div class='title'>" + dr.userName + "</div><i class='icon icon-check muted teamitem Fmitem_" + i + "'></i></a>";
+		            	 else
+		         			sHtml += "<a id='Fmitem_" + i + "' class='item' onclick='selTeamFm(this, \"" + dr.userId + "\")'><div class='title'>" + dr.userName + "</div><i class='icon icon-check muted hidden teamitem Fmitem_" + i + "'></i></a>";
+					}
+	          		$(".FmPageList").html(sHtml);
+	    		}
+	       	},
+	     	error: function () {
+		   		alert("网络异常,请重试!");
+		 	}
+		});
+		
+		//护士
+		dataJson = "{'documentId': '" + docId + "', 'teamId':'" + TeamFpId + "', 'userRole':'4'}";
+		
+		$.ajax({
+			type: "POST",
+	 		url: "selTeamUser",
+	 		data: "jsondata=" + dataJson,
+			dataType: "json",
+			success: function(data){
+				if(data.rtdata != null){
+	    			var sHtml = '';
+	          		for(var i = 0; i < data.rtdata.length;i++){
+		            	 var dr = data.rtdata[i];
+		            	 var bFlag = false;
+		            	 for(var j = 0; j < teamHs.length; j++){
+		            	 	if(dr.userId == teamHs[j]){
+		            	 		bFlag = true;
+		            	 		break;
+		            	 	}
+		            	 }
+		            	 if(bFlag)
+		            		sHtml += "<a id='Hsitem_" + i + "' class='item' onclick='selTeamHs(this, \"" + dr.userId + "\")'><div class='title'>" + dr.userName + "</div><i class='icon icon-check muted teamitem Hsitem_" + i + "'></i></a>";
+		            	 else
+		         			sHtml += "<a id='Hsitem_" + i + "' class='item' onclick='selTeamHs(this, \"" + dr.userId + "\")'><div class='title'>" + dr.userName + "</div><i class='icon icon-check muted hidden teamitem Hsitem_" + i + "'></i></a>";
+					}
+	          		$(".HsPageList").html(sHtml);
+	    		}
+	       	},
+	     	error: function () {
+		   		alert("网络异常,请重试!");
+		 	}
+		});
+	}
+	
+	function selTeamFm(obj, sid){
+		$("." + obj.id).toggleClass("hidden");
+		
+		var bFlag = true;
+		for(var i =0; i<teamFm.length;i++){
+			if(teamFm[i] == sid){
+				bFlag = false;
+				teamFm.splice(i, 1);
+			}
+		}
+		if(bFlag){
+			teamFm[teamFmCount] = sid;
+			teamFmCount++;
+		}else{
+			teamFmCount--;
+		}
+	}
+	function selTeamHs(obj, sid){
+		$("." + obj.id).toggleClass("hidden");
+		
+		var bFlag = true;
+		for(var i =0; i<teamHs.length;i++){
+			if(teamHs[i] == sid){
+				bFlag = false;
+				teamHs.splice(i, 1);
+			}
+		}
+		if(bFlag){
+			teamHs[teamHsCount] = sid;
+			teamHsCount++;
+		}else{
+			teamHsCount--;
+		}
+	}
+	
+	$(document).on('click', '#btnFm', function() {
+		$(".btnHs").removeClass("active");
+		$(".btnFm").addClass("active");
+		
+		$(".HsPage").addClass("hidden");
+		$(".FmPage").removeClass("hidden");
+		
+	});
+	$(document).on('click', '#btnHs', function() {
+		$(".btnFm").removeClass("active");
+		$(".btnHs").addClass("active");
+		
+		$(".FmPage").addClass("hidden");
+		$(".HsPage").removeClass("hidden");
+	});
+	
+	//【按钮】报存团队
+	$(document).on('click', '#btnTeamFp', function() {
+		var TeamFpId = $("#TeamFpId").val();
+		
+		var ids = "";
+		var idCount = 0;
+		
+		for(var i = 0; i < teamFm.length; i++){
+			if(teamFm[i] != ''){
+				ids += teamFm[i] + ",";
+				idCount++;
+			}
+		}
+		for(var i = 0; i < teamHs.length; i++){
+			if(teamHs[i] != ''){
+				ids += teamHs[i] + ",";
+				idCount++;
+			}
+		}
+		
+		var dataJson = '';
+		if(ids == ''){
+			dataJson = "{'documentId': '" + docId + "', 'qateamId':'" + TeamFpId + "', 'userList':''}";
+		}else{
+			dataJson = "{'documentId': '" + docId + "', 'qateamId':'" + TeamFpId + "', 'userList':'" + ids.substring(0, ids.length - 1) + "'}";
+		}
+		
+		$.ajax({
+			type: "POST",
+	 		url: "saveDocTeam",
+	 		data: "jsondata=" + dataJson,
+			dataType: "json",
+			success: function(data){
+				alert("团队匹配成功!");
+				location.reload();
+	       	},
+	     	error: function () {
+		   		alert("网络异常,请重试!");
+		 	}
+		});
+	});
+	
+	function openTeamView(){
+		var pageTeamInfo = layer.open({
+		  	type: 1,
+		  	title: ['团队信息', 'background-color: #5E787E; color:white;'],
+		  	content: $("#pnlTeamInfo").html(),
+		  	anim: 'scale',
+		  	style: 'position:fixed; left:0; top:0; width:100%; height:100%; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+		});
+		
+		var dataJson = "{'documentId': '" + docId + "'}";
+		$.ajax({
+			type: "POST",
+	 		url: "selTeamUserInfo",
+	 		data: "jsondata=" + dataJson,
+			dataType: "json",
+			success: function(data){
+				if(data.code == 1){
+					var sHtml = '';
+					for(var i = 0; i < data.rtdata.length; i++){
+						var user = data.rtdata[i];
+						sHtml +=   "<div class='row'>" +
+				        		   "<div class='cell-3'><div class='tile state'><img class='editable img-responsive' src='getUserPhotoByKey?id=" + user.userId + "'/></div></div>" +
+				        		   "<div class='cell-8'>" +
+				          		   "	<div class='column'>" +
+				            	   "		<div class='cell'>姓名:" + user.userName + "</div>" +
+				            	   "		<div class='cell'>年龄:" + user.age + "</div>" +
+				            	   "		<div class='cell'>电话:" + user.tel + "</div>" +
+				            	   "		<div class='cell'>&nbsp;</div>" +
+				            	   "		<div class='cell'>&nbsp;</div>" +
+				            	   "	</div>" +
+				            	   "</div>" +
+				            	   "</div>";
+					}
+					$(".TeamInfoForm").html(sHtml);
+				}
+			},
+	     	error: function () {
+		   		alert("网络异常,请重试!");
+		 	}
+		});
+	}
+	
+	//团队删除
+	function clearTeam(){
+		var TeamFpId = $("#TeamFpId").val();
+		layer.open({
+		    content: '请问是否确定取消团队匹配?'
+		    ,btn: ['确定', '取消']
+		    ,yes: function(index){
+		    	
+		    	dataJson = "{'documentId': '" + docId + "', 'qsTeamId':'" + TeamFpId + "'}";
+	    		
+	    		$.ajax({
+  				type: "POST",
+  		 		url: "clearTeam",
+  		  		data: "jsondata=" + dataJson,
+  				dataType: "json",
+  				success: function(data){
+  					if(data.code == 1){
+  						//刷新列表
+  						location.reload();
+  					}else{
+  						alert("取消团队匹配失败,请重试!");
+  					}
+  		       	},
+  		     	error: function () {
+  		     		alert("网络异常,请重试!");
+  			 	}
+  			});
+		    }
+		});
+	}
+	
+	//医生确认转单
+	$(document).on('click', '#btnDoctorZdSave', function() {
+    	var dataJson = "{'documentId': '" + docment.documentId + "', 'changeName': '" + zdDocName + "', 'zdDoctor': '" + zdDocid + "'}";
+    	$.ajax({
+			type: "POST",
+			async: false,
+	 		url: "makeZhuanDan",
+	  		data: "jsondata=" + dataJson,
+			dataType: "json",
+			success: function(data){
+				if(data.code==1){
+					alert("转单成功!");
+					location.href="toWebScDocList";
+				}else{
+					alert("转单失败,请重试!");
+				}
+	       	},
+	     	error: function () {
+	     		alert("转单失败,请重试!");
+		 	}
+		});
+	});
+	
+	
+	//医生确认订单
+	$(document).on('click', '#btnDoctorQrSave', function() {
+		var anesthetic = '';
+		$(".layui-m-layercont #anesthetic option:selected").each(function(){
+			anesthetic = $(this).val();
+        });
+		
+    	var ywsj_hxxt = '';
+    	$(".layui-m-layercont #ywsjHxxt option:selected").each(function(){
+    		ywsj_hxxt += $(this).val() + ",";
+        });
+    	var ywsj_xhxt = '';
+    	$(".layui-m-layercont #ywsjXhxt option:selected").each(function(){
+    		ywsj_xhxt += $(this).val() + ",";
+        });
+    	var data = $(".layui-m-layercont #realOderForm").serializeJSON();
+    	if(data['sskssj']==""){
+    		alert("手术开始时间不能为空!");
+    		return;
+		}else if(data['ssjssj']==""){
+			alert("手术结束时间不能为空!");
+			return;
+		}
+		else if(data['mediaId']==""){
+			alert("请上传图片!");
+			return;
+		}
+    	data['anestheticId'] = anesthetic;
+		data['ywsjHxxt'] = ywsj_hxxt.substring(0, ywsj_hxxt.length - 1);
+    	data['ywsjXhxt'] = ywsj_xhxt.substring(0, ywsj_xhxt.length - 1);
+    	//当前为确认订单信息
+    	data['documentId'] = docment.documentId;
+    	data['operativeId'] = docment.operativeId;
+//     	data['anestheticId'] = docment.anestheticId;
+    	//data['sssc'] = minu;
+    	data['recordType'] = "2102";
+    	//data['operateStartTime'] = docment.operateStartTime;
+    	//data['patientNum'] = docment.patientNum;
+    	//data['patientName'] = docment.patientName;
+    	//data['patientAge'] = docment.patientAge;
+    	//data['patientSex'] = docment.patientSex;
+    	//data['patientBednum'] = docment.patientBednum;
+    	//data['documentTitle'] = docment.documentTitle;
+    	//data['operateUser'] = docment.operateUser;
+    	//data['operateAide'] = docment.operateAide;
+    	//data['qaUserValue'] = docment.qaUserValue;
+    	//data['adminMemo'] = docment.adminMemo;
+    	//data['hospitalMemo'] = docment.hospitalMemo;
+		var dataJson = JSON.stringify(data);
+		$.ajax({
+			type: "POST",
+			async: false,
+	 		url: "saveRealDocment",
+	  		data: "jsondata=" + dataJson,
+			dataType: "json",
+			success: function(data){
+				if(data.code==1){
+					alert("订单确认成功!");
+					location.href="toWebScDocList";
+				}else{
+					alert("订单确认失败,请重试!");
+				}
+	       	},
+	     	error: function () {
+	     		alert("订单确认异常!");
+		 	}
+		});
+	});
+	
+	//转单
+	
+	//手术史计算
+	var shsstate = 0;
+	$(document).on('change', '#shs', function() {
+	//$('#shs').change(function(){
+		if(shsstate == 0){
+			$(".layui-m-layercont #shcs").removeAttr("disabled");
+			shsstate = 1;
+		}else{
+			$(".layui-m-layercont #shcs").attr("disabled","disabled");
+			$(".layui-m-layercont #shcs").val("");
+			shsstate = 0;
+		}
+		
+	});
+	
+	//过敏原
+	$(document).on('change', '#ywsjGm', function() {
+	//$('#ywsjGm').change(function(){
+		var ywsjGm = $('.layui-m-layercont #ywsjGm option:selected').val();
+		if(ywsjGm == 2){
+			$(".layui-m-layercont #ywsjGmSocre").removeAttr("disabled");
+		}else{
+			$(".layui-m-layercont #ywsjGmSocre").attr("disabled","disabled"); 
+			$(".layui-m-layercont #ywsjGmSocre").val("");
+		} 
+		
+	});
+	
+	//循环系统选其他变更
+	$(document).on('change', '#ywsjXhxt', function() {
+	//$('#ywsjXhxt').change(function(){
+		var state = 0;
+		$('.layui-m-layercont #ywsjXhxt option:selected').each(function(){
+			if($(this).val() == 5){
+				state=1;
+			}
+		});
+		if(state == 1){
+			$(".layui-m-layercont #ywsjXhxtQt").removeAttr("disabled");
+		}else{
+			$(".layui-m-layercont #ywsjXhxtQt").attr("disabled","disabled");
+			$(".layui-m-layercont #ywsjXhxtQt").val("");
+		}
+		
+	});
+	
+	//呼吸系统选其他变更
+	$(document).on('change', '#ywsjHxxt', function() {
+	//$('#ywsjHxxt').change(function(){
+		var state = 0;
+		$('.layui-m-layercont #ywsjHxxt option:selected').each(function(){
+			if($(this).val() == 6){
+				state=1;
+			}
+		});
+		if(state == 1){
+			$(".layui-m-layercont #ywsjHxxtQt").removeAttr("disabled");
+		}else{
+			$(".layui-m-layercont #ywsjHxxtQt").attr("disabled","disabled");
+			$(".layui-m-layercont #ywsjHxxtQt").val("");
+		}
+		
+	});
+	
+	//呕吐详情
+	var state = 0;
+	$(document).on('click', '#shblOt', function() {
+	//$('#shblOt').click(function (){
+		if(state == 0){
+	        //当前为选中状态
+	         $(".layui-m-layercont #shblOtScore").removeAttr("disabled");
+	        state = 1;
+	    }else{
+	        //当前为不选中状态
+	    	$(".layui-m-layercont #shblOtScore").attr("disabled","disabled");
+	    	$(".layui-m-layercont #shblOtScore").val("");
+	        state = 0;
+	    }
+	});
+	
+	//【按钮】确认订单
+	$("#btnQrWc").on("click", function(){
+		layer.open({
+		    content: '确定订单完成?'
+		    ,btn: ['确认通过', '拒绝确认']
+		    ,yes: function(index){
+		    	var dataJson = "{'documentId': '" + docId + "', 'documentState' : '5'}";
+            	//更新状态
+            	$.ajax({
+        			type: "POST",
+        	 		url: "updateDocRealState",
+        	  		data: "jsondata=" + dataJson,
+        			dataType: "json",
+        			success: function(data){
+        				if(data.code == 1){
+        					location.reload();
+        				}else{
+        					alert("订单查询失败,请重试!");
+        				}
+        	       	},
+        	     	error: function () {
+        	     		alert("订单查询异常,请重试!");
+        		 	}
+        		});
+		    },no: function(index){
+		    	var dataJson = "{'documentId': '" + docId + "', 'documentState' : '3'}";
+            	//更新状态
+            	$.ajax({
+        			type: "POST",
+        	 		url: "updateDocRealState",
+        	  		data: "jsondata=" + dataJson,
+        			dataType: "json",
+        			success: function(data){
+        				if(data.code == 1){
+        					location.reload();
+        				}else{
+        					alert("拒绝确认失败,请重试!");
+        				}
+        	       	},
+        	     	error: function () {
+        	     		alert("网络异常,请重试!");
+        		 	}
+        		});
+		    }
+		});
+	});
+	
+	//【按钮】取消订单
+	$("#btnQx").on("click", function(){
+		var pageTeamInfo = layer.open({
+		  	type: 1,
+		  	title: ['取消订单', 'background-color: #5E787E; color:white;'],
+		  	content: $("#pnlCannel").html(),
+		  	anim: 'scale',
+		  	style: 'position:fixed; left:0; top:0; width:100%; height:100%; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+		});
+	});
+	
+	//【按钮】取消订单
+	$(document).on('click', '#btnQxSave', function() {
+		var desc = $(".layui-m-layermain #desc").val()
+		var documentState = $("#documentState").val();
+		var dataJson = '';
+		if(documentState == '0'){
+			dataJson = "{'documentId': '" + docId + "', 'documentState': '-1', 'oldDocumentState':'0'}";
+		}else{
+			dataJson = "{'documentId': '" + docId + "', 'documentState': '9', 'oldDocumentState':'" + documentState + "', 'Memo':'" + desc + "'}";
+		}
+
+		$.ajax({
+			type: "POST",
+	 		url: "updateDocState",
+	  		data: "jsondata=" + dataJson,
+			dataType: "json",
+			success: function(data){
+				if(data.code == 1){
+					alert("撤销成功!");
+					location.reload();
+				}else{
+					alert("撤销失败,请重试!");
+				}
+	       	},
+	     	error: function () {
+	     		alert("网络异常,请重试!");
+		 	}
+		});
+	});
+	
+	//【按钮】同意撤销订单
+	$("#btnQxTy").on("click", function(){
+		layer.open({
+		    content: '同意关闭订单？'
+		    ,btn: ['同意', '关闭']
+		    ,yes: function(index){
+		    	var dataJson = "{'documentId': '" + docId + "', 'documentState' : '6', 'oldDocumentState':'9'}";
+	        	//更新状态
+	        	$.ajax({
+	    			type: "POST",
+	    	 		url: "updateDocState",
+	    	  		data: "jsondata=" + dataJson,
+	    			dataType: "json",
+	    			success: function(data){
+	    				if(data.code == 1){
+	    					location.reload();
+	    				}else{
+	    					alert("拒绝确认失败,请重试!");
+	    				}
+	    	       	},
+	    	     	error: function () {
+	    	     		alert("网络异常,请重试!");
+	    		 	}
+	    		});
+		    }
+		});
+	});
+	
+	//【按钮】拒绝撤销订单
+	$("#btnQxJj").on("click", function(){
+		layer.open({
+		    content: '拒绝撤销订单？'
+		    ,btn: ['同意', '关闭']
+		    ,yes: function(index){
+		    	var oldDocumentState = $("#oldDocumentState").val();
+		    	var dataJson = "{'documentId': '" + docId + "', 'documentState':'" + oldDocumentState + "','oldDocumentState':'9','memo':''}";
+		    	//更新状态
+	        	$.ajax({
+	    			type: "POST",
+	    	 		url: "updateDocState",
+	    	  		data: "jsondata=" + dataJson,
+	    			dataType: "json",
+	    			success: function(data){
+	    				if(data.code == 1){
+	    					location.reload();
+	    				}else{
+	    					alert("拒绝撤销订单失败,请重试!");
+	    				}
+	    	       	},
+	    	     	error: function () {
+	    	     		alert("网络异常,请重试!");
+	    		 	}
+	    		});
+		    }
+		});
+	});
+	
+	function opDocPhoto(){
+		$("#docPhoto").attr("src","getRealMakPhotoByDocumentId?documentId=" + docId);
+		$("#docPhoto").removeClass("hidden");
+		
+		$("#docPhotoTip").addClass("hidden");
+	}
+	
+	//【按钮】拒绝订单
+	$("#btnDoctorQx").on("click", function(){
+		alert("取消已分配订单,请联系管理员(电话:400-123-456)!");
+	});
+	
+	//【按钮】医生撤销已接订单
+	$("#btnDoctorCx").on("click", function(){
+		var dataJson = "{'documentState':'2','oldDocumentState':'3','recordType':'2101','documentId':'"+docId+"'}";
+		$.ajax({
+			type: "POST",
+	 		url: "updateAllowedDocState",
+	  		data: "jsondata=" + dataJson,
+			dataType: "json",
+			success: function(data){
+				if(data.code == 1){
+					alert("状态修改成功!");
+					location.reload();
+				}
+	       	},
+	     	error: function () {
+	     		alert("状态修改失败,请重试!");
+		 	}
+		});
+	});
+	//【按钮】医生接单订单
+	$("#btnDoctorJd").on("click", function(){
+		var dataJson = "{'documentState':'3','oldDocumentState':'2','recordType':'2001','documentId':'"+docId+"'}";
+		$.ajax({
+			type: "POST",
+	 		url: "updateDocState",
+	  		data: "jsondata=" + dataJson,
+			dataType: "json",
+			success: function(data){
+				if(data.code == 1){
+					alert("状态修改成功!");
+					location.reload();
+				}
+	       	},
+	     	error: function () {
+	     		alert("状态修改失败,请重试!");
+		 	}
+		});
+	});
+	
+	var jg_score = $("#jg_score").val();
+	addStar("jg", jg_score);
+	var dr_score = $("#dr_score").val();
+	addStar("dr", dr_score);
+	function addStar(type, lv){
+		for(var i = 1; i <= lv; i++)
+			$("#" + type + "-star-" + i).addClass("active-star");
+	}
+	
+	//【按钮】医生打分
+	$("#btnDocDf").on("click", function(){
+		var pageTeamInfo = layer.open({
+		  	type: 1,
+		  	title: ['评价打分', 'background-color: #5E787E; color:white;'],
+		  	content: $("#pnlDocDrDf").html(),
+		  	anim: 'scale',
+		  	style: 'position:fixed; left:0; top:0; width:100%; height:100%; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;'
+		});
+	});
+	
+	$(document).on('click', '#btnDrDf', function() {
+		var score = $(".layui-m-layermain #drstar").val();
+		var score_reason = $(".layui-m-layermain #drreason").val();
+		if(score < 3){
+			if(score_reason == ''){
+				alert("3星以下必须填写评价！");
+				return;
+			}
+		}
+    	if(score == -1){
+    		layer.open({
+    		    content: '请问是否确定添加黑名单？'
+    		    ,btn: ['确定', '取消']
+    		    ,yes: function(index){
+   		    		//保存
+   		    		var dataJson = "{'documentId':'" + docId + "','dt':'1','score':'-1','score_reason':'" + score_reason + "','uid':'" + $("#title_applyUserId").val() + "'}";
+            		$.ajax({
+            			type: "POST",
+            	 		url: "saveDocScore",
+            	 		data: "jsondata=" + dataJson,
+            			dataType: "json",
+            			success: function(data){
+            				if(data.code == 1){
+	        					alert("评分成功!");
+	        					location.reload();
+            				}else{
+        						alert("评分失败,请重试!");
+        					}
+        		       	},
+        		     	error: function () {
+        		     		alert("网络失败,请关闭重试!");
+        			 	}
+            		});
+		    	}
+		    });
+    	}else{
+    		//保存
+    		var dataJson = "{'documentId':'" + docId + "','dt':'1','score':'" + score + "','score_reason':'" + score_reason + "'}";
+    		$.ajax({
+    			type: "POST",
+    	 		url: "saveDocScore",
+    	 		data: "jsondata=" + dataJson,
+    			dataType: "json",
+    			success: function(data){
+    				if(data.code == 1){
+    					alert("评分成功!");
+    					location.reload();
+    				}else{
+						alert("评分失败,请重试!");
+					}
+		       	},
+		     	error: function () {
+		     		alert("网络失败,请关闭重试!");
+			 	}
+    		});
+    	}
+	});
+	
+	function changeStar(score){
+		for(var i = 1; i <= 5; i++)
+			$(".layui-m-layermain #df-dr-star-" + i).removeClass("active-star");
+		for(var i = 1; i <= score; i++)
+			$(".layui-m-layermain #df-dr-star-" + i).addClass("active-star");
+		$(".layui-m-layermain #drstar").val(score);
+	}
+</script>
+</body>
+</html>

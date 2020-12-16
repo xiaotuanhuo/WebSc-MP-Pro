@@ -9,7 +9,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Component;
 
-import com.sc.mp.bean.WebScUser;
+import com.sc.mp.model.WebScUser;
 
 @Component
 public class ControllerUtil {
