@@ -43,6 +43,23 @@
     from WSC_USER
     where user_id = #{userId,jdbcType=INTEGER}
   </select>
+  <select id="selectByLoginName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    user_id,
+    user_name,
+    login_pwd,
+    salt,
+    sex,
+    phone,
+    role_id,
+    role_type_id,
+    province,
+    city,
+    area,
+    status
+    from WSC_USER
+    where login_name = #{loginName,jdbcType=INTEGER}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from WSC_USER
     where user_id = #{userId,jdbcType=INTEGER}

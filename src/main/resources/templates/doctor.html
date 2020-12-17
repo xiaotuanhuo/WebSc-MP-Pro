@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+	<title>医生</title>
+	
+	<!-- Google font file. If you want you can change. -->
+	<link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,900" rel="stylesheet">
+	<!-- Fontawesome font file css -->
+	<!-- <link rel="stylesheet" href="https://www.jq22.com/jquery/font-awesome.4.7.0.css"> -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}">
+	<!-- Template global css file. Requared all pages -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/global.style.css}">
+	<link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
+	<link rel="stylesheet" th:href="@{/css/Mdate.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/jalendar.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/timedropper.min.css}" />
+
+</head>
+
+<body>
+	<div class="wrapper">
+		<div class="nav-menu">
+			<nav class="menu">
+			<!-- Menu navigation start -->
+				<div class="nav-container menu-container">
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">姓名</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">张三</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">性别</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">男</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">手机</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">18888888888</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">角色</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">区域管理员</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">机构</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">上海市-市辖区-徐汇区夙呈医生集团</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">区域</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">上海市-市辖区-徐汇区</h6>
+						</div>
+					</div>
+					
+					<button class="button circle red block menu-logout">登出</button>
+				</div>
+				
+				<!-- Menu navigation end -->
+			</nav>
+		</div>
+		
+		<div class="wrapper-inline">
+			<!-- Header area start -->
+			<header class="no-background"> <!-- extra class no-background -->
+				<div class="navi-menu-button">
+					<em></em>
+					<em></em>
+					<em></em>
+				</div>
+			</header>
+			<!-- Header area end -->
+			
+			<!-- Page content start -->
+			<main id="mescroll" class="margin mt-0 mescroll">
+				<div class="dash-balance">
+					<div class="dash-content relative">
+						<h3 class="w-text">SuCheng</h3>
+					</div>
+				</div>
+				
+				<section class="bal-section container">
+					<div id="content">
+					    <div id="content-body">
+					    	<div class="content-head">
+								<div class="d-flex align-items-center">
+								    <div class="d-flex flex-grow">
+								        <div class="mr-auto">
+								            <p class="mb-0">我的订单</p>
+								        </div>
+								    </div>
+								</div>
+							</div>
+					        <div class="content-row">
+					            <div class="content-col">
+					                <img src="/img/p1.png" alt="">
+					                <span>待处理</span>
+					            </div>
+					            <div class="content-col">
+					                <img src="/img/p2.png" alt="">
+					                <span>历史订单</span>
+					            </div>
+					            <div class="content-col">
+					                <img src="/img/p3.png" alt="">
+					                <span>待评分</span>
+					            </div>
+					        </div>
+					    </div>
+					</div>
+				</section>
+				<!-- Order area end -->
+				
+				<!-- 备休区域 start -->
+				<section id="" class="container" style="margin-bottom: 30px;">
+					<h4 class="title-main">我的备休</h4>
+					<div id="yourId" class="jalendar">
+						<div class="sp sp-wave"></div>
+					</div>
+				</section>
+				<!-- 备休区域 end -->
+				
+				<!-- 备休添加 start -->
+				<div class="popup-overlay" id="formPopup">
+					<!-- if you dont want overlay add class .no-overlay -->
+					<div class="popup-container">
+						<div class="popup-header">
+							<h6 class="popup-title">新增备休</h6>
+							<span class="popup-close" data-dismiss="true" style="display: none;"><i class="fa fa-times"></i></span>
+						</div>
+						<div class="popup-content">
+							<!-- <div class="form-row-group with-icons">
+								<div class="form-row no-padding">
+									<i class="fa fa-bookmark"></i>
+									<input type="text" id="restTitle"
+										class="form-element" placeholder="我的备休">
+								</div>
+							</div>
+							
+							<div class="form-mini-divider"></div> -->
+							
+							<div class="form-row-group with-icons">
+								<div class="form-row no-padding">
+									<i class="fa fa-hourglass-start"></i>
+									<input id="picktime_begin" type="text" class="form-element" placeholder="开始时间">
+								</div>
+							</div>
+							
+							<div class="form-mini-divider"></div>
+							
+							<div class="form-row-group with-icons">
+								<div class="form-row no-padding">
+									<i class="fa fa-hourglass-end"></i>
+									<input id="picktime_end" type="text" class="form-element" placeholder="结束时间">
+								</div>
+							</div>
+							
+							<div class="form-mini-divider"></div>
+							
+							
+	
+						</div>
+						<div class="popup-footer">
+							<button class="button orange">提交</button>
+						</div>
+					</div>
+				</div>
+				<!-- 备休添加 end -->
+
+			</main>
+			<!-- Page content end -->
+		</div>
+	</div>
+	<!--Page loader DOM Elements. Requared all pages-->
+	<div class="sweet-loader">
+		<div class="box">
+		  	<div class="circle1"></div>
+		  	<div class="circle2"></div>
+		  	<div class="circle3"></div>
+		</div>
+	</div>
+	
+	<!-- JQuery library file. requared all pages -->
+	<!-- <script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script> -->
+	<script th:src="@{/js/jquery.min.js}"></script>
+	<!-- Template global script file. requared all pages -->
+	<script th:src="@{/js/global.script.js}"></script>
+	<script th:src="@{/js/jalendar.min.js}" type="text/javascript" charset="utf-8"></script>
+	<script th:src="@{/js/timedropper.min.js}"></script>
+	
+	<script type="text/javascript">
+		$(function() {
+			getDataList();
+			
+			$("#picktime_begin").timeDropper({
+				meridians: false,
+				format: 'HH:mm',
+			});
+			
+			$("#picktime_end").timeDropper({
+				meridians: false,
+				format: 'HH:mm',
+			});
+			
+			$(".orange").on("click", function() {
+				//$("#yourId").children().remove();
+				//$.parser.parse("#yourId");
+				$(".popup-close").click();
+			});
+			
+			var renderCalendar = function() {
+				$('#yourId').jalendar({
+				    color: '#66CDAA', // Unlimited
+				    color2: '#8FBC8F', // Unlimited
+				    lang: 'CN',
+				    done: function(data) {
+				    	console.log(000);
+				    	if (data.type == "del") {
+				    		deleteCalendar(data.calendarId);
+				    	}
+				    }
+				});
+			}
+			
+			/*加载备休数据*/
+			function getDataList() {
+				$.ajax({
+					url: 'calendars',
+					success : function(result) {
+						setListData(result.data);
+						renderCalendar();
+						$('.sp-wave').hide();
+					},
+					error : function() {
+						
+					}
+				});
+			}
+			
+			/*设置列表数据*/
+			function setListData(data) {
+				var listDom = document.getElementById("yourId");
+				for (var i = 0; i < data.length; i++) {
+					var newObj = data[i];
+					var divDom = document.createElement("div");
+					divDom.setAttribute("class", "added-event");
+					divDom.setAttribute("data-date", newObj.day);
+					divDom.setAttribute("data-title", newObj.title);
+					divDom.setAttribute("data-id", newObj.calendarId);
+					
+					listDom.appendChild(divDom);
+				}
+			}
+			
+			/*备休信息删除*/
+			function deleteCalendar(id) {
+				$.post('/mp/calendar/del/' + id, {_method: "DELETE"}, function (data) {
+					alert(data.msg);
+				});
+			}
+			
+			$(".menu-logout").on("click", function() {
+				location.href = "logout";
+			});
+		});
+	</script>
+</body>
+
+</html>

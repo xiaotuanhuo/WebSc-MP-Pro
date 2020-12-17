@@ -1,0 +1,67 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1.0, maximum-scale=1.0,user-scalable=no" />
+    <title>账号绑定</title>
+</head>
+<body class="bodgray">
+<div class="container">
+	<article class="mainpanel">
+		<div class="row" style="margin:10px 10px 0 20px;">
+			<h5>登录名:</h5>
+		</div>
+		<div class="row" style="margin:10px 10px 0 20px;">
+			<input id="loginname" name="loginname"  type="text" class="form-control" style="width:100%;height:43px;font-size:16px;outline: medium; border:none; border-bottom:1px solid #000;" >
+		</div>
+		<div class="row" style="margin:20px 10px 0 20px;">
+			<h5>密码:</h5>
+		</div>
+		<div class="row" style="margin:10px 10px 20px 20px;">
+			<input id="loginpwd" name="loginpwd"  type="password" class="form-control" style="width:100%;height:43px;font-size:16px;outline: medium; border:none; border-bottom:1px solid #000;" >
+		</div>
+	</article>
+	<div class="row" style="margin:20px 20px 0 20px;">
+		<button type="button" class="btn primary block circle">登    录</button>
+	</div>
+	
+</div>
+<script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+	
+	$(".primary").on("click", function() {
+		var loginName = $("#loginname").val();
+		var loginPwd = $("#loginpwd").val();
+		
+		if (loginName == '') {
+			alert("请填写登录名");
+			return;
+		}
+		if (loginPwd == '') {
+			alert("请填写登录密码");
+			return;
+		}
+		
+		var dataJson = "{\"loginName\":\"" + loginName + "\", \"password\":\""
+				+ loginPwd + "\"}";
+		$.ajax({
+			type : "POST",
+			data : "loginInfo=" + dataJson,
+			dataType : "json",
+			url : "login",
+			success: function(data) {
+				console.log(123);
+				if (data.code == 1) {
+					location.href = "index";
+				} else {
+					alert(data.msg);
+				}
+			},
+			error: function() {
+				alert("网络错误，无法正常登录！");
+			}
+		});
+	});
+</script>
+
+</body>
+</html>

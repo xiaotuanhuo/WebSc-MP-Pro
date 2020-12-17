@@ -28,11 +28,22 @@ spring:
             max-file-size: 100MB
             max-request-size: 200MB
 redis:
-host: 106.14.164.162
-port: 36380
-        
+    host: 106.14.164.162
+    port: 36380
+
 mybatis:
-  mapper-locations: classpath:mapping/*.xml
-  type-aliases-package: com.sc.mp.model
+    mapper-locations: classpath:mapping/*.xml
+    type-aliases-package: com.sc.mp.model
 
 projectDomainName: localhost
+
+sc:
+    role:
+        super: 7
+        regional: 4
+        doctor: 5
+    page:
+        login: login
+        super: super
+        regional: regional
+        doctor: doctor

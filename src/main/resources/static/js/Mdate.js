@@ -7,7 +7,7 @@
         link.href = url;
         d.getElementsByTagName("head")[0].appendChild(link)
     };
-    includeCss("../css/Mdate.css");
+    //includeCss("../css/Mdate.css");
     var dateopts = {
         beginYear: 2000,
         beginMonth: 1,
@@ -214,7 +214,9 @@
                 that.acceptId.setAttribute("data-month", monthTag);
                 that.acceptId.setAttribute("data-day", dayTag);
                 that.dateCancel();
-                callback(that.acceptId.value);
+                if(typeof callback === "function") {
+                	callback(that.acceptId.value);
+                }
             };
             cancelBtn.onclick = function() {
                 that.dateCancel()

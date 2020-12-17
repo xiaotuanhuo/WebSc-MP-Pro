@@ -1,6 +1,5 @@
 "use strict";
 $(document).ready(function(){
-console.log(233);
 	$('.navi-menu-button').on('click', function(e){
 		navMenuOpen();
 	});
