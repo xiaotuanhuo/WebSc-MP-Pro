@@ -13,8 +13,7 @@ import com.sc.mp.model.WebScUser;
 
 @Component
 public class ControllerUtil {
-	public final static String USER_SESSION_KEY = "WEBSCMP_JSESSIONID";
-	
+
 	/**
 	 * 获取用户信息
 	 * @param request

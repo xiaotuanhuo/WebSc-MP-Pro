@@ -6,6 +6,7 @@ package com.sc.mp.util;
  *
  */
 public class ScConstant {
+	public final static String USER_SESSION_KEY = "WEBSCMP_JSESSIONID";
 	public final static String AM = "am";
 	public final static String PM = "pm";
 	public final static String ALL = "all";
