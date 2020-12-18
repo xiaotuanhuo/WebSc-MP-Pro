@@ -25,7 +25,7 @@
 	<div class="wrapper">
 		<div class="nav-menu">
 			<nav class="menu">
-			<!-- Menu navigation start -->
+				<!-- Menu navigation start -->
 				<div class="nav-container menu-container">
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
@@ -34,7 +34,7 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">张三</h6>
+							<h6 class="text-muted menu-info">[[${user.userName}]]</h6>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -44,7 +44,14 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">男</h6>
+							<div th:switch="${user.sex}">
+								<div th:case="'0'">
+									<h6 class="text-muted menu-info">女</h6>
+								</div>
+								<div th:case="*">
+									<h6 class="text-muted menu-info">男</h6>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -54,7 +61,7 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">18888888888</h6>
+							<h6 class="text-muted menu-info">[[${user.phone}]]</h6>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -64,7 +71,7 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">区域管理员</h6>
+							<h6 class="text-muted menu-info">[[${user.roleName}]]</h6>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -74,7 +81,7 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">上海市-市辖区-徐汇区夙呈医生集团</h6>
+							<h6 class="text-muted menu-info">[[${user.deptName}]]</h6>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -84,13 +91,12 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">上海市-市辖区-徐汇区</h6>
+							<h6 class="text-muted menu-info">[[${user.districtName}]]</h6>
 						</div>
 					</div>
 					
 					<button class="button circle red block menu-logout">登出</button>
 				</div>
-				
 				<!-- Menu navigation end -->
 			</nav>
 		</div>
@@ -662,6 +668,10 @@
 		new Mdate("dateSelector_end");
 		$("#distpicker11").distpicker({
 			autoSelect: false
+		});
+		
+		$(".menu-logout").on("click", function() {
+			location.href = "logout";
 		});
 	</script>
 </body>
