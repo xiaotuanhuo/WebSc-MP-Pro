@@ -1,6 +1,8 @@
 package com.sc.mp.service;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.sc.mp.mapper.DeptMapper;
 import com.sc.mp.mapper.RoleMapper;
@@ -20,7 +23,9 @@ import com.sc.mp.model.WebScRole;
 import com.sc.mp.model.WebScCalendar;
 import com.sc.mp.model.WebScDept;
 import com.sc.mp.model.WebScUser;
+import com.sc.mp.util.ScConstant;
 import com.sc.mp.util.DistrictUtil;
+import com.sc.mp.util.UUID19;
 
 @Service
 public class UserService {
@@ -113,6 +118,43 @@ public class UserService {
 //		String date = format.format(new Date());
 		List<WebScCalendar> calendars = scCalendarMapper.selectByDoctor(user.getUserId());
 		return calendars;
+	}
+	
+	public WebScCalendar addCalendar(JSONObject calendarInfo, Integer doctorId) {
+		WebScCalendar calendar = new WebScCalendar();
+		String id = UUID19.uuid();
+		String day = calendarInfo.getString("day");			// 备休日
+		String begin = calendarInfo.getString("begin");		// 开始时间
+		String end = calendarInfo.getString("end");			// 结束时间
+		String timeBtn = calendarInfo.getString("timeBtn");	// 上午/下午/全天
+		String title = null;	// 标题
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		try {
+			Date startTime = format.parse(day + " " + begin + ":00");
+			Date endTime = format.parse(day + " " + end + ":00");
+			calendar.setStartTime(startTime);
+			calendar.setEndTime(endTime);
+		} catch (ParseException e) {
+			log.error("时间转换出错：" + (day + " " + begin + ":00") + " " + (day + " " + end + ":00"));
+		}
+		if (timeBtn.equals(ScConstant.AM)) {
+			title = ScConstant.AM_TEXT;
+		} else if (timeBtn.equals(ScConstant.PM)) {
+			title = ScConstant.PM_TEXT;
+		} else if (timeBtn.equals(ScConstant.ALL)) {
+			title = ScConstant.ALL_TEXT;
+		} else {
+			title = ScConstant.CAL_PREFIX + begin + ":00" + " - " + end + ":00";
+		}
+		calendar.setCalendarId(id);
+		calendar.setUserId(doctorId);
+		calendar.setTitle(title);
+		
+		if (scCalendarMapper.insert(calendar) == 1) {
+			return calendar;
+		} else {
+			return null;
+		}
 	}
 	
 	/**

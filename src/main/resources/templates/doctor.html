@@ -14,17 +14,17 @@
 	<!-- Template global css file. Requared all pages -->
 	<link rel="stylesheet" type="text/css" th:href="@{/css/global.style.css}">
 	<link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
-	<link rel="stylesheet" th:href="@{/css/Mdate.css}">
+	<link rel="stylesheet" th:href="@{/css/mescroll.min.css}">
 	<link rel="stylesheet" type="text/css" th:href="@{/css/jalendar.css}" />
-	<link rel="stylesheet" type="text/css" th:href="@{/css/timedropper.min.css}" />
-
+	<!-- <link rel="stylesheet" type="text/css" th:href="@{/css/timedropper.min.css}" /> -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-clockpicker.min.css}" />
 </head>
 
 <body>
 	<div class="wrapper">
 		<div class="nav-menu">
 			<nav class="menu">
-			<!-- Menu navigation start -->
+				<!-- Menu navigation start -->
 				<div class="nav-container menu-container">
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
@@ -33,7 +33,7 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">张三</h6>
+							<h6 class="text-muted menu-info">[[${user.userName}]]</h6>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -43,7 +43,14 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">男</h6>
+							<div th:switch="${user.sex}">
+								<div th:case="'0'">
+									<h6 class="text-muted menu-info">女</h6>
+								</div>
+								<div th:case="*">
+									<h6 class="text-muted menu-info">男</h6>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -53,7 +60,7 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">18888888888</h6>
+							<h6 class="text-muted menu-info">[[${user.phone}]]</h6>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -63,7 +70,7 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">区域管理员</h6>
+							<h6 class="text-muted menu-info">[[${user.roleName}]]</h6>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -73,7 +80,7 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">上海市-市辖区-徐汇区夙呈医生集团</h6>
+							<h6 class="text-muted menu-info">[[${user.deptName}]]</h6>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -83,13 +90,12 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">上海市-市辖区-徐汇区</h6>
+							<h6 class="text-muted menu-info">[[${user.districtName}]]</h6>
 						</div>
 					</div>
 					
 					<button class="button circle red block menu-logout">登出</button>
 				</div>
-				
 				<!-- Menu navigation end -->
 			</nav>
 		</div>
@@ -172,7 +178,7 @@
 							
 							<div class="form-mini-divider"></div> -->
 							
-							<div class="form-row-group with-icons">
+							<!-- <div class="form-row-group with-icons">
 								<div class="form-row no-padding">
 									<i class="fa fa-hourglass-start"></i>
 									<input id="picktime_begin" type="text" class="form-element" placeholder="开始时间">
@@ -188,10 +194,39 @@
 								</div>
 							</div>
 							
+							<div class="form-mini-divider"></div> -->
+							
+							<div class="form-row-group with-icons">
+								<div class="form-row no-padding clockpicker" data-placement="right" data-align="top" data-autoclose="true">
+									<i class="fa fa-hourglass-start"></i>
+									<input id="picktime_begin" type="text" class="form-element" data-autoclose="true" />
+								</div>
+							</div>
+							
 							<div class="form-mini-divider"></div>
 							
+							<div class="form-row-group with-icons">
+								<div class="form-row no-padding clockpicker">
+									<i class="fa fa-hourglass-end"></i>
+									<input id="picktime_end" type="text" class="form-element" data-autoclose="true" />
+								</div>
+							</div>
 							
-	
+							<div class="form-mini-divider"></div>
+							
+							<input id="timeBtn" type="text" style="display: none;" value="all" />
+							<div class="RadioStyle">
+								<div>
+									<input type="checkbox" id="am" class="radioCheck" />
+									<label for="am">上午</label>
+									<input type="checkbox" id="pm" class="radioCheck" />
+									<label for="pm">下午</label>
+									<input type="checkbox" id="all" class="radioCheck" checked />
+									<label for="all">全天</label>
+								</div>
+							</div>
+							
+							<div class="form-mini-divider"></div>
 						</div>
 						<div class="popup-footer">
 							<button class="button orange">提交</button>
@@ -219,20 +254,33 @@
 	<!-- Template global script file. requared all pages -->
 	<script th:src="@{/js/global.script.js}"></script>
 	<script th:src="@{/js/jalendar.min.js}" type="text/javascript" charset="utf-8"></script>
-	<script th:src="@{/js/timedropper.min.js}"></script>
+	<!-- <script th:src="@{/js/timedropper.min.js}"></script> -->
+	<script th:src="@{/js/bootstrap-clockpicker.min.js}"></script>
 	
 	<script type="text/javascript">
 		$(function() {
 			getDataList();
 			
-			$("#picktime_begin").timeDropper({
+			/* $("#picktime_begin").timeDropper({
 				meridians: false,
 				format: 'HH:mm',
+				setCurrentTime: false
 			});
 			
 			$("#picktime_end").timeDropper({
 				meridians: false,
 				format: 'HH:mm',
+				setCurrentTime: false
+			}); */
+			
+			$('#picktime_begin').clockpicker();
+			$('#picktime_end').clockpicker();
+			//禁止输入框唤起输入法
+			$("#picktime_begin").focus(function() {
+				document.activeElement.blur();
+			});
+			$("#picktime_end").focus(function() {
+				document.activeElement.blur();
 			});
 			
 			$(".orange").on("click", function() {
@@ -287,11 +335,70 @@
 			
 			/*备休信息删除*/
 			function deleteCalendar(id) {
-				$.post('/mp/calendar/del/' + id, {_method: "DELETE"}, function (data) {
+				$.post('/calendar/del/' + id, {_method: "DELETE"}, function (data) {
 					alert(data.msg);
 				});
 			}
 			
+			// 时间段按钮选择时与时间输入框的联动
+			$(".radioCheck").on('click', function() {
+				/*控制复选框只可选择一个*/
+				$(".radioCheck").removeAttr("checked");
+				$(this).prop("checked", true);
+				if ($(this).attr('id') == "am") {
+					$("#picktime_begin").val("08:30");
+					$("#picktime_end").val("12:00");
+					$("#timeBtn").val("am");
+				} else if ($(this).attr('id') == "pm") {
+					$("#picktime_begin").val("13:00");
+					$("#picktime_end").val("17:00");
+					$("#timeBtn").val("pm");
+				} else {
+					$("#picktime_begin").val("08:30");
+					$("#picktime_end").val("17:00");
+					$("#timeBtn").val("all");
+				}
+			});
+			
+			//时间输入框选择后与时间段按钮的联动
+			//监听时间变化
+			$("#picktime_begin").on("change", function() {
+				if (($("#picktime_begin").val() == "08:30") && ($("#picktime_end").val() == "12:00")) {
+					$(".radioCheck").removeAttr("checked");
+					$("#am").prop("checked", true);
+					$("#timeBtn").val("am");
+				} else if (($("#picktime_begin").val() == "13:00") && ($("#picktime_end").val() == "17:00")) {
+					$(".radioCheck").removeAttr("checked");
+					$("#pm").prop("checked", true);
+					$("#timeBtn").val("pm");
+				} else if (($("#picktime_begin").val() == "08:00") && ($("#picktime_end").val() == "17:00")) {
+					$(".radioCheck").removeAttr("checked");
+					$("#all").prop("checked", true);
+					$("#timeBtn").val("all");
+				} else {
+					$(".radioCheck").removeAttr("checked");
+					$("#timeBtn").val("");
+				}
+			});
+			$("#picktime_end").on("change", function() {
+				if (($("#picktime_begin").val() == "08:30") && ($("#picktime_end").val() == "12:00")) {
+					$(".radioCheck").removeAttr("checked");
+					$("#am").prop("checked", true);
+					$("#timeBtn").val("am");
+				} else if (($("#picktime_begin").val() == "13:00") && ($("#picktime_end").val() == "17:00")) {
+					$(".radioCheck").removeAttr("checked");
+					$("#pm").prop("checked", true);
+					$("#timeBtn").val("pm");
+				} else if (($("#picktime_begin").val() == "08:00") && ($("#picktime_end").val() == "17:00")) {
+					$(".radioCheck").removeAttr("checked");
+					$("#all").prop("checked", true);
+					$("#timeBtn").val("all");
+				} else {
+					$(".radioCheck").removeAttr("checked");
+					$("#timeBtn").val("");
+				}
+			});
+
 			$(".menu-logout").on("click", function() {
 				location.href = "logout";
 			});

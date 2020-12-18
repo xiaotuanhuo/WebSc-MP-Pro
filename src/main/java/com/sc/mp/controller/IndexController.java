@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -112,7 +113,7 @@ public class IndexController {
 		return retPage;
 	}
 	
-	@RequestMapping(value="/login", method=RequestMethod.POST)
+	@PostMapping(value="/login")
 	@ResponseBody
 	public ResultBean login(HttpServletRequest request) throws IOException {
 		HttpSession session = request.getSession();
@@ -164,6 +165,20 @@ public class IndexController {
 		List<WebScCalendar> calendars = userService.getCalendarsByDoctor(user);
 		PageInfo<WebScCalendar> infos = new PageInfo<>(calendars);
 		return new PageResultBean<>(infos.getTotal(), infos.getList());
+	}
+	
+	@PostMapping(value="/addCalendar")
+	@ResponseBody
+	public ResultBean addCalendar(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		WebScUser user = (WebScUser) session.getAttribute(session.getId());
+		String infoStr = request.getParameter("calendarInfo");
+		JSONObject calendarInfo = JSONObject.parseObject(infoStr);
+		WebScCalendar calendar = userService.addCalendar(calendarInfo, user.getUserId());
+		if (calendar == null) {
+			return ResultBean.error("添加备休失败");
+		}
+		return ResultBean.success(calendar); 
 	}
 	
 	@DeleteMapping("/calendar/del/{id}")

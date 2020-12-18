@@ -8,6 +8,7 @@ public class ResultBean implements Serializable {
 	public static final String FAIL = "0";
 	private String msg = "操作成功";
 	private String code = SUCCESS;
+	private Object data;
 	
 	private ResultBean() {
 		super();
@@ -18,12 +19,30 @@ public class ResultBean implements Serializable {
 		this.code = code;
 	}
 	
+	public ResultBean(String msg, Object data, String code) {
+        this.msg = msg;
+        this.data = data;
+        this.code = code;
+    }
+	
 	public static ResultBean success() {
 		return success("操作成功");
 	}
 	
 	public static ResultBean success(String msg) {
-		return new ResultBean(msg, SUCCESS);
+		return success(msg, null);
+	}
+	
+	public static ResultBean successData(Object data) {
+		return success("操作成功", data);
+	}
+	
+	public static ResultBean success(Object data) {
+		return success("操作成功", data);
+	}
+	
+	public static ResultBean success(String msg, Object data) {
+		return new ResultBean(msg, data, SUCCESS);
 	}
 	
 	public static ResultBean error(String msg) {
@@ -47,5 +66,13 @@ public class ResultBean implements Serializable {
 	
 	public void setCode(String code) {
 		this.code = code;
+	}
+	
+	public Object getData() {
+		return data;
+	}
+	
+	public void setData(Object data) {
+		this.data = data;
 	}
 }
