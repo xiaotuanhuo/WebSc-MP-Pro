@@ -14,8 +14,6 @@
 	<!-- Template global css file. Requared all pages -->
 	<link rel="stylesheet" type="text/css" th:href="@{/css/global.style.css}">
 	<link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
-	<!-- Link Swiper's CSS -->
-	<link rel="stylesheet" th:href="@{/css/swiper.min.css}">
 	<!-- <link rel="stylesheet" th:href="@{/css/animate.min.css}"> -->
 	<link rel="stylesheet" th:href="@{/css/mescroll.min.css}">
 	<link rel="stylesheet" th:href="@{/css/Mdate.css}">
@@ -120,89 +118,53 @@
 					</div>
 				</div>
 				
+				<section class="bal-section container">
+					<div class="trader-info">
+						<ul class="trader-info-list list-unstyled">
+							<li>
+								<div class="profile1"></div>
+								<h2>3</h2>
+								<small class="txt-muted">日手术量</small>
+							</li>
+							<li>
+								<div class="profile2"></div>
+								<h2>50</h2>
+								<small class="txt-muted">月手术量</small>
+							</li>
+							<li>
+								<div class="profile3"></div>
+								<h2>283</h2>
+								<small class="txt-muted">年手术量</small>
+							</li>
+						</ul>
+					</div>
+				</section>
+				
 				<!-- charts start -->
-				<section class="bal-section container refer">
-					<!-- Swiper -->
-					<div class="swiper-container">
-						<div class="swiper-wrapper">
-							<div class="swiper-slide">
-								<div class="chart-body">
-							    	<div class="chart-head purp">
-										<div class="d-flex align-items-center">
-										    <div class="d-flex flex-grow">
-										        <div class="mr-auto">
-										        	<h3 class="w-text mt-0 mb-0 chart-title">近7日</h3>
-										        </div>
-										        <div class="ref-bouns">
-										            <h6 class="mt-0 chart-star">3</h6>
-										            <small>今日</small>
-										        </div>
-										    </div>
-										</div>
-									</div>
-									<div class="row align-items-center chart-content">
-										<div class="col-12">
-											<div class="advertising-wrapper">
-												<canvas id="container1" class="chart-container"></canvas>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							
-							<div class="swiper-slide">
-								<div class="chart-body">
-							    	<div class="chart-head purp">
-										<div class="d-flex align-items-center">
-										    <div class="d-flex flex-grow">
-										        <div class="mr-auto">
-										        	<h5 class="w-text mt-0 mb-0 chart-title">近30日</h5>
-										        </div>
-										        <div class="ref-bouns">
-										            <h3 class="mt-0 chart-star">52</h3>
-										            <small>本月</small>
-										        </div>
-										    </div>
-										</div>
-									</div>
-									<div class="row align-items-center chart-content">
-										<div class="col-12">
-											<div class="advertising-wrapper">
-												<canvas id="container2" class="chart-container"></canvas>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							
-							<div class="swiper-slide">
-								<div class="chart-body">
-							    	<div class="chart-head purp">
-										<div class="d-flex align-items-center">
-										    <div class="d-flex flex-grow">
-										        <div class="mr-auto">
-										        	<h5 class="w-text mt-0 mb-0 chart-title">本年度</h5>
-										        </div>
-										        <div class="ref-bouns">
-										            <h3 class="mt-0 chart-star">666</h3>
-										            <small>当年</small>
-										        </div>
-										    </div>
-										</div>
-									</div>
-									<div class="row align-items-center chart-content">
-										<div class="col-12">
-											<div class="advertising-wrapper">
-												<canvas id="container3"class="chart-container"></canvas>
-											</div>
-										</div>
-									</div>
+				<section class="section container refer">
+					<div class="chart-body">
+						<div class="row align-items-center chart-content">
+							<div class="col-12">
+								<div class="advertising-wrapper">
+									<canvas id="container" class="chart-container"></canvas>
 								</div>
 							</div>
 						</div>
-						
-						<!-- Add Pagination -->
-						<div class="swiper-pagination"></div>
+					</div>
+				</section>
+				
+				<!-- charts area end -->
+				
+				<!-- charts start -->
+				<section class="section container refer">
+					<div class="chart-body">
+						<div class="row align-items-center chart-content">
+							<div class="col-12">
+								<div class="advertising-wrapper">
+									<canvas id="container2" class="chart-container"></canvas>
+								</div>
+							</div>
+						</div>
 					</div>
 				</section>
 				
@@ -338,11 +300,9 @@
 	
 	<!-- JQuery library file. requared all pages -->
 	<script th:src="@{/js/jquery.min.js}"></script>
-	<!-- Swiper JS -->
-    <script th:src="@{/js/swiper.min.js}"></script>
     <!-- <script th:src="@{/js/swiper.animate.min.js}"></script> -->
 	<!-- F2 阿里可视化插件 -->
-	<script src="https://gw.alipayobjects.com/os/lib/antv/f2/3.7.0/dist/f2.min.js"></script>
+	<script src="https://gw.alipayobjects.com/os/lib/antv/f2/3.7.3/dist/f2-all.min.js"></script>
 	
 	<!-- 下拉刷新 下拉加载插件 -->
 	<script th:src="@{/js/mescroll.min.js}"></script>		
@@ -361,303 +321,231 @@
 			window.location.href = "/mp/more";
 		});
 		
-		var swiper = new Swiper('.swiper-container', {
-			pagination : '.swiper-pagination'
-		});
-
-		const data = [ {
-			time : '11.23',
-			value : 5
+		const data = [{
+			month : '1',
+			year : '2019',
+			temperature : 7
 		}, {
-			time : '11.24',
-			value : 4
+			month : '1',
+			year : '2020',
+			temperature : 3.9
 		}, {
-			time : '11.25',
-			value : 5
+			month : '2',
+			year : '2019',
+			temperature : 6.9
 		}, {
-			time : '11.26',
-			value : 7
+			month : '2',
+			year : '2020',
+			temperature : 4.2
 		}, {
-			time : '11.27',
-			value : 6
+			month : '3',
+			year : '2019',
+			temperature : 9.5
 		}, {
-			time : '11.28',
-			value : 4
+			month : '3',
+			year : '2020',
+			temperature : 5.7
 		}, {
-			time : '11.29',
-			value : 3
-		} ];
-
-		const data2 = [ {
-			time : '31',
-			value : 3
+			month : '4',
+			year : '2019',
+			temperature : 14.5
 		}, {
-			time : '1',
-			value : 1
+			month : '4',
+			year : '2020',
+			temperature : 8.5
 		}, {
-			time : '2',
-			value : 1
+			month : '5',
+			year : '2019',
+			temperature : 18.4
 		}, {
-			time : '3',
-			value : 4
+			month : '5',
+			year : '2020',
+			temperature : 11.9
 		}, {
-			time : '4',
-			value : 5
+			month : '6',
+			year : '2019',
+			temperature : 21.5
 		}, {
-			time : '5',
-			value : 3
+			month : '6',
+			year : '2020',
+			temperature : 15.2
 		}, {
-			time : '6',
-			value : 2
+			month : '7',
+			year : '2019',
+			temperature : 25.2
 		}, {
-			time : '7',
-			value : 2
+			month : '7',
+			year : '2020',
+			temperature : 17
 		}, {
-			time : '8',
-			value : 5
+			month : '8',
+			year : '2019',
+			temperature : 26.5
 		}, {
-			time : '9',
-			value : 1
+			month : '8',
+			year : '2020',
+			temperature : 16.6
 		}, {
-			time : '10',
-			value : 5
+			month : '9',
+			year : '2019',
+			temperature : 23.3
 		}, {
-			time : '11',
-			value : 3
+			month : '9',
+			year : '2020',
+			temperature : 14.2
 		}, {
-			time : '12',
-			value : 5
+			month : '10',
+			year : '2019',
+			temperature : 18.3
 		}, {
-			time : '13',
-			value : 4
+			month : '10',
+			year : '2020',
+			temperature : 10.3
 		}, {
-			time : '14',
-			value : 6
+			month : '11',
+			year : '2019',
+			temperature : 13.9
 		}, {
-			time : '15',
-			value : 8
+			month : '11',
+			year : '2020',
+			temperature : 6.6
 		}, {
-			time : '16',
-			value : 5
+			month : '12',
+			year : '2019',
+			temperature : 9.6
 		}, {
-			time : '17',
-			value : 1
-		}, {
-			time : '18',
-			value : 5
-		}, {
-			time : '19',
-			value : 3
-		}, {
-			time : '20',
-			value : 3
-		}, {
-			time : '21',
-			value : 4
-		}, {
-			time : '22',
-			value : 6
-		}, {
-			time : '23',
-			value : 5
-		}, {
-			time : '24',
-			value : 2
-		}, {
-			time : '25',
-			value : 5
-		}, {
-			time : '26',
-			value : 7
-		}, {
-			time : '27',
-			value : 1
-		}, {
-			time : '28',
-			value : 4
-		}, {
-			time : '29',
-			value : 3
-		} ];
-
-		const data3 = [ {
-			time : '1',
-			value : 45
-		}, {
-			time : '2',
-			value : 53
-		}, {
-			time : '3',
-			value : 34
-		}, {
-			time : '4',
-			value : 64
-		}, {
-			time : '5',
-			value : 61
-		}, {
-			time : '6',
-			value : 22
-		}, {
-			time : '7',
-			value : 50
-		}, {
-			time : '8',
-			value : 47
-		}, {
-			time : '9',
-			value : 41
-		}, {
-			time : '10',
-			value : 49
-		}, {
-			time : '11',
-			value : 53
-		}, {
-			time : '12',
-			value : null
-		} ];
+			month : '12',
+			year : '2020',
+			temperature : null
+		}];
 		const chart = new F2.Chart({
-			id : 'container1',
+			id : 'container',
 			pixelRatio : window.devicePixelRatio
 		});
-
-		chart.source(data, {
-			value : {
-				tickCount : 5,
-				min : 0
-			},
-			day : {
-				range : [ 0, 1 ]
-			}
-		});
+		chart.source(data);
 		chart.tooltip({
-			custom : true,
-			triggerOn : [ 'touchstart', 'touchmove' ],
-			triggerOff : 'touchend',
-			showXTip : true,
-			showYTip : true,
-			snap : true,
-			crosshairsType : 'xy',
-			crosshairsStyle : {
-				lineDash : [2]
+			showCrosshairs : true
+		});
+		chart.legend({
+			align: 'center',
+			marker: function marker(x, y, r, ctx) {
+				ctx.lineWidth = 1;
+				ctx.strokeStyle = ctx.fillStyle;
+				ctx.moveTo(x - r - 3, y);
+				ctx.lineTo(x + r + 3, y);
+				ctx.stroke();
+				ctx.arc(x, y, r, 0, Math.PI * 2, false);
+				ctx.fill();
 			}
 		});
-		chart.axis('time', {
-			label : function label(text, index, total) {
-				const textCfg = {};
-				if (index === 0) {
-					textCfg.textAlign = 'left';
-				} else if (index === total - 1) {
-					textCfg.textAlign = 'right';
-				}
-				return textCfg;
-			}
-		});
-		chart.scale('value', {
-			alias : '手术量'
-		});
-		chart.line().position('time*value').color('#6495ED');;
-		chart.point().position('time*value').style({
-			stroke : '#fff',
-			lineWidth : 1
+		chart.line().position('month*temperature').color('year');
+		chart.point().position('month*temperature').color('year').style({
+			lineWidth : 1,
+			stroke : '#fff'
 		});
 		chart.render();
-
-		const chart2 = new F2.Chart({
-			id : 'container2',
-			pixelRatio : window.devicePixelRatio
-		});
-
-		chart2.source(data2, {
-			value : {
-				tickCount : 5,
-				min : 0
-			},
-			day : {
-				range : [ 0, 1 ]
-			}
-		});
-		chart2.tooltip({
-			custom : true,
-			triggerOn : [ 'touchstart', 'touchmove' ],
-			triggerOff : 'touchend',
-			showXTip : true,
-			showYTip : true,
-			snap : true,
-			crosshairsType : 'xy',
-			crosshairsStyle : {
-				lineDash : [ 2 ]
-			}
-		});
-		chart2.axis('time', {
-			label : function label(text, index, total) {
-				const textCfg = {};
-				if (index === 0) {
-					textCfg.textAlign = 'left';
-				} else if (index === total - 1) {
-					textCfg.textAlign = 'right';
-				}
-				return textCfg;
-			}
-		});
-		chart2.scale('value', {
-			alias : '手术量'
-		});
-		chart2.line().position('time*value').color('#6495ED');
-		chart2.point().position('time*value').style({
-			stroke : '#fff',
-			lineWidth : 1
-		});
-		chart2.render();
-
-		const chart3 = new F2.Chart({
-			id : 'container3',
-			pixelRatio : window.devicePixelRatio
-		});
-
-		chart3.source(data3, {
-			value : {
-				tickCount : 5,
-				min : 0
-			},
-			day : {
-				range : [ 0, 1 ]
-			}
-		});
-		chart3.tooltip({
-			custom : true,
-			triggerOn : [ 'touchstart', 'touchmove' ],
-			triggerOff : 'touchend',
-			showXTip : true,
-			showYTip : true,
-			snap : true,
-			crosshairsType : 'xy',
-			crosshairsStyle : {
-				lineDash : [ 2 ]
-			}
-		});
-		chart3.axis('time', {
-			label : function label(text, index, total) {
-				const textCfg = {};
-				if (index === 0) {
-					textCfg.textAlign = 'left';
-				} else if (index === total - 1) {
-					textCfg.textAlign = 'right';
-				}
-				return textCfg;
-			}
-		});
-		chart3.scale('value', {
-			alias : '手术量'
-		});
-		chart3.line().position('time*value').color('#6495ED');
-		chart3.point().position('time*value').style({
-			stroke : '#fff',
-			lineWidth : 1
-		});
-		chart3.render();
 		
+		
+		
+		
+		
+		const data2 = [{
+			amount: 20,
+			ratio: 0.1,
+			memo: '学习',
+			const: 'const'
+		}, {
+			amount: 100,
+			ratio: 0.5,
+			memo: '睡觉',
+			const: 'const'
+		}, {
+			amount: 10,
+			ratio: 0.05,
+			memo: '吃饭',
+			const: 'const'
+		}, {
+			amount: 30,
+			ratio: 0.15,
+			memo: '讲礼貌',
+			const: 'const'
+		}, {
+			amount: 10,
+			ratio: 0.05,
+			memo: '其他',
+			const: 'const'
+			}, {
+			amount: 20,
+			ratio: 0.1,
+			memo: '运动',
+			const: 'const'
+		}, {
+			amount: 10,
+			ratio: 0.05,
+			memo: '暂无备注',
+			const: 'const'
+		}];
+		
+		const chart2 = new F2.Chart({
+			id: 'container2',
+			pixelRatio: window.devicePixelRatio
+		});
+
+		chart2.source(data2);
+		chart2.coord('polar', {
+			transposed: true,
+			innerRadius: 0.4,
+			radius: 0.75
+		});
+		chart2.axis(false);
+		chart2.legend({
+			position: 'bottom',
+			align: 'center'
+		});
+		chart2.tooltip(false);
+		chart2.guide().html({
+			position: [ '50%', '50%' ],
+			html: '<div style="width: 100px;height: 20px;text-align: center;line-height: 20px;" id="textContent"></div>'
+		});
+		// 配置文本饼图
+		chart2.pieLabel({
+			sidePadding: 75,
+			label1: function label1(data2) {
+				return {
+					text: data2.memo,
+					fill: '#808080'
+				};
+			},
+			label2: function label2(data2) {
+				return {
+					fill: '#000000',
+					text: '$' + data2.amount.toFixed(2),
+					fontWeight: 500,
+					fontSize: 10
+				};
+			}
+		});
+		chart2.interval().position('const*ratio').color('memo', [ '#1890FF', '#13C2C2', '#2FC25B', '#FACC14', '#F04864', '#8543E0', '#3436C7', '#223273' ]).adjust('stack');
+		chart2.render();
+		
+		// 绘制内阴影
+		const frontPlot = chart.get('frontPlot');
+		const coord = chart.get('coord'); // 获取坐标系对象
+		frontPlot.addShape('sector', {
+			attrs: {
+				x: coord.center.x,
+				y: coord.center.y,
+				r: coord.circleRadius * coord.innerRadius * 1.2, // 全半径
+				r0: coord.circleRadius * coord.innerRadius,
+				fill: '#000',
+				opacity: 0.15
+			}
+		});
+		chart2.get('canvas').draw();
+			
+			
+			
+			
 		$("#dateSelector_begin").focus(function() {
 			document.activeElement.blur();
 		});
@@ -667,9 +555,9 @@
 		});
 		new Mdate("dateSelector_end");
 		$("#distpicker11").distpicker({
-			autoSelect: false
+			autoSelect : false
 		});
-		
+
 		$(".menu-logout").on("click", function() {
 			location.href = "logout";
 		});

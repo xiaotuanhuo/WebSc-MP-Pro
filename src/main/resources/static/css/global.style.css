@@ -3108,9 +3108,12 @@ ul.income-list li {
     width: 33.3333%;
 }
 
-.trader-info{
+.trader-info-copy{
 	text-align: center;
 	padding: 20px 10px 0;
+}
+.trader-info{
+	text-align: center;
 }
 .trader-info h3{
 	font-size: 18px;
@@ -3123,7 +3126,8 @@ ul.income-list li {
 .trader-info-list{
     background: #fff;
     border-bottom: 1px solid #eee;
-    padding-bottom: 15px;
+    padding: 15px 0;
+    border-radius: 3px;
 }
 .trader-info-list li{
 	width: 32%;
