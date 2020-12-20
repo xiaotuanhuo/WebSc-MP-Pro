@@ -159,7 +159,7 @@ public class IndexController {
 	@ResponseBody
 	public ResultBean addCalendar(HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		WebScUser user = (WebScUser) session.getAttribute(session.getId());
+		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
 		String infoStr = request.getParameter("calendarInfo");
 		JSONObject calendarInfo = JSONObject.parseObject(infoStr);
 		WebScCalendar calendar = userService.addCalendar(calendarInfo, user.getUserId());
@@ -173,7 +173,7 @@ public class IndexController {
 	@ResponseBody
 	public ResultBean delCalendar(HttpServletRequest request, @PathVariable("id") String calendarId) {
 		HttpSession session = request.getSession();
-		WebScUser user = (WebScUser) session.getAttribute(session.getId());
+		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
 		if (userService.deleteCalendar(user, calendarId)) {
 			return ResultBean.success("删除成功");
 		} else {

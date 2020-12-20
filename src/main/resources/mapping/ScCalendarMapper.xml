@@ -56,8 +56,8 @@
     select 
     calendar_id,
     title,
-    DATE_FORMAT(start_time, '%Y-%m-%d') as day
-    from WSC_CALENDAR where user_id = #{userId, jdbcType=INTEGER} and start_time like CONCAT(DATE_FORMAT(NOW(), '%Y-%m'), '%')
+    DATE_FORMAT(start_time, '%Y-%c-%e') as day
+    from WSC_CALENDAR where user_id = #{userId, jdbcType=INTEGER} and start_time <![CDATA[ >= ]]> DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S')
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from WSC_CALENDAR

@@ -13,9 +13,11 @@
 <title>登录</title>
 
 <style type="text/css">
+
 body {
 	background-image: linear-gradient(#1E90FF,#8470FF);
-	color: #D5D6E2;
+	#color: #D5D6E2;
+	color: #FF0000;
 	font-weight: 500;
 	font-size: 1.05em;
 	font-family: "Microsoft YaHei", "Segoe UI", "Lucida Grande", Helvetica,
@@ -36,6 +38,10 @@ body {
 	padding: 35px 0;
 	border-bottom: 1px solid #f0f0f0;
 	margin-bottom: 30px;
+}
+
+.form-horizontal span {
+	color: #D5D6E2;
 }
 
 .form-horizontal .form-group {
@@ -67,10 +73,6 @@ body {
 	font-size: 17px;
 	color: #c8c8c8;
 	transition: all 0.5s ease 0s;
-}
-
-.form-horizontal .form-control:focus+i {
-	color: #00b4ef;
 }
 
 .form-horizontal .fa-question-circle {
@@ -204,7 +206,8 @@ body {
 	<script th:src="@{/js/jquery.validationEngine.js}"></script>
 	<script type="text/javascript">
 		$('#loginForm').validationEngine({
-			maxErrorsPerField: 1
+			maxErrorsPerField: 1,
+			focusFirstField: false
 		});
 	</script>
 

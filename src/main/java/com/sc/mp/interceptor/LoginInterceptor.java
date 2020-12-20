@@ -31,15 +31,14 @@ public class LoginInterceptor implements HandlerInterceptor {
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
-		WebScUser user = (WebScUser) request.getSession().getAttribute(ScConstant.USER_SESSION_KEY);
-		System.out.println("afterCompletion----" + user.getUserId() + " ::: " + request.getRequestURL());
+//		WebScUser user = (WebScUser) request.getSession().getAttribute(ScConstant.USER_SESSION_KEY);
+//		System.out.println("afterCompletion----" + user.getUserId() + " ::: " + request.getRequestURL());
 	}
 	
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-		WebScUser user = (WebScUser) request.getSession().getAttribute(ScConstant.USER_SESSION_KEY);
-		System.out.println("postHandle----" + user.getUserId() + " ::: " + request.getRequestURL());
-
+//		WebScUser user = (WebScUser) request.getSession().getAttribute(ScConstant.USER_SESSION_KEY);
+//		System.out.println("postHandle----" + user.getUserId() + " ::: " + request.getRequestURL());
 	}
 }
