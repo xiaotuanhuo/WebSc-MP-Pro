@@ -1,6 +1,7 @@
 package com.sc.mp.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
+import com.sc.mp.bean.MonthCount;
 import com.sc.mp.bean.PageResultBean;
 import com.sc.mp.bean.ResultBean;
 import com.sc.mp.model.WebScCalendar;
@@ -90,7 +92,7 @@ public class IndexController {
 			return "redirect:/index";
 		} else {
 			session.invalidate();
-			model.addAttribute("msg", "用户名或者密码错误");
+			model.addAttribute("msg", ScConstant.USER_ERROR);
 			return "login";
 		}
 	}
@@ -109,12 +111,15 @@ public class IndexController {
 		String retPage = loginPage;
 		if (user.getRoleId().equals(superRoleId)) {
 			retPage = superPage;
+			// 统计年月日手术量
+			Map<String, Integer> map = userService.statsYMD();
+			model.addAttribute("statsYMD", map);
 		} else if (user.getRoleId().equals(regionalRoleId)) {
 			retPage = regionalPage;
 		} else if (user.getRoleId().equals(doctorRoleId)) {
 			retPage = doctorPage;
 		} else {
-			retPage = "403";
+			model.addAttribute("msg", ScConstant.NO_AUTH);
 		}
 		model.addAttribute("user", user);
 		return retPage;
@@ -135,7 +140,6 @@ public class IndexController {
 			@RequestParam(value = "limit", defaultValue = "10") int limit,
 			@RequestParam(value = "date", required = false) String date) {
 		HttpSession session = request.getSession();
-		log.info("getList()___sessionId=" + session.getId());
 		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
 		List<WebScCalendar> calendars = userService.getCalendars(page, limit, date, user);
 		PageInfo<WebScCalendar> infos = new PageInfo<>(calendars);
@@ -179,6 +183,13 @@ public class IndexController {
 		} else {
 			return ResultBean.error("删除失败");
 		}
+	}
+	
+	@RequestMapping("/statsMonths")
+	@ResponseBody
+	public ResultBean statsMonths() {
+		List<MonthCount> monthCounts = userService.statsByYear();
+		return ResultBean.success(monthCounts);
 	}
 
 }

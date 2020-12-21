@@ -3,8 +3,11 @@ package com.sc.mp.service;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -14,7 +17,9 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
+import com.sc.mp.bean.MonthCount;
 import com.sc.mp.mapper.DeptMapper;
+import com.sc.mp.mapper.DocMapper;
 import com.sc.mp.mapper.RoleMapper;
 import com.sc.mp.mapper.ScCalendarMapper;
 import com.sc.mp.mapper.UserMapper;
@@ -42,11 +47,8 @@ public class UserService {
 	@Resource
 	private ScCalendarMapper scCalendarMapper;
 	
-	public String test() {
-		log.info("test......");
-		WebScUser user = userMapper.selectByPrimaryKey(1);
-		return user.getLoginName();
-	}
+	@Resource
+	private DocMapper docMapper;
 	
 	public WebScUser selectUserInfo(WebScUser user) {
 		return userMapper.selectUserInfo(user);
@@ -97,10 +99,10 @@ public class UserService {
 			DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			date = format.format(new Date());
 		}
-		if (user == null) {
-			log.info("session已过期");
-			return null;
-		}
+//		if (user == null) {
+//			log.info("session已过期");
+//			return null;
+//		}
 		return scCalendarMapper.selectCalendarsByDate(date, user);
 	}
 	
@@ -119,6 +121,12 @@ public class UserService {
 		return calendars;
 	}
 	
+	/**
+	 * 新增备休信息
+	 * @param calendarInfo
+	 * @param doctorId
+	 * @return
+	 */
 	public WebScCalendar addCalendar(JSONObject calendarInfo, Integer doctorId) {
 		WebScCalendar calendar = new WebScCalendar();
 		String id = UUID19.uuid();
@@ -164,5 +172,28 @@ public class UserService {
 			// TODO
 		}
 		return scCalendarMapper.deleteByPrimaryKey(calendarId) == 1;
+	}
+	
+	/**
+	 * 年月日手术量统计
+	 */
+	public Map<String, Integer> statsYMD() {
+		Map<String, Integer> statsMap = new HashMap<String, Integer>();
+		int daySum = docMapper.statsDay();
+		int monthSum = docMapper.statsMonth();
+		int yearSum = docMapper.statsYear();
+		statsMap.put("day", daySum);
+		statsMap.put("month", monthSum);
+		statsMap.put("year", yearSum);
+		return statsMap;
+	}
+	
+	public List<MonthCount> statsByYear() {
+		Calendar cal = Calendar.getInstance();
+		int thisYear = cal.get(Calendar.YEAR);	// 今年
+		int lastYear = thisYear - 1;	// 去年
+		int beforeLastYear = thisYear - 2;	// 前年
+		List<MonthCount> monthCounts = docMapper.statsByYear(thisYear, lastYear, beforeLastYear);
+		return monthCounts;
 	}
 }

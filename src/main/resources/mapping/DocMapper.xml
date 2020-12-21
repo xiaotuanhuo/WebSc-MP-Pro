@@ -614,4 +614,77 @@
       		and user_name = #{userName,jdbcType=VARCHAR} 
       	</if>
     </select>
+    
+    <select id="statsDay" resultType="Integer">
+    	select
+           count(1) as count
+        from WSC_DOCUMENT
+        where operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(),"%Y-%m-%d"), "%")
+    </select>
+    
+    <select id="statsMonth" resultType="Integer">
+    	select
+            count(1) as count
+        from WSC_DOCUMENT
+        where operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(),"%Y-%m"), "%")
+    </select>
+    
+    <select id="statsYear" resultType="Integer">
+    	select
+            count(1) as count
+        from WSC_DOCUMENT
+        where operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(),"%Y"), "%")
+    </select>
+    
+    <select id="statsByYear" parameterType="java.lang.Integer" resultType="com.sc.mp.bean.MonthCount">
+    	select 
+    	    MID(monthList.leftMonth, 1, 4) as year,
+    	    MID(monthList.leftMonth, 6, 2) as month,
+    	    ifnull(doc.num, 0) as count
+    	from 
+    	    (
+    	        SELECT CONCAT(#{thisYear,jdbcType=INTEGER},'-01') AS leftMonth UNION
+    	        SELECT CONCAT(#{thisYear,jdbcType=INTEGER},'-02') AS leftMonth UNION
+    	        SELECT CONCAT(#{thisYear,jdbcType=INTEGER},'-03') AS leftMonth UNION
+    	        SELECT CONCAT(#{thisYear,jdbcType=INTEGER},'-04') AS leftMonth UNION
+    	        SELECT CONCAT(#{thisYear,jdbcType=INTEGER},'-05') AS leftMonth UNION
+    	        SELECT CONCAT(#{thisYear,jdbcType=INTEGER},'-06') AS leftMonth UNION
+    	        SELECT CONCAT(#{thisYear,jdbcType=INTEGER},'-07') AS leftMonth UNION
+    	        SELECT CONCAT(#{thisYear,jdbcType=INTEGER},'-08') AS leftMonth UNION
+    	        SELECT CONCAT(#{thisYear,jdbcType=INTEGER},'-09') AS leftMonth UNION
+    	        SELECT CONCAT(#{thisYear,jdbcType=INTEGER},'-10') AS leftMonth UNION
+    	        SELECT CONCAT(#{thisYear,jdbcType=INTEGER},'-11') AS leftMonth UNION
+    	        SELECT CONCAT(#{thisYear,jdbcType=INTEGER},'-12') AS leftMonth UNION
+    	        SELECT CONCAT(#{lastYear,jdbcType=INTEGER},'-01') AS leftMonth UNION
+    	        SELECT CONCAT(#{lastYear,jdbcType=INTEGER},'-02') AS leftMonth UNION
+    	        SELECT CONCAT(#{lastYear,jdbcType=INTEGER},'-03') AS leftMonth UNION
+    	        SELECT CONCAT(#{lastYear,jdbcType=INTEGER},'-04') AS leftMonth UNION
+    	        SELECT CONCAT(#{lastYear,jdbcType=INTEGER},'-05') AS leftMonth UNION
+    	        SELECT CONCAT(#{lastYear,jdbcType=INTEGER},'-06') AS leftMonth UNION
+    	        SELECT CONCAT(#{lastYear,jdbcType=INTEGER},'-07') AS leftMonth UNION
+    	        SELECT CONCAT(#{lastYear,jdbcType=INTEGER},'-08') AS leftMonth UNION
+    	        SELECT CONCAT(#{lastYear,jdbcType=INTEGER},'-09') AS leftMonth UNION
+    	        SELECT CONCAT(#{lastYear,jdbcType=INTEGER},'-10') AS leftMonth UNION
+    	        SELECT CONCAT(#{lastYear,jdbcType=INTEGER},'-11') AS leftMonth UNION
+    	        SELECT CONCAT(#{lastYear,jdbcType=INTEGER},'-12') AS leftMonth UNION
+    	        SELECT CONCAT(#{beforeLastYear,jdbcType=INTEGER},'-01') AS leftMonth UNION
+    	        SELECT CONCAT(#{beforeLastYear,jdbcType=INTEGER},'-02') AS leftMonth UNION
+    	        SELECT CONCAT(#{beforeLastYear,jdbcType=INTEGER},'-03') AS leftMonth UNION
+    	        SELECT CONCAT(#{beforeLastYear,jdbcType=INTEGER},'-04') AS leftMonth UNION
+    	        SELECT CONCAT(#{beforeLastYear,jdbcType=INTEGER},'-05') AS leftMonth UNION
+    	        SELECT CONCAT(#{beforeLastYear,jdbcType=INTEGER},'-06') AS leftMonth UNION
+    	        SELECT CONCAT(#{beforeLastYear,jdbcType=INTEGER},'-07') AS leftMonth UNION
+    	        SELECT CONCAT(#{beforeLastYear,jdbcType=INTEGER},'-08') AS leftMonth UNION
+    	        SELECT CONCAT(#{beforeLastYear,jdbcType=INTEGER},'-09') AS leftMonth UNION
+    	        SELECT CONCAT(#{beforeLastYear,jdbcType=INTEGER},'-10') AS leftMonth UNION
+    	        SELECT CONCAT(#{beforeLastYear,jdbcType=INTEGER},'-11') AS leftMonth UNION
+    	        SELECT CONCAT(#{beforeLastYear,jdbcType=INTEGER},'-12') AS leftMonth
+    	    ) monthList
+    	left join
+    	    (select count(1) as num, DATE_FORMAT(NOW(), '%Y-%m') rightMonth from WSC_DOCUMENT) doc
+    	    on monthList.leftMonth = doc.rightMonth
+    	    where monthList.leftMonth <![CDATA[ <= ]]> DATE_FORMAT(NOW(), '%Y-%m')
+    	    order by monthList.leftMonth
+    </select>
+    
 </mapper>

@@ -123,17 +123,17 @@
 						<ul class="trader-info-list list-unstyled">
 							<li>
 								<div class="profile1"></div>
-								<h2>3</h2>
+								<h2>[[${statsYMD.day}]]</h2>
 								<small class="txt-muted">日手术量</small>
 							</li>
 							<li>
 								<div class="profile2"></div>
-								<h2>50</h2>
+								<h2>[[${statsYMD.month}]]</h2>
 								<small class="txt-muted">月手术量</small>
 							</li>
 							<li>
 								<div class="profile3"></div>
-								<h2>283</h2>
+								<h2>[[${statsYMD.year}]]</h2>
 								<small class="txt-muted">年手术量</small>
 							</li>
 						</ul>
@@ -317,188 +317,72 @@
 	<script th:src="@{/js/main.js}"></script>
 	
 	<script type="text/javascript">
+		$(document).ready(function() {
+			drawMonthCount();
+			drawTopProvince();
+		});
+	
 		$('#moreBtn').on("click", function() {
 			window.location.href = "/mp/more";
 		});
 		
-		const data = [{
-			month : '1',
-			year : '2018',
-			temperature : 0
-		},{
-			month : '1',
-			year : '2019',
-			temperature : 7
-		}, {
-			month : '1',
-			year : '2020',
-			temperature : 3.9
-		}, {
-			month : '2',
-			year : '2018',
-			temperature : 0
-		},{
-			month : '2',
-			year : '2019',
-			temperature : 6.9
-		}, {
-			month : '2',
-			year : '2020',
-			temperature : 4.2
-		}, {
-			month : '3',
-			year : '2018',
-			temperature : 0
-		},{
-			month : '3',
-			year : '2019',
-			temperature : 9.5
-		}, {
-			month : '3',
-			year : '2020',
-			temperature : 5.7
-		}, {
-			month : '4',
-			year : '2018',
-			temperature : 0
-		},{
-			month : '4',
-			year : '2019',
-			temperature : 14.5
-		}, {
-			month : '4',
-			year : '2020',
-			temperature : 8.5
-		}, {
-			month : '5',
-			year : '2018',
-			temperature : 0
-		},{
-			month : '5',
-			year : '2019',
-			temperature : 18.4
-		}, {
-			month : '5',
-			year : '2020',
-			temperature : 11.9
-		}, {
-			month : '6',
-			year : '2018',
-			temperature : 0
-		},{
-			month : '6',
-			year : '2019',
-			temperature : 21.5
-		}, {
-			month : '6',
-			year : '2020',
-			temperature : 15.2
-		}, {
-			month : '7',
-			year : '2018',
-			temperature : 0
-		},{
-			month : '7',
-			year : '2019',
-			temperature : 25.2
-		}, {
-			month : '7',
-			year : '2020',
-			temperature : 17
-		}, {
-			month : '8',
-			year : '2018',
-			temperature : 0
-		},{
-			month : '8',
-			year : '2019',
-			temperature : 26.5
-		}, {
-			month : '8',
-			year : '2020',
-			temperature : 16.6
-		}, {
-			month : '9',
-			year : '2018',
-			temperature : 0
-		},{
-			month : '9',
-			year : '2019',
-			temperature : 23.3
-		}, {
-			month : '9',
-			year : '2020',
-			temperature : 14.2
-		}, {
-			month : '10',
-			year : '2018',
-			temperature : 0
-		},{
-			month : '10',
-			year : '2019',
-			temperature : 18.3
-		}, {
-			month : '10',
-			year : '2020',
-			temperature : 10.3
-		}, {
-			month : '11',
-			year : '2018',
-			temperature : 0
-		},{
-			month : '11',
-			year : '2019',
-			temperature : 13.9
-		}, {
-			month : '11',
-			year : '2020',
-			temperature : 6.6
-		}, {
-			month : '12',
-			year : '2018',
-			temperature : 0
-		},{
-			month : '12',
-			year : '2019',
-			temperature : 9.6
-		}, {
-			month : '12',
-			year : '2020',
-			temperature : null
-		}];
-		const chart = new F2.Chart({
-			id : 'container',
-			pixelRatio : window.devicePixelRatio
-		});
-		chart.source(data);
-		chart.tooltip({
-			showTitle: true,
-			showCrosshairs : true
-		});
-		chart.legend({
-			align: 'center',
-			marker: function marker(x, y, r, ctx) {
-				ctx.lineWidth = 1;
-				ctx.strokeStyle = ctx.fillStyle;
-				ctx.moveTo(x - r - 3, y);
-				ctx.lineTo(x + r + 3, y);
-				ctx.stroke();
-				ctx.arc(x, y, r, 0, Math.PI * 2, false);
-				ctx.fill();
-			}
-		});
-		chart.line().position('month*temperature').color('year');
-		chart.point().position('month*temperature').color('year').style({
-			lineWidth : 1,
-			stroke : '#fff'
-		});
-		chart.render();
+		/* 近3年每月手术统计 */
+		function drawMonthCount() {
+			$.ajax({
+		    	type: "POST",
+		    	dataType: "json",
+		    	url: "statsMonths",
+		    	contentType: "application/json",
+		    	success: function (result) {
+        			if(result.code == 1) {
+        				var data = result.data;
+        				var chart = new F2.Chart({
+    		    			id : 'container',
+    		    			pixelRatio : window.devicePixelRatio
+    		    		});
+    		    		chart.source(data);
+    		    		chart.tooltip({
+    		    			showTitle: true,
+    		    			showCrosshairs : true
+    		    		});
+    		    		chart.legend({
+    		    			align: 'center',
+    		    			marker: function marker(x, y, r, ctx) {
+    		    				ctx.lineWidth = 1;
+    		    				ctx.strokeStyle = ctx.fillStyle;
+    		    				ctx.moveTo(x - r - 3, y);
+    		    				ctx.lineTo(x + r + 3, y);
+    		    				ctx.stroke();
+    		    				ctx.arc(x, y, r, 0, Math.PI * 2, false);
+    		    				ctx.fill();
+    		    			}
+    		    		});
+    		    		chart.line().position('month*count').color('year');
+    		    		chart.point().position('month*count').color('year').style({
+    		    			lineWidth : 1,
+    		    			stroke : '#fff'
+    		    		});
+    		    		chart.render();
+        			} else {
+        				
+        			}
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
+		
+		function drawTopProvince() {
+			
+		}
 		
 		
 		
 		
 		
-		const data2 = [{
+		
+		/* const data2 = [{
 			amount: 20,
 			ratio: 0.1,
 			memo: '学习',
@@ -590,7 +474,7 @@
 				opacity: 0.15
 			}
 		});
-		chart2.get('canvas').draw();
+		chart2.get('canvas').draw(); */
 			
 			
 			
