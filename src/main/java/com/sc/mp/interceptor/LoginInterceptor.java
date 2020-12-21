@@ -17,7 +17,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		WebScUser user = (WebScUser) request.getSession().getAttribute(ScConstant.USER_SESSION_KEY);
-		System.out.println("preHandle----" + user + " ::: " + request.getRequestURL());
+//		System.out.println("preHandle----" + user + " ::: " + request.getRequestURL());
 		if (user == null) {
 			request.setAttribute("msg", "无权限请先登录");
 //			// 获取request返回页面到登录页
