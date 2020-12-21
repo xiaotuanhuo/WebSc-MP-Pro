@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
-import com.sc.mp.bean.MonthCount;
+import com.sc.mp.bean.OperationCount;
 import com.sc.mp.mapper.DeptMapper;
 import com.sc.mp.mapper.DocMapper;
 import com.sc.mp.mapper.RoleMapper;
@@ -188,12 +188,12 @@ public class UserService {
 		return statsMap;
 	}
 	
-	public List<MonthCount> statsByYear() {
+	public List<OperationCount> statsByYear() {
 		Calendar cal = Calendar.getInstance();
 		int thisYear = cal.get(Calendar.YEAR);	// 今年
 		int lastYear = thisYear - 1;	// 去年
 		int beforeLastYear = thisYear - 2;	// 前年
-		List<MonthCount> monthCounts = docMapper.statsByYear(thisYear, lastYear, beforeLastYear);
+		List<OperationCount> monthCounts = docMapper.statsByYear(thisYear, lastYear, beforeLastYear);
 		return monthCounts;
 	}
 }

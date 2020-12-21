@@ -636,7 +636,7 @@
         where operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(),"%Y"), "%")
     </select>
     
-    <select id="statsByYear" parameterType="java.lang.Integer" resultType="com.sc.mp.bean.MonthCount">
+    <select id="statsByYear" parameterType="java.lang.Integer" resultType="com.sc.mp.bean.OperationCount">
     	select 
     	    MID(monthList.leftMonth, 1, 4) as year,
     	    MID(monthList.leftMonth, 6, 2) as month,

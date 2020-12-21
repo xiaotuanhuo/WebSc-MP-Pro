@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
-import com.sc.mp.bean.MonthCount;
+import com.sc.mp.bean.OperationCount;
 import com.sc.mp.bean.PageResultBean;
 import com.sc.mp.bean.ResultBean;
 import com.sc.mp.model.WebScCalendar;
@@ -188,7 +188,7 @@ public class IndexController {
 	@RequestMapping("/statsMonths")
 	@ResponseBody
 	public ResultBean statsMonths() {
-		List<MonthCount> monthCounts = userService.statsByYear();
+		List<OperationCount> monthCounts = userService.statsByYear();
 		return ResultBean.success(monthCounts);
 	}
 

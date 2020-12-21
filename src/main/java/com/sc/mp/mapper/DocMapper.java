@@ -6,7 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.sc.mp.bean.MonthCount;
+import com.sc.mp.bean.OperationCount;
 import com.sc.mp.model.WebScDoc;
 
 @Mapper
@@ -39,6 +39,6 @@ public interface DocMapper {
 	 * @param beforeLastYear	前年
 	 * @return
 	 */
-	List<MonthCount> statsByYear(@Param("thisYear") Integer thisYear, @Param("lastYear") Integer lastYear,
+	List<OperationCount> statsByYear(@Param("thisYear") Integer thisYear, @Param("lastYear") Integer lastYear,
 			@Param("beforeLastYear") Integer beforeLastYear);
 }
