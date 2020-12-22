@@ -334,7 +334,7 @@
 		    	url: "statsMonths",
 		    	contentType: "application/json",
 		    	success: function (result) {
-        			if(result.code == 1) {
+        			if(result.code == 0) {
         				var data = result.data;
         				var chart = new F2.Chart({
     		    			id : 'container',

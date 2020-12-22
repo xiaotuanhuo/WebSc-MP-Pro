@@ -10,6 +10,9 @@ import com.sc.mp.model.WebScAnesthetic;
 
 @Mapper
 public interface AnestheticMapper {
+	@Select(value = "SELECT * FROM WSC_ANESTHETIC")
+	List<WebScAnesthetic> getWebScAnesthetics();
+	
 	@Select("SELECT * FROM WSC_ANESTHETIC WHERE anesthetic_id = #{anestheticId} limit 1")
 	WebScAnesthetic selectAnestheticById(@Param("anestheticId") String anestheticId);
 	

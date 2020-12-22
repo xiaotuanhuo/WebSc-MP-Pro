@@ -45,18 +45,7 @@
   </select>
   <select id="selectByLoginName" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
-    user_id,
-    user_name,
-    login_pwd,
-    salt,
-    sex,
-    phone,
-    role_id,
-    role_type_id,
-    province,
-    city,
-    area,
-    status
+    <include refid="Base_Column_List"/>
     from WSC_USER
     where login_name = #{loginName,jdbcType=INTEGER}
   </select>

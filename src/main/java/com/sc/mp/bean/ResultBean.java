@@ -4,22 +4,22 @@ import java.io.Serializable;
 
 public class ResultBean implements Serializable {
 	private static final long serialVersionUID = -8276264968757808344L;
-	private static final String SUCCESS = "1";
-	public static final String FAIL = "0";
+	private static final int SUCCESS = 0;
+	public static final int FAIL = -1;
 	private String msg = "操作成功";
-	private String code = SUCCESS;
+	private int code = SUCCESS;
 	private Object data;
 	
 	private ResultBean() {
 		super();
 	}
 	
-	public ResultBean(String msg, String code) {
+	public ResultBean(String msg, int code) {
 		this.msg = msg;
 		this.code = code;
 	}
 	
-	public ResultBean(String msg, Object data, String code) {
+	public ResultBean(String msg, Object data, int code) {
         this.msg = msg;
         this.data = data;
         this.code = code;
@@ -60,11 +60,11 @@ public class ResultBean implements Serializable {
 		this.msg = msg;
 	}
 	
-	public String getCode() {
+	public int getCode() {
 		return code;
 	}
 	
-	public void setCode(String code) {
+	public void setCode(int code) {
 		this.code = code;
 	}
 	

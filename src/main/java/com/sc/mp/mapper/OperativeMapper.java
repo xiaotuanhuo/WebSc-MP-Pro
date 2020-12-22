@@ -10,6 +10,9 @@ import com.sc.mp.model.WebScOperative;
 
 @Mapper
 public interface OperativeMapper {
+	@Select(value = "SELECT * FROM WSC_OPERATIVE")
+	List<WebScOperative> getWebScOperatives();
+	
 	@Select("SELECT * FROM WSC_OPERATIVE WHERE operative_id = #{operativeId} limit 1")
 	WebScOperative selectOperativeById(@Param("operativeId") String operativeId);
 	

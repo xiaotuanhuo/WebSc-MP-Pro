@@ -159,6 +159,32 @@
 		doctor_evaluate_memo
     </sql>
     
+    <select id="selectXcxDocsByConditions" resultMap="BaseResultMap" parameterType="hashmap">
+	  	select 
+	    <include refid="Base_Column_List" />
+	    from 
+	    WSC_DOCUMENT doc 
+	    where 
+	    1=1 
+	    <if test="orgId != null and orgId != ''" >
+	    	and org_id = #{orgId,jdbcType=VARCHAR}
+	    </if>
+	    <if test="patientName != null and patientName != ''" >
+	    	and patient_name = #{patientName,jdbcType=VARCHAR}
+	    </if>
+	    <if test="startDate != null and startDate != ''" >
+	    	<![CDATA[
+	    		and operate_start_time >= #{startDate,jdbcType=VARCHAR}
+	    	]]>
+	    </if>
+	    <if test="endDate != null and endDate != ''" >
+	    	<![CDATA[
+	    		and operate_start_time <= #{endDate,jdbcType=VARCHAR}
+	    	]]>
+	    </if>
+	    order by operate_start_time desc
+	</select>
+    
     <select id="selectImportDocsByConditions" resultMap="BaseResultMap" parameterType="hashmap">
 	  	select 
 	    <include refid="Base_Column_List" />
@@ -329,7 +355,7 @@
     	delete from WSC_DOCUMENT where document_id = #{documentId,jdbcType=VARCHAR}
     </delete>
     
-    <select id="selectByPrimaryKey"  parameterType="java.lang.String">
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
     	select 
     	<include refid="Base_Column_List"/>
     	from WSC_DOCUMENT 
