@@ -23,9 +23,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.sc.mp.annotation.OperationLog;
 import com.sc.mp.bean.PageResultBean;
 import com.sc.mp.bean.ResultBean;
 import com.sc.mp.bean.enums.DocStateEnum;
+import com.sc.mp.bean.enums.RoleEnum;
 import com.sc.mp.mapper.AnestheticMapper;
 import com.sc.mp.mapper.DocMapper;
 import com.sc.mp.mapper.OperativeMapper;
@@ -39,7 +41,6 @@ import com.sc.mp.util.LuceneUtil;
 import com.sc.mp.util.StringUtil;
 import com.sc.mp.util.UUID19;
 import com.sc.mp.util.UnixtimeUtil;
-
 
 @Controller
 @RequestMapping(value = "xcx")
@@ -64,6 +65,7 @@ public class XcxController {
 	@Value("${wx-api-uri}")
 	private String wxApiUri;
 	
+	@OperationLog("获取麻醉方法列表和手术名列表")
     @GetMapping(value = "/getAnestheticsAndOperatives")
     @ResponseBody
     public ResultBean getAnestheticsAndOperatives() {
@@ -74,12 +76,15 @@ public class XcxController {
 //			resMap.put("operatives", operativeMapper.getWebScOperatives());
 			resultBean = ResultBean.success(resMap);
 		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("获取麻醉方法列表和手术名列表失败，"+e.getMessage());
 			resultBean = ResultBean.error("获取麻醉方法列表和手术名列表失败");
 		}
 		
         return resultBean;
     }
 	
+	@OperationLog("保存订单")
     @PostMapping(value = "/saveOrder")
     @ResponseBody
 	public ResultBean saveOrder(@RequestBody() WebScDoc doc) {
@@ -92,18 +97,24 @@ public class XcxController {
 			if(0 == userMapper.isExistByDoctorName(doc.getOperateUser())) {
 				throw new Exception("姓名为："+doc.getOperateUser()+"的医生不存在");
 			}
+			if(StringUtil.isEmpty(doc.getOperativeId())) {
+				throw new Exception("请先选择需要进行的手术");
+			}
 			
 			docMapper.insert(doc);
 			
 			resultBean = ResultBean.success("订单发布成功");
 			
 		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("订单发布失败，"+e.getMessage());
 			resultBean = ResultBean.error("订单发布失败，"+e.getMessage());
 		}
 		
         return resultBean;
     }
 	
+	@OperationLog("获取订单明细")
     @GetMapping(value = "/getDocDetail")
     @ResponseBody
 	public ResultBean getDocDetail(@RequestParam("documentId") String documentId) {
@@ -131,13 +142,14 @@ public class XcxController {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			logger.error("获取订单明细失败，"+e.getMessage());
 			resultBean = ResultBean.error("获取订单明细失败");
 		}
 		
         return resultBean;
     }
 	
+	@OperationLog("查询订单列表")
     @PostMapping(value = "/searchOrderList")
     @ResponseBody
 	public PageResultBean<WebScDoc> searchOrderList(@RequestBody() Map<String, Object> paraMap) {
@@ -172,7 +184,7 @@ public class XcxController {
 			prb.setCode(0);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			logger.error("获取订单列表，"+e.getMessage());
 			prb = new PageResultBean<WebScDoc>();
 			prb.setCode(-1);
 		}
@@ -180,6 +192,7 @@ public class XcxController {
         return prb;
     }
 	
+	@OperationLog("评价")
     @PostMapping(value = "/orderEvaluate")
     @ResponseBody
 	public ResultBean orderEvaluate(@RequestBody() Map<String, Object> paraMap) {
@@ -193,13 +206,14 @@ public class XcxController {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			logger.error("评价失败，"+e.getMessage());
 			resultBean = ResultBean.error("评价失败，请重试...");
 		}
 		
         return resultBean;
     }
 	
+	@OperationLog("登录")
     @PostMapping(value = "/login")
     @ResponseBody
 	public ResultBean login(@RequestBody() Map<String, Object> paraMap) {
@@ -209,46 +223,52 @@ public class XcxController {
 			//0、check用户名和密码
 			WebScUser webScUser = userMapper.selectByLoginName(paraMap.get("name").toString());
 			if(StringUtil.isNull(webScUser)) {
-				logger.info("用户名有误");
+				logger.info("用户名有误，loginname:"+webScUser.getLoginName());
 				resultBean = ResultBean.error("用户名或密码有误");
 			}else {
-				String pws = new Md5Hash(paraMap.get("pws").toString(), webScUser.getSalt()).toString();
-				if(pws.equals(webScUser.getLoginPwd())) {
-					//1、获取openId和sessionKey
-					URI uri = new URI(
-							wxApiUri
-							+ "appid="+appid
-									+ "&secret="+secret
-											+ "&js_code="+paraMap.get("code").toString()
-													+ "&grant_type="+paraMap.get("code").toString());
-					String responseMsg = HttpsUtil.getHttps(uri);
-					JSONObject responseMsgJson = JSONObject.parseObject(responseMsg);
-					
-					//2、保存openId到数据库
-					userMapper.updOpenid(responseMsgJson.getString("openid"), webScUser.getUserId());
-					
-					//3、将用户信息、openId和sessionKey传到前台
-					Map<String, Object> resMap = new HashMap<String, Object>();
-					resMap.put("openid", responseMsgJson.getString("openid"));
-					resMap.put("session_key", responseMsgJson.getString("session_key"));
-					resMap.put("userInfo", webScUser);
-					
-					resultBean = ResultBean.success(resMap);
+				if(!(RoleEnum.JGDDLRY.getCode()+"").equals(webScUser.getRoleId())) {
+					logger.info("用户角色有误，loginname:"+webScUser.getLoginName());
+					resultBean = ResultBean.error("不存在账号为“"+webScUser.getLoginName()+"”的录入人员");
 				}else {
-					logger.info("密码有误");
-					resultBean = ResultBean.error("用户名或密码有误");
+					String pws = new Md5Hash(paraMap.get("pws").toString(), webScUser.getSalt()).toString();
+					if(pws.equals(webScUser.getLoginPwd())) {
+						//1、获取openId和sessionKey
+						URI uri = new URI(
+								wxApiUri
+								+ "appid="+appid
+										+ "&secret="+secret
+												+ "&js_code="+paraMap.get("code").toString()
+														+ "&grant_type="+paraMap.get("code").toString());
+						String responseMsg = HttpsUtil.getHttps(uri);
+						JSONObject responseMsgJson = JSONObject.parseObject(responseMsg);
+						
+						//2、保存openId到数据库
+						userMapper.updOpenid(responseMsgJson.getString("openid"), webScUser.getUserId());
+						
+						//3、将用户信息、openId和sessionKey传到前台
+						Map<String, Object> resMap = new HashMap<String, Object>();
+						resMap.put("openid", responseMsgJson.getString("openid"));
+						resMap.put("session_key", responseMsgJson.getString("session_key"));
+						resMap.put("userInfo", webScUser);
+						
+						resultBean = ResultBean.success(resMap);
+					}else {
+						logger.info("密码有误，loginname:"+webScUser.getLoginName());
+						resultBean = ResultBean.error("用户名或密码有误");
+					}
 				}
 			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			logger.error("登录失败，"+e.getMessage());
 			resultBean = ResultBean.error("登录失败，请重试...");
 		}
 		
         return resultBean;
     }
 	
+	@OperationLog("登出")
     @PostMapping(value = "/signOut")
     @ResponseBody
 	public ResultBean signOut(@RequestBody() Map<String, Object> paraMap){
@@ -261,13 +281,14 @@ public class XcxController {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			logger.error("登出失败，"+e.getMessage());
 			resultBean = ResultBean.error("登出失败，请重试...");
 		}
 		
         return resultBean;
 	}
 	
+	@OperationLog("自动登录")
     @PostMapping(value = "/autoLogin")
     @ResponseBody
     public ResultBean autoLogin(@RequestBody() Map<String, Object> paraMap){
@@ -296,13 +317,14 @@ public class XcxController {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
-			resultBean = ResultBean.error("登出失败，请重试...");
+			logger.error("自动登录失败，"+e.getMessage());
+			resultBean = ResultBean.error("自动登录失败，请重试...");
 		}
 		
         return resultBean;
 	}
 	
+	@OperationLog("搜索手术名称列表")
     @PostMapping(value = "/searchOperativeNames")
     @ResponseBody
 	public ResultBean searchOperativeNames(@RequestBody() Map<String, Object> paraMap) {
@@ -313,12 +335,13 @@ public class XcxController {
 							operativeNameLucenePath, paraMap.get("key").toString(), 5));
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			logger.error("搜索手术名称列表失败，"+e.getMessage());
 			resultBean = ResultBean.error("搜索手术名称列表失败，请重试...");
 		}
 		return resultBean;
 	}
 	
+	@OperationLog("获取手术量信息")
     @GetMapping(value = "/getOperativeCount")
     @ResponseBody
 	public ResultBean getOperativeCount(@RequestParam("orgId") String orgId) {
@@ -381,7 +404,7 @@ public class XcxController {
 			resultBean = ResultBean.success(sourceMap);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			logger.error("获取手术量信息失败，"+e.getMessage());
 			resultBean = ResultBean.error("获取手术量信息");
 		}
 		return resultBean;

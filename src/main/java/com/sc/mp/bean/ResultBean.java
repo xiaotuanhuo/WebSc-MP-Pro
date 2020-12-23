@@ -75,4 +75,10 @@ public class ResultBean implements Serializable {
 	public void setData(Object data) {
 		this.data = data;
 	}
+
+	@Override
+	public String toString() {
+		return "ResultBean [msg=" + msg + ", code=" + code + ", data=" + data + "]";
+	}
+	
 }

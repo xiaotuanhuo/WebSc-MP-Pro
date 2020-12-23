@@ -4,6 +4,9 @@ server:
 spring:
   profiles:
     active: dev
+  #开启aop功能
+  aop:
+    auto: true
 
 projectDomainName: localhost
 
