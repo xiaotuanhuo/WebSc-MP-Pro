@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
@@ -26,6 +28,7 @@ import com.sc.mp.bean.OperationCount;
 import com.sc.mp.bean.PageResultBean;
 import com.sc.mp.bean.ResultBean;
 import com.sc.mp.model.WebScCalendar;
+import com.sc.mp.model.WebScOrganization;
 import com.sc.mp.model.WebScUser;
 import com.sc.mp.service.UserService;
 import com.sc.mp.util.ScConstant;
@@ -56,7 +59,7 @@ public class IndexController {
 	 * 登录页面
 	 * @return
 	 */
-	@RequestMapping("/login")
+	@RequestMapping("/toLogin")
 	public String gologin() {
 		return "login";
 	}
@@ -67,10 +70,44 @@ public class IndexController {
 	 * @return
 	 */
 	@RequestMapping("/logout")
-	public String logout(HttpServletRequest request) {
+	public String logout(HttpServletRequest request, RedirectAttributes ra) {
 		HttpSession session = request.getSession();
+		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
 		session.invalidate();
-		return "redirect:/index";
+//		return "redirect:/index";
+		
+		ra.addFlashAttribute("wxUserid", user.getWxUserid());
+		ra.addFlashAttribute("openid", user.getWxOpenid());
+		return "redirect:/toLogin";
+	}
+	
+	/**
+	 * 提示
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/tip")
+	public String tip() {
+		return "tip";
+	}
+	
+	/**
+	 * 企业微信绑定系统用户与否
+	 */
+	@RequestMapping("/login")
+	public String wxwork(HttpServletRequest request, @RequestParam(value="code") String code, Model model) {
+		WebScUser wxUser = userService.getOpenid(code);	// 仅保存企业微信端的userid openid
+		WebScUser user = userService.getUserByOpenid(wxUser.getWxOpenid());
+		if (user != null) {
+			// 当前企业微信已绑定系统用户
+			request.getSession().setAttribute(ScConstant.USER_SESSION_KEY, user);
+			return "redirect:/index";
+		} else {
+			request.getSession().invalidate();
+			model.addAttribute("wxUserid", wxUser.getWxUserid());
+			model.addAttribute("openid", wxUser.getWxOpenid());
+			return "login";
+		}
 	}
 	
 	/**
@@ -78,20 +115,38 @@ public class IndexController {
 	 * @param request
 	 * @param username
 	 * @param password
+	 * @param username
+	 * @param password
 	 * @param model
 	 * @return
 	 */
 	@PostMapping(value="/login")
-	public String toLogin(HttpServletRequest request, @RequestParam("username") String username,
+	public String toLogin(HttpServletRequest request, @RequestParam("wxUserid") String wxUserid,
+			@RequestParam("openid") String openid, @RequestParam("username") String username,
 			@RequestParam("password") String password, Model model) {
 		HttpSession session = request.getSession();
 		// 登录校验
 		WebScUser user = userService.selectByLoginInfo(username, password);
 		if (user != null) {
+			// userid openid与系统用户的解绑与重新绑定
+			if (user.getWxOpenid() == null || !user.getWxOpenid().equals(openid)) {
+				// openid是否绑定其他系统用户
+				WebScUser userOfOpenid = userService.getUserByOpenid(openid);
+				if (userOfOpenid != null) {
+					// 将userid openid与其解绑
+					userService.unbind(userOfOpenid);
+				}
+				// openid与当前用户绑定
+				user.setWxUserid(wxUserid);
+				user.setWxOpenid(openid);
+				userService.bind(user);
+			}
 			session.setAttribute(ScConstant.USER_SESSION_KEY, user);
 			return "redirect:/index";
 		} else {
 			session.invalidate();
+			model.addAttribute("wxUserid", wxUserid);
+			model.addAttribute("openid", openid);
 			model.addAttribute("msg", ScConstant.USER_ERROR);
 			return "login";
 		}
@@ -190,6 +245,30 @@ public class IndexController {
 	public ResultBean statsMonths() {
 		List<OperationCount> monthCounts = userService.statsByYear();
 		return ResultBean.success(monthCounts);
+	}
+	
+	@RequestMapping("/statsProvince")
+	@ResponseBody
+	public ResultBean statsProvince() {
+		List<OperationCount> provinceCounts = userService.statsByProvince();
+		return ResultBean.success(provinceCounts);
+	}
+	
+	@RequestMapping("/organizations")
+	@ResponseBody
+	public ResultBean getOrganizations(@RequestParam(value = "province") String province,
+			@RequestParam(value = "city") String city,
+			@RequestParam(value = "area") String area) {
+		List<WebScOrganization> organizations = userService.getOrganizations(province, city, area);
+		return ResultBean.success(organizations);
+	}
+	
+	@PostMapping("/reporting")
+	@ResponseBody
+	public ResultBean getReporting(@RequestBody String data) {
+		JSONObject jsonData = JSONObject.parseObject(data);
+		List<OperationCount> operationCounts = userService.getReporting(jsonData);
+		return ResultBean.success(operationCounts);
 	}
 
 }

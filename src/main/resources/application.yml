@@ -31,3 +31,5 @@ sc:
         super: super
         regional: regional
         doctor: doctor
+    stats:
+        top: 2

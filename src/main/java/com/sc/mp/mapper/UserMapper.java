@@ -29,6 +29,20 @@ public interface UserMapper {
 	int updOpenid(@Param("openid") String openid, @Param("userId") int userId);
 	
 	/**
+	 * 解绑用户wxUserid wxopenid
+	 * @param userId
+	 * @return
+	 */
+	int unbindOpenid(@Param("userId") int userId);
+	
+	/**
+	 * 系统用户绑定wxUserid openid
+	 * @param user
+	 * @return
+	 */
+	int bundOpenid(WebScUser user);
+	
+	/**
 	 * 判断指定姓名的医生是否存在
 	 * @param doctorName 医生姓名
 	 * @return 大于0表示存在

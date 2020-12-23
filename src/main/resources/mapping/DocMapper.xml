@@ -713,4 +713,66 @@
     	    order by monthList.leftMonth
     </select>
     
+    <select id="statsByProvince" parameterType="java.lang.Integer" resultType="com.sc.mp.bean.OperationCount">
+        (SELECT COUNT(1) as count, wo.city as cityCode
+        FROM
+        `WSC_DOCUMENT` wd, WSC_ORGANIZATION wo
+        WHERE wd.org_id = wo.org_id and wd.operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(), '%Y'), '%')
+        GROUP BY wo.city ORDER BY count DESC LIMIT #{top,jdbcType=INTEGER})
+        UNION
+        (SELECT IFNULL(SUM(t.c),0) as count, '86' as cityCode
+        FROM
+        ((SELECT COUNT(1) as c, wo.city as cCode
+        FROM
+        `WSC_DOCUMENT` wd, WSC_ORGANIZATION wo
+        WHERE wd.org_id = wo.org_id and wd.operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(), '%Y'), '%')
+        GROUP BY wo.city ORDER BY c DESC LIMIT #{top,jdbcType=INTEGER}, 9999)) t)
+    </select>
+    
+    <select id="selectReporting" parameterType="java.util.Map" resultType="com.sc.mp.bean.OperationCount">
+        SELECT
+            COUNT(1) count,
+            wd.org_id as orgId,
+            wo.org_name as orgName,
+            wo.province,
+            wo.city,
+            wo.area
+        FROM `WSC_DOCUMENT` wd, WSC_ORGANIZATION wo
+        <where>
+        	<choose>
+        		<when test="params.orgId != null and params.orgId != ''">
+        			AND wd.org_id = #{params.orgId,jdbcType=VARCHAR}
+        		</when>
+        		<otherwise>
+        			<choose>
+        				<when test="params.area != null and params.area != ''">
+        					AND wd.org_id in (SELECT org_id FROM WSC_ORGANIZATION WHERE area = #{params.area,jdbcType=VARCHAR} AND leaf = 1)
+        				</when>
+        				<otherwise>
+        					<choose>
+        						<when test="params.city != null and params.city != ''">
+        							AND wd.org_id in (SELECT org_id FROM WSC_ORGANIZATION WHERE city = #{params.city,jdbcType=VARCHAR} AND leaf = 1)
+        						</when>
+        						<otherwise>
+        							<choose>
+        								<when test="params.province != null and params.province != ''">
+        									AND wd.org_id in (SELECT org_id FROM WSC_ORGANIZATION WHERE province = #{params.province,jdbcType=VARCHAR} AND leaf = 1)
+        								</when>
+        							</choose>
+        						</otherwise>
+        					</choose>
+        				</otherwise>
+        			</choose>
+        		</otherwise>
+        	</choose>
+        	<if test="params.beginTime != null and params.beginTime != ''">
+        		AND wd.operate_start_time <![CDATA[ >= ]]> CONCAT(#{enbeginTime,jdbcType=VARCHAR}, ' 00:00:00')
+        	</if>
+        	<if test="params.endTime != null and params.endTime != ''">
+        		AND wd.operate_start_time <![CDATA[ <= ]]> CONCAT(#{params.endTime,jdbcType=VARCHAR}, ' 00:00:00')
+        	</if>
+        	AND wd.org_id = wo.org_id AND wd.document_state = '5' GROUP BY wd.org_id ORDER BY count DESC
+        </where>
+    </select>
+    
 </mapper>

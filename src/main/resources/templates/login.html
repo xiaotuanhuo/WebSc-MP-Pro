@@ -175,6 +175,8 @@ body {
 					<form id="loginForm" class="form-horizontal" th:action="@{/login}"
 						method="post">
 						<span class="heading">用户登录</span>
+						<input type="text" name="wxUserid" th:value="${wxUserid}" style="display: none;">
+						<input type="text" name="openid" th:value="${openid}" style="display: none;">
 						<div class="form-group">
 							<input type="tel" name="username" class="form-control"
 								placeholder="手机号码" data-validation-engine="validate[required,custom[mobilePhone]]"

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sc.mp.mapper.OrganizationMapper" >
+  <resultMap id="BaseResultMap" type="com.sc.mp.model.WebScOrganization" >
+    <id column="org_id" property="orgId" jdbcType="VARCHAR" />
+    <result column="org_pid" property="orgPid" jdbcType="VARCHAR" />
+    <result column="root_id" property="rootId" jdbcType="VARCHAR" />
+    <result column="credentials" property="credentials" jdbcType="VARCHAR" />
+    <result column="narcotic_card" property="narcoticCard" jdbcType="VARCHAR" />
+    <result column="leaf" property="leaf" jdbcType="INTEGER" />
+    <result column="org_name" property="orgName" jdbcType="VARCHAR" />
+    <result column="org_address" property="orgAddress" jdbcType="VARCHAR" />
+    <result column="org_tel" property="orgTel" jdbcType="VARCHAR" />
+    <result column="leader_name" property="leaderName" jdbcType="VARCHAR" />
+    <result column="leader_tel" property="leaderTel" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    org_id, org_pid, root_id, credentials, narcotic_card, leaf, org_name, org_address, 
+    org_tel, leader_name, leader_tel, province, city, area, create_date, status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from WSC_ORGANIZATION
+    where org_id = #{orgId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectOrganizations" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+      org_id,
+      org_name,
+      leaf
+    from WSC_ORGANIZATION
+    <where>
+    	<choose>
+    		<when test="area != null">
+    			area = #{area,jdbcType=VARCHAR}
+    		</when>
+    		<otherwise>
+    			<choose>
+    				<when test="city != null">
+    					city = #{city,jdbcType=VARCHAR}
+    				</when>
+    				<otherwise>
+    					<choose>
+    						<when test="province != null">
+    							province = #{province,jdbcType=VARCHAR}
+    						</when>
+    					</choose>
+    				</otherwise>
+    			</choose>
+    		</otherwise>
+    	</choose>
+    	AND leaf = 1
+    </where>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from WSC_ORGANIZATION
+    where org_id = #{orgId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sc.mp.model.WebScOrganization" >
+    insert into WSC_ORGANIZATION (org_id, org_pid, root_id, 
+      credentials, narcotic_card, leaf, 
+      org_name, org_address, org_tel, 
+      leader_name, leader_tel, province, 
+      city, area, create_date, 
+      status)
+    values (#{orgId,jdbcType=VARCHAR}, #{orgPid,jdbcType=VARCHAR}, #{rootId,jdbcType=VARCHAR}, 
+      #{credentials,jdbcType=VARCHAR}, #{narcoticCard,jdbcType=VARCHAR}, #{leaf,jdbcType=INTEGER}, 
+      #{orgName,jdbcType=VARCHAR}, #{orgAddress,jdbcType=VARCHAR}, #{orgTel,jdbcType=VARCHAR}, 
+      #{leaderName,jdbcType=VARCHAR}, #{leaderTel,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, 
+      #{city,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sc.mp.model.WebScOrganization" >
+    insert into WSC_ORGANIZATION
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orgId != null" >
+        org_id,
+      </if>
+      <if test="orgPid != null" >
+        org_pid,
+      </if>
+      <if test="rootId != null" >
+        root_id,
+      </if>
+      <if test="credentials != null" >
+        credentials,
+      </if>
+      <if test="narcoticCard != null" >
+        narcotic_card,
+      </if>
+      <if test="leaf != null" >
+        leaf,
+      </if>
+      <if test="orgName != null" >
+        org_name,
+      </if>
+      <if test="orgAddress != null" >
+        org_address,
+      </if>
+      <if test="orgTel != null" >
+        org_tel,
+      </if>
+      <if test="leaderName != null" >
+        leader_name,
+      </if>
+      <if test="leaderTel != null" >
+        leader_tel,
+      </if>
+      <if test="province != null" >
+        province,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="area != null" >
+        area,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orgId != null" >
+        #{orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="orgPid != null" >
+        #{orgPid,jdbcType=VARCHAR},
+      </if>
+      <if test="rootId != null" >
+        #{rootId,jdbcType=VARCHAR},
+      </if>
+      <if test="credentials != null" >
+        #{credentials,jdbcType=VARCHAR},
+      </if>
+      <if test="narcoticCard != null" >
+        #{narcoticCard,jdbcType=VARCHAR},
+      </if>
+      <if test="leaf != null" >
+        #{leaf,jdbcType=INTEGER},
+      </if>
+      <if test="orgName != null" >
+        #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgAddress != null" >
+        #{orgAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="orgTel != null" >
+        #{orgTel,jdbcType=VARCHAR},
+      </if>
+      <if test="leaderName != null" >
+        #{leaderName,jdbcType=VARCHAR},
+      </if>
+      <if test="leaderTel != null" >
+        #{leaderTel,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sc.mp.model.WebScOrganization" >
+    update WSC_ORGANIZATION
+    <set >
+      <if test="orgPid != null" >
+        org_pid = #{orgPid,jdbcType=VARCHAR},
+      </if>
+      <if test="rootId != null" >
+        root_id = #{rootId,jdbcType=VARCHAR},
+      </if>
+      <if test="credentials != null" >
+        credentials = #{credentials,jdbcType=VARCHAR},
+      </if>
+      <if test="narcoticCard != null" >
+        narcotic_card = #{narcoticCard,jdbcType=VARCHAR},
+      </if>
+      <if test="leaf != null" >
+        leaf = #{leaf,jdbcType=INTEGER},
+      </if>
+      <if test="orgName != null" >
+        org_name = #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgAddress != null" >
+        org_address = #{orgAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="orgTel != null" >
+        org_tel = #{orgTel,jdbcType=VARCHAR},
+      </if>
+      <if test="leaderName != null" >
+        leader_name = #{leaderName,jdbcType=VARCHAR},
+      </if>
+      <if test="leaderTel != null" >
+        leader_tel = #{leaderTel,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        area = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where org_id = #{orgId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sc.mp.model.WebScOrganization" >
+    update WSC_ORGANIZATION
+    set org_pid = #{orgPid,jdbcType=VARCHAR},
+      root_id = #{rootId,jdbcType=VARCHAR},
+      credentials = #{credentials,jdbcType=VARCHAR},
+      narcotic_card = #{narcoticCard,jdbcType=VARCHAR},
+      leaf = #{leaf,jdbcType=INTEGER},
+      org_name = #{orgName,jdbcType=VARCHAR},
+      org_address = #{orgAddress,jdbcType=VARCHAR},
+      org_tel = #{orgTel,jdbcType=VARCHAR},
+      leader_name = #{leaderName,jdbcType=VARCHAR},
+      leader_tel = #{leaderTel,jdbcType=VARCHAR},
+      province = #{province,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      area = #{area,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=VARCHAR}
+    where org_id = #{orgId,jdbcType=VARCHAR}
+  </update>
+</mapper>

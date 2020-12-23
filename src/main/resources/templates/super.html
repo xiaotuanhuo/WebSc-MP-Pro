@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
 	<title>超级管理员</title>
 	
 	<!-- Google font file. If you want you can change. -->
@@ -141,9 +141,9 @@
 				</section>
 				
 				<!-- charts start -->
-				<section class="section container refer">
+				<section class="section container">
 					<div class="chart-body">
-						<div class="row align-items-center chart-content">
+						<div class="align-items-center chart-content">
 							<div class="col-12">
 								<div class="advertising-wrapper">
 									<canvas id="container" class="chart-container"></canvas>
@@ -158,7 +158,7 @@
 				<!-- charts start -->
 				<section class="section container refer">
 					<div class="chart-body">
-						<div class="row align-items-center chart-content">
+						<div class="align-items-center chart-content">
 							<div class="col-12">
 								<div class="advertising-wrapper">
 									<canvas id="container2" class="chart-container"></canvas>
@@ -203,11 +203,13 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label class="sr-only" for="organ">organ</label>
-										<select class="form-control" id="organ"></select>
+										<span>医疗机构</span>
+										<select class="form-field" id="orgs">
+											<option style='display: none'></option>
+										</select>
 									</div>
 									<div>
-										<a href="#" id="" class="button circle block yellow">查询</a>
+										<a id="reportingBtn" class="button circle block blue">查询</a>
 									</div>
                                 </div>
 							</div>
@@ -215,74 +217,8 @@
 					</div>
 				</section>
 				
-				<section id="" class="container">
-					<ul class="transaction-list list-unstyled">
-							<li>
-								<div class="d-flex align-items-center justify-content-between">
-									<div class="d-flex align-items-center">
-										<div class="ml-10">
-											<h6 class="coin-name">上海禾新医院</h6>
-											<small class="text-muted">上海市-直辖市-浦东新区</span></small>
-										</div>
-									</div>
-									<div>
-										<small class="d-block mb-0 txt-red">43</small>
-									</div>
-								</div>
-							</li>
-							<li>
-								<div class="d-flex align-items-center justify-content-between">
-									<div class="d-flex align-items-center">
-										<div class="ml-10">
-											<h6 class="coin-name">医疗机构A</h6>
-											<small class="text-muted">北京市-直辖市-朝阳区</span></small>
-										</div>
-									</div>
-									<div>
-										<small class="d-block mb-0 txt-red">102</small>
-									</div>
-								</div>
-							</li>
-							<li>
-								<div class="d-flex align-items-center justify-content-between">
-									<div class="d-flex align-items-center">
-										<div class="ml-10">
-											<h6 class="coin-name">医疗机构B</h6>
-											<small class="text-muted">安徽省-合肥市-瑶海区</span></small>
-										</div>
-									</div>
-									<div>
-										<small class="d-block mb-0 txt-red">61</small>
-									</div>
-								</div>
-							</li>
-							<li>
-								<div class="d-flex align-items-center justify-content-between">
-									<div class="d-flex align-items-center">
-										<div class="ml-10">
-											<h6 class="coin-name">医疗机构A</h6>
-											<small class="text-muted">北京市-直辖市-朝阳区</span></small>
-										</div>
-									</div>
-									<div>
-										<small class="d-block mb-0 txt-red">102</small>
-									</div>
-								</div>
-							</li>
-							<li>
-								<div class="d-flex align-items-center justify-content-between">
-									<div class="d-flex align-items-center">
-										<div class="ml-10">
-											<h6 class="coin-name">医疗机构B</h6>
-											<small class="text-muted">安徽省-合肥市-瑶海区</span></small>
-										</div>
-									</div>
-									<div>
-										<small class="d-block mb-0 txt-red">61</small>
-									</div>
-								</div>
-							</li>
-						</ul>
+				<section class="container">
+					<ul id="reporting" class="transaction-list list-unstyled"></ul>
 				</section>
 				
 			</main>
@@ -314,16 +250,60 @@
 	
 	<script th:src="@{/js/distpicker.data.js}"></script>
 	<script th:src="@{/js/distpicker.js}"></script>
-	<script th:src="@{/js/main.js}"></script>
+	<!-- <script th:src="@{/js/main.js}"></script> -->
 	
 	<script type="text/javascript">
 		$(document).ready(function() {
 			drawMonthCount();
 			drawTopProvince();
+			getOrganizations("", "", "");
+			getReporting("", "", "", "", "");
+		});
+		
+		// 监听省市区的变化 更新机构列表
+		$("#province").on("change", function() {
+			var provinceCode = $("#province").find(':selected').data('code');
+			$("#orgs").empty();
+			var organizationDom = document.getElementById("orgs");
+			var orgName = "";
+			var optionDom = document.createElement("option");
+			optionDom.setAttribute('style', 'display: none;');
+			optionDom.innerHTML = orgName;
+			organizationDom.appendChild(optionDom);
+			getOrganizations(provinceCode, "", "");
+		});
+		$("#city").on("change", function() {
+			var cityCode = $("#city").find(':selected').data('code');
+			$("#orgs").empty();
+			var organizationDom = document.getElementById("orgs");
+			var orgName = "";
+			var optionDom = document.createElement("option");
+			optionDom.setAttribute('style', 'display: none;');
+			optionDom.innerHTML = orgName;
+			organizationDom.appendChild(optionDom);
+			getOrganizations("", cityCode, "");
+		});
+		$("#district").on("change", function() {
+			var areaCode = $("#district").find(':selected').data('code');
+			$("#orgs").empty();
+			var organizationDom = document.getElementById("orgs");
+			var orgName = "";
+			var optionDom = document.createElement("option");
+			optionDom.setAttribute('style', 'display: none;');
+			optionDom.innerHTML = orgName;
+			organizationDom.appendChild(optionDom);
+			getOrganizations("", "", areaCode);
 		});
 	
-		$('#moreBtn').on("click", function() {
-			window.location.href = "/mp/more";
+		$('#reportingBtn').on("click", function() {
+			var begin = $("#dateSelector_begin").val();
+			var end = $("#dateSelector_end").val();
+			var pCode = $("#province").find(':selected').data('code');
+			var cCode = $("#city").find(':selected').data('code');
+			var dCode = $("#district").find(':selected').data('code');
+			var oCode = $("#orgs").find(':selected').data('code');
+			$("#reporting").empty();
+			getReporting(begin, end, pCode, cCode, dCode, oCode);
 		});
 		
 		/* 近3年每月手术统计 */
@@ -374,111 +354,125 @@
 		}
 		
 		function drawTopProvince() {
-			
+			$.ajax({
+		    	type: "POST",
+		    	dataType: "json",
+		    	url: "statsProvince",
+		    	contentType: "application/json",
+		    	success: function (result) {
+        			if(result.code == 0) {
+        				var data2 = result.data;
+        				const chart2 = new F2.Chart({
+        					  id: 'container2',
+        					  pixelRatio: window.devicePixelRatio
+        					});
+
+        					chart2.source(data2);
+        					chart2.coord('polar', {
+        					  transposed: true,
+        					  radius: 0.75
+        					});
+        					chart2.legend(false);
+        					chart2.axis(false);
+        					chart2.tooltip(false);
+
+        					// 添加饼图文本
+        					chart2.pieLabel({
+        					  sidePadding: 40,
+        					  label1: function label1(data2, color) {
+        					    return {
+        					      text: data2.cityName,
+        					      fill: color
+        					    };
+        					  },
+        					  label2: function label2(data2) {
+        					    return {
+        					      text: data2.count,
+        					      fill: '#808080',
+        					      fontWeight: 'bold'
+        					    };
+        					  }
+        					});
+
+        					chart2.interval()
+        					  .position('pieConst*count')
+        					  .color('cityName', ['#1890FF', '#13C2C2', '#2FC25B', '#FACC14', '#F04864'])
+        					  .adjust('stack');
+        					chart2.render();
+        			} else {
+        				
+        			}
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
 		}
 		
+		function getOrganizations(province, city, area) {
+			$.ajax({
+		    	type: "POST",
+		    	dataType: "json",
+		    	url: 'organizations?province=' + province + "&city=" + city + "&area=" + area,
+		    	contentType: "application/json",
+		    	success: function (result) {
+		    		var organizations = result.data;
+		    		if (organizations.length > 0) {
+		    			var organizationDom = document.getElementById("orgs");
+		    			for (var i = 0; i < organizations.length; i++) {
+		    				var orgName = organizations[i].name;
+		    				var optionDom = document.createElement("option");
+		    				optionDom.setAttribute("data-code", organizations[i].id);
+		    				optionDom.innerHTML = orgName;
+		    				organizationDom.appendChild(optionDom);
+		    			}
+		    		}
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
 		
+		function getReporting(begin, end, province, city, area, orgId) {
+			var jsonData = JSON.stringify({'beginTime': begin, 'endTime': end, 'province': province, 'city': city, 'area': area, 'orgId': orgId});
+			$.ajax({
+		    	type: "POST",
+		    	data: jsonData,
+		    	dataType: "json",
+		    	url: 'reporting',
+		    	contentType: "application/json",
+		    	success: function (result) {
+		    		var data = result.data;
+		    		var ulDom = document.getElementById("reporting");
+		    		
+		    		for (var i = 0; i < data.length; i++) {
+		    			var newObj = data[i];
+						var str = '<div class="d-flex align-items-center justify-content-between">';
+						str += '<div class="d-flex align-items-center">';
+						str += '<div class="ml-10">';
+						str += '<h6 class="coin-name">' + newObj.orgName + '</h6>';
+						str += '<small class="text-muted">' + newObj.wholeDistrict
+								+ '</small>';
+						str += '</div>';
+						str += '</div>';
+						str += '<div>';
+						str += '<small class="d-block mb-0 txt-muted">'
+								+ newObj.count + '</small>';
+						str += '</div>';
+						str += '</div>';
+						var liDom = document.createElement("li");
+						liDom.innerHTML = str;
+						
+						ulDom.appendChild(liDom);//加在列表的后面,上拉加载
+		    		}
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
 		
-		
-		
-		
-		/* const data2 = [{
-			amount: 20,
-			ratio: 0.1,
-			memo: '学习',
-			const: 'const'
-		}, {
-			amount: 100,
-			ratio: 0.5,
-			memo: '睡觉',
-			const: 'const'
-		}, {
-			amount: 10,
-			ratio: 0.05,
-			memo: '吃饭',
-			const: 'const'
-		}, {
-			amount: 30,
-			ratio: 0.15,
-			memo: '讲礼貌',
-			const: 'const'
-		}, {
-			amount: 10,
-			ratio: 0.05,
-			memo: '其他',
-			const: 'const'
-			}, {
-			amount: 20,
-			ratio: 0.1,
-			memo: '运动',
-			const: 'const'
-		}, {
-			amount: 10,
-			ratio: 0.05,
-			memo: '暂无备注',
-			const: 'const'
-		}];
-		
-		const chart2 = new F2.Chart({
-			id: 'container2',
-			pixelRatio: window.devicePixelRatio
-		});
-
-		chart2.source(data2);
-		chart2.coord('polar', {
-			transposed: true,
-			innerRadius: 0.4,
-			radius: 0.75
-		});
-		chart2.axis(false);
-		chart2.legend({
-			position: 'bottom',
-			align: 'center'
-		});
-		chart2.tooltip(false);
-		chart2.guide().html({
-			position: [ '50%', '50%' ],
-			html: '<div style="width: 100px;height: 20px;text-align: center;line-height: 20px;" id="textContent"></div>'
-		});
-		// 配置文本饼图
-		chart2.pieLabel({
-			sidePadding: 75,
-			label1: function label1(data2) {
-				return {
-					text: data2.memo,
-					fill: '#808080'
-				};
-			},
-			label2: function label2(data2) {
-				return {
-					fill: '#000000',
-					text: '$' + data2.amount.toFixed(2),
-					fontWeight: 500,
-					fontSize: 10
-				};
-			}
-		});
-		chart2.interval().position('const*ratio').color('memo', [ '#1890FF', '#13C2C2', '#2FC25B', '#FACC14', '#F04864', '#8543E0', '#3436C7', '#223273' ]).adjust('stack');
-		chart2.render();
-		
-		// 绘制内阴影
-		const frontPlot = chart.get('frontPlot');
-		const coord = chart.get('coord'); // 获取坐标系对象
-		frontPlot.addShape('sector', {
-			attrs: {
-				x: coord.center.x,
-				y: coord.center.y,
-				r: coord.circleRadius * coord.innerRadius * 1.2, // 全半径
-				r0: coord.circleRadius * coord.innerRadius,
-				fill: '#000',
-				opacity: 0.15
-			}
-		});
-		chart2.get('canvas').draw(); */
-			
-			
-			
-			
 		$("#dateSelector_begin").focus(function() {
 			document.activeElement.blur();
 		});

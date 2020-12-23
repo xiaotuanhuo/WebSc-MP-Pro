@@ -368,6 +368,18 @@
       wx_userid = #{wxUserid,jdbcType=VARCHAR}
     where user_id = #{userId,jdbcType=INTEGER}
   </update>
+  <update id="unbindOpenid" parameterType="java.lang.Integer" >
+    update WSC_USER
+    set wx_openid = null,
+      wx_userid = null
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="bundOpenid" parameterType="com.sc.mp.model.WebScUser" >
+    update WSC_USER
+    set wx_openid = #{wxOpenid,jdbcType=VARCHAR},
+      wx_userid = #{wxUserid,jdbcType=VARCHAR}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
 
   <select id="selectUserInfo" resultMap="BaseResultMap" parameterType="com.sc.mp.model.WebScUser">
   	select 
