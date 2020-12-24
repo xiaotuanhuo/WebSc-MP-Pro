@@ -33,12 +33,14 @@ import com.sc.mp.mapper.DocMapper;
 import com.sc.mp.mapper.OperativeMapper;
 import com.sc.mp.mapper.UserMapper;
 import com.sc.mp.model.WebScDoc;
+import com.sc.mp.model.WebScOperative;
 import com.sc.mp.model.WebScUser;
 import com.sc.mp.util.CalendarUtil;
 import com.sc.mp.util.DateUtils;
 import com.sc.mp.util.HttpsUtil;
 import com.sc.mp.util.LuceneUtil;
 import com.sc.mp.util.StringUtil;
+import com.sc.mp.util.TripleDESUtil;
 import com.sc.mp.util.UUID19;
 import com.sc.mp.util.UnixtimeUtil;
 
@@ -64,6 +66,10 @@ public class XcxController {
 	private String secret;
 	@Value("${wx-api-uri}")
 	private String wxApiUri;
+	@Value("${lucene-token}")
+	private String luceneToken;
+	@Value("${lucene-token-key}")
+	private String luceneTokenKey;
 	
 	@OperationLog("获取麻醉方法列表和手术名列表")
     @GetMapping(value = "/getAnestheticsAndOperatives")
@@ -406,6 +412,28 @@ public class XcxController {
 			e.printStackTrace();
 			logger.error("获取手术量信息失败，"+e.getMessage());
 			resultBean = ResultBean.error("获取手术量信息");
+		}
+		return resultBean;
+	}
+	
+	@OperationLog("更新手术名Lucene文件")
+    @GetMapping(value = "/updOperativeLucene")
+    @ResponseBody
+	public ResultBean updOperativeLucene(@RequestParam("token") String token) {
+		ResultBean resultBean = null;
+		try {
+			String plainToken = new String(TripleDESUtil.decryptMode(luceneTokenKey, token.getBytes("UTF-8")));
+			if (luceneToken.equals(plainToken)) {
+				List<WebScOperative> webScOperatives = operativeMapper.getWebScOperatives();
+				LuceneUtil.createOperativeNameIndex(operativeNameLucenePath, webScOperatives);
+				resultBean = ResultBean.success("手术名Lucene文件更新成功");
+			}else {
+				resultBean = ResultBean.error("token有误");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("更新手术名Lucene文件失败，"+e.getMessage());
+			resultBean = ResultBean.error("更新手术名Lucene文件失败，请重试...");
 		}
 		return resultBean;
 	}
