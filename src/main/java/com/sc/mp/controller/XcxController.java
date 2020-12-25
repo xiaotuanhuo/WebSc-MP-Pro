@@ -40,7 +40,6 @@ import com.sc.mp.util.DateUtils;
 import com.sc.mp.util.HttpsUtil;
 import com.sc.mp.util.LuceneUtil;
 import com.sc.mp.util.StringUtil;
-import com.sc.mp.util.TripleDESUtil;
 import com.sc.mp.util.UUID19;
 import com.sc.mp.util.UnixtimeUtil;
 
@@ -68,8 +67,6 @@ public class XcxController {
 	private String wxApiUri;
 	@Value("${lucene-token}")
 	private String luceneToken;
-	@Value("${lucene-token-key}")
-	private String luceneTokenKey;
 	
 	@OperationLog("获取麻醉方法列表和手术名列表")
     @GetMapping(value = "/getAnestheticsAndOperatives")
