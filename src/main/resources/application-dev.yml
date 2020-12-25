@@ -35,4 +35,3 @@ wx-appid: wx5139fc8c8b8878f7
 wx-secret: f46eab7526212299671b17e854a2a5d7
 wx-api-uri: https://api.weixin.qq.com/sns/jscode2session?
 lucene-token: operativeluceneupdtoken1234
-lucene-token-key: qwertyuiop1234567890pppp

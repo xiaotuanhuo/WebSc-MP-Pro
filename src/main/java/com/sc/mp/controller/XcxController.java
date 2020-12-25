@@ -417,13 +417,13 @@ public class XcxController {
 	}
 	
 	@OperationLog("更新手术名Lucene文件")
-    @GetMapping(value = "/updOperativeLucene")
+	@PostMapping(value = "/updOperativeLucene")
     @ResponseBody
-	public ResultBean updOperativeLucene(@RequestParam("token") String token) {
+	public ResultBean updOperativeLucene(@RequestBody() Map<String, Object> paraMap) {
 		ResultBean resultBean = null;
 		try {
-			String plainToken = new String(TripleDESUtil.decryptMode(luceneTokenKey, token.getBytes("UTF-8")));
-			if (luceneToken.equals(plainToken)) {
+			String token = paraMap.get("token").toString();
+			if (luceneToken.equals(token)) {
 				List<WebScOperative> webScOperatives = operativeMapper.getWebScOperatives();
 				LuceneUtil.createOperativeNameIndex(operativeNameLucenePath, webScOperatives);
 				resultBean = ResultBean.success("手术名Lucene文件更新成功");
