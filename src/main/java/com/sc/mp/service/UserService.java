@@ -211,8 +211,8 @@ public class UserService {
 		return monthCounts;
 	}
 	
-	public List<OperationCount> statsByProvince() {
-		List<OperationCount> operationCounts = docMapper.statsByProvince(top);
+	public List<OperationCount> statsByCity() {
+		List<OperationCount> operationCounts = docMapper.statsByCity(top);
 		for (int i = 0; i < operationCounts.size(); i++) {
 			if (operationCounts.get(i).getCityCode().equals(ScConstant.OTHER_PROVINCE)) {
 				if (operationCounts.get(i).getCount() == 0) {
@@ -243,6 +243,14 @@ public class UserService {
 			}
 		}
 		return operationCounts;
+	}
+	
+	/**
+	 * 统计医生全职兼职情况
+	 * @return
+	 */
+	public List<OperationCount> statsWork() {
+		return userMapper.statsDoctorWork();
 	}
 	
 	public List<WebScOrganization> getOrganizations(String province, String city, String area) {

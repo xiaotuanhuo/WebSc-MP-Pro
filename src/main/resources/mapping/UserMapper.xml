@@ -390,4 +390,12 @@
         and user_id = #{userId,jdbcType=INTEGER} 
 	</if>
   </select>
+  
+  <select id="statsDoctorWork" resultType="com.sc.mp.bean.OperationCount">
+      SELECT COUNT(1) count, work,
+      CASE WHEN work = 0 THEN '全职' ELSE '兼职' end workDesc
+      FROM `WSC_USER`
+      WHERE role_id = 5 GROUP BY `work`;
+  </select>
+  
 </mapper>

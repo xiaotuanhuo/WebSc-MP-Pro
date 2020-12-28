@@ -92,7 +92,7 @@ public class IndexController {
 	}
 	
 	/**
-	 * 企业微信绑定系统用户与否
+	 * 企业微信绑定登录
 	 */
 	@RequestMapping("/login")
 	public String wxwork(HttpServletRequest request, @RequestParam(value="code") String code, Model model) {
@@ -247,11 +247,18 @@ public class IndexController {
 		return ResultBean.success(monthCounts);
 	}
 	
-	@RequestMapping("/statsProvince")
+	@RequestMapping("/statsCity")
 	@ResponseBody
-	public ResultBean statsProvince() {
-		List<OperationCount> provinceCounts = userService.statsByProvince();
-		return ResultBean.success(provinceCounts);
+	public ResultBean statsCity() {
+		List<OperationCount> cityCounts = userService.statsByCity();
+		return ResultBean.success(cityCounts);
+	}
+	
+	@RequestMapping("/statsWork")
+	@ResponseBody
+	public ResultBean statsWork() {
+		List<OperationCount> workCounts = userService.statsWork();
+		return ResultBean.success(workCounts);
 	}
 	
 	@RequestMapping("/organizations")

@@ -68,11 +68,11 @@ public interface DocMapper {
 			@Param("beforeLastYear") Integer beforeLastYear);
 	
 	/**
-	 * 按省统计手术量TopX
+	 * 按市统计手术量TopX
 	 * @param top	统计前几位
 	 * @return
 	 */
-	List<OperationCount> statsByProvince(@Param("top") Integer top);
+	List<OperationCount> statsByCity(@Param("top") Integer top);
 	
 	/**
 	 * 已完成手术的列表查询

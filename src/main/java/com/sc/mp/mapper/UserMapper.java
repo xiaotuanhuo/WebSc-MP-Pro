@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import com.sc.mp.bean.OperationCount;
 import com.sc.mp.model.WebScUser;
 
 @Mapper
@@ -69,4 +70,10 @@ public interface UserMapper {
 	 * @return
 	 */
 	WebScUser selectByLoginName(@Param("loginName") String name);
+	
+	/**
+	 * 统计医生全职兼职情况
+	 * @return
+	 */
+	List<OperationCount> statsDoctorWork();
 }

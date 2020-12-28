@@ -146,22 +146,32 @@
 						<div class="align-items-center chart-content">
 							<div class="col-12">
 								<div class="advertising-wrapper">
-									<canvas id="container" class="chart-container"></canvas>
+									<canvas id="yearCount" class="chart-container"></canvas>
 								</div>
 							</div>
 						</div>
 					</div>
 				</section>
 				
-				<!-- charts area end -->
-				
 				<!-- charts start -->
-				<section class="section container refer">
+				<section class="section container">
 					<div class="chart-body">
 						<div class="align-items-center chart-content">
 							<div class="col-12">
 								<div class="advertising-wrapper">
-									<canvas id="container2" class="chart-container"></canvas>
+									<canvas id="cityCount" class="chart-container"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				
+				<section class="section container">
+					<div class="chart-body">
+						<div class="align-items-center chart-content">
+							<div class="col-12">
+								<div class="advertising-wrapper">
+									<canvas id="workCount" class="chart-container"></canvas>
 								</div>
 							</div>
 						</div>
@@ -209,7 +219,7 @@
 										</select>
 									</div>
 									<div>
-										<a id="reportingBtn" class="button circle block blue">查询</a>
+										<a id="reportingBtn" class="button circle block" style="background: #00b4ef; color: #fff;">查询</a>
 									</div>
                                 </div>
 							</div>
@@ -220,7 +230,7 @@
 				<section class="container">
 					<ul id="reporting" class="transaction-list list-unstyled"></ul>
 				</section>
-				
+				<div class="form-label-divider" style="display: none;"><span>没有更多数据了</span></div>
 			</main>
 			<!-- Page content end -->
 		</div>
@@ -255,7 +265,8 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			drawMonthCount();
-			drawTopProvince();
+			drawTopCity();
+			drawDoctorWork();
 			getOrganizations("", "", "");
 			getReporting("", "", "", "", "");
 		});
@@ -304,6 +315,8 @@
 			var oCode = $("#orgs").find(':selected').data('code');
 			$("#reporting").empty();
 			getReporting(begin, end, pCode, cCode, dCode, oCode);
+			$(".expandable-item").removeClass("active");
+			$(".expandable-content").removeAttr("style");
 		});
 		
 		/* 近3年每月手术统计 */
@@ -317,7 +330,7 @@
         			if(result.code == 0) {
         				var data = result.data;
         				var chart = new F2.Chart({
-    		    			id : 'container',
+    		    			id : 'yearCount',
     		    			pixelRatio : window.devicePixelRatio
     		    		});
     		    		chart.source(data);
@@ -353,17 +366,17 @@
 			});
 		}
 		
-		function drawTopProvince() {
+		function drawTopCity() {
 			$.ajax({
 		    	type: "POST",
 		    	dataType: "json",
-		    	url: "statsProvince",
+		    	url: "statsCity",
 		    	contentType: "application/json",
 		    	success: function (result) {
         			if(result.code == 0) {
         				var data2 = result.data;
         				const chart2 = new F2.Chart({
-        					  id: 'container2',
+        					  id: 'cityCount',
         					  pixelRatio: window.devicePixelRatio
         					});
 
@@ -396,9 +409,77 @@
 
         					chart2.interval()
         					  .position('pieConst*count')
-        					  .color('cityName', ['#1890FF', '#13C2C2', '#2FC25B', '#FACC14', '#F04864'])
+        					  .color('cityCode', ['#1890FF', '#13C2C2', '#2FC25B', '#FACC14', '#F04864'])
         					  .adjust('stack');
         					chart2.render();
+        			} else {
+        				
+        			}
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
+		
+		function drawDoctorWork() {
+			$.ajax({
+		    	type: "POST",
+		    	dataType: "json",
+		    	url: "statsWork",
+		    	contentType: "application/json",
+		    	success: function (result) {
+        			if(result.code == 0) {
+        				var data3 = result.data;
+        				var sum = 0;
+        				data3.forEach(function(obj) {
+        					sum += obj.count;
+        				});
+        				const map = {};
+        				data3.forEach(function(obj) {
+							map[obj.workDesc] = Math.round((obj.count / sum) * 100) + '%';
+						});
+        				
+						const chart3 = new F2.Chart({
+							id: 'workCount',
+							pixelRatio: window.devicePixelRatio,
+							padding: [20, 'auto']
+						});
+						chart3.source(data3, {
+							percent: {
+								formatter: function formatter(val) {
+									return val + '%';
+								}
+							}
+						});
+						chart3.tooltip(false);
+						chart3.legend({
+							position: 'bottom',
+							align: 'center',
+							clickable: false,
+							itemFormatter: function itemFormatter(val) {
+								return val + ' ' + map[val];
+							}
+						});
+						chart3.coord('polar', {
+							transposed: true,
+							innerRadius: 0.6,
+							radius: 0.75
+						});
+						chart3.axis(false);
+						chart3.interval()
+							.position('pieConst*count')
+							.color('workDesc', ['#2FC25B', '#3BA4FF'])
+							.adjust('stack');
+						
+						chart3.guide().html({
+							position: ['50%', '45%'],
+							html: `<div style="width: 250px; height: 40px; text-align: center;">
+								<div style="font-size: 16px">医生</div>
+								<div style="font-size: 24px">` + sum + `</div>
+								</div>`
+						});
+						chart3.render();
         			} else {
         				
         			}
@@ -443,28 +524,35 @@
 		    	url: 'reporting',
 		    	contentType: "application/json",
 		    	success: function (result) {
-		    		var data = result.data;
-		    		var ulDom = document.getElementById("reporting");
-		    		
-		    		for (var i = 0; i < data.length; i++) {
-		    			var newObj = data[i];
-						var str = '<div class="d-flex align-items-center justify-content-between">';
-						str += '<div class="d-flex align-items-center">';
-						str += '<div class="ml-10">';
-						str += '<h6 class="coin-name">' + newObj.orgName + '</h6>';
-						str += '<small class="text-muted">' + newObj.wholeDistrict
-								+ '</small>';
-						str += '</div>';
-						str += '</div>';
-						str += '<div>';
-						str += '<small class="d-block mb-0 txt-muted">'
-								+ newObj.count + '</small>';
-						str += '</div>';
-						str += '</div>';
-						var liDom = document.createElement("li");
-						liDom.innerHTML = str;
-						
-						ulDom.appendChild(liDom);//加在列表的后面,上拉加载
+		    		if (result.code == 0) {
+		    			var data = result.data;
+		    			if (data.length > 0) {
+		    				$(".form-label-divider").attr("style", "display: none;");
+		    				var ulDom = document.getElementById("reporting");
+				    		for (var i = 0; i < data.length; i++) {
+				    			var newObj = data[i];
+								var str = '<div class="d-flex align-items-center justify-content-between">';
+								str += '<div class="d-flex align-items-center">';
+								str += '<div class="ml-10">';
+								str += '<h6 class="coin-name">' + newObj.orgName + '</h6>';
+								str += '<small class="text-muted">' + newObj.wholeDistrict
+										+ '</small>';
+								str += '</div>';
+								str += '</div>';
+								str += '<div>';
+								str += '<small class="d-block mb-0 txt-muted">'
+										+ newObj.count + '</small>';
+								str += '</div>';
+								str += '</div>';
+								var liDom = document.createElement("li");
+								liDom.innerHTML = str;
+								ulDom.appendChild(liDom);//加在列表的后面,上拉加载
+				    		}
+		    			} else {
+		    				$(".form-label-divider").attr("style", "display: block;");
+		    			}
+		    		} else {
+		    			alert(result.msg);
 		    		}
 		    	},
 		    	error: function() {

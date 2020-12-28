@@ -713,7 +713,7 @@
     	    order by monthList.leftMonth
     </select>
     
-    <select id="statsByProvince" parameterType="java.lang.Integer" resultType="com.sc.mp.bean.OperationCount">
+    <select id="statsByCity" parameterType="java.lang.Integer" resultType="com.sc.mp.bean.OperationCount">
         (SELECT COUNT(1) as count, wo.city as cityCode
         FROM
         `WSC_DOCUMENT` wd, WSC_ORGANIZATION wo
@@ -766,7 +766,7 @@
         		</otherwise>
         	</choose>
         	<if test="params.beginTime != null and params.beginTime != ''">
-        		AND wd.operate_start_time <![CDATA[ >= ]]> CONCAT(#{enbeginTime,jdbcType=VARCHAR}, ' 00:00:00')
+        		AND wd.operate_start_time <![CDATA[ >= ]]> CONCAT(#{params.beginTime,jdbcType=VARCHAR}, ' 00:00:00')
         	</if>
         	<if test="params.endTime != null and params.endTime != ''">
         		AND wd.operate_start_time <![CDATA[ <= ]]> CONCAT(#{params.endTime,jdbcType=VARCHAR}, ' 00:00:00')

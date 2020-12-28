@@ -130,15 +130,15 @@
 							</div>
 					        <div class="content-row">
 					            <div class="content-col">
-					                <img src="/img/p1.png" alt="">
+					                <img src="/img/pending.png" alt="">
 					                <span>待处理</span>
 					            </div>
 					            <div class="content-col">
-					                <img src="/img/p2.png" alt="">
+					                <img src="/img/history.png" alt="">
 					                <span>历史订单</span>
 					            </div>
 					            <div class="content-col">
-					                <img src="/img/p3.png" alt="">
+					                <img src="/img/cancel.png" alt="">
 					                <span>已取消</span>
 					            </div>
 					        </div>
@@ -160,7 +160,7 @@
 					<ul id="restList" class="transaction-list list-unstyled"></ul>
 				</section>
 				<!-- 备休区域 end -->
-				
+				<div class="form-label-divider" style="display: none;"><span>没有更多数据了</span></div>
 			</main>
 			<!-- Page content end -->
 		</div>
@@ -263,40 +263,45 @@
 
 		/*设置列表数据*/
 		function setListData(data, isAppend) {
-			var listDom = document.getElementById("restList");
-			for (var i = 0; i < data.length; i++) {
-				var newObj = data[i];
-				
-				var str = '<div class="d-flex align-items-center justify-content-between">';
-				str += '<div class="fl-100 align-items-center">';
-				str += '<div class="ml-10">';
-				str += '<h5 class="coin-name">' + newObj.name + '</h5>';
-				str += '<small class="text-muted">' + newObj.phone
-						+ '</small>';
-				str += '</div>';
-				str += '</div>';
-				str += '<div class="fm-auto align-items-center mr-10">';
-				str += '<div class="ml-10">';
-				str += '<small class="text-muted">' + newObj.dept
-						+ '</small>';
-				str += '</div>';
-				str += '</div>';
-				str += '<div class="fr-70">';
-				str += '<small class="d-block mb-0 txt-green">'
-						+ (newObj.begin).substring(11, 16) + '-'
-						+ (newObj.end).substring(11, 16) + '</small>';
-				str += '<small class="text-muted d-block">'
-						+ (newObj.begin).substring(0, 10) + '</small>';
-				str += '</div>';
-				str += '</div>';
-				var liDom = document.createElement("li");
-				liDom.innerHTML = str;
+			if (data.length > 0) {
+				$(".form-label-divider").attr("style", "display: none;");
+				var listDom = document.getElementById("restList");
+				for (var i = 0; i < data.length; i++) {
+					var newObj = data[i];
+					
+					var str = '<div class="d-flex align-items-center justify-content-between">';
+					str += '<div class="fl-100 align-items-center">';
+					str += '<div class="ml-10">';
+					str += '<h5 class="coin-name">' + newObj.name + '</h5>';
+					str += '<small class="text-muted">' + newObj.phone
+							+ '</small>';
+					str += '</div>';
+					str += '</div>';
+					str += '<div class="fm-auto align-items-center mr-10">';
+					str += '<div class="ml-10">';
+					str += '<small class="text-muted">' + newObj.dept
+							+ '</small>';
+					str += '</div>';
+					str += '</div>';
+					str += '<div class="fr-70">';
+					str += '<small class="d-block mb-0 txt-green">'
+							+ (newObj.begin).substring(11, 16) + '-'
+							+ (newObj.end).substring(11, 16) + '</small>';
+					str += '<small class="text-muted d-block">'
+							+ (newObj.begin).substring(0, 10) + '</small>';
+					str += '</div>';
+					str += '</div>';
+					var liDom = document.createElement("li");
+					liDom.innerHTML = str;
 
-				if (isAppend) {
-					listDom.appendChild(liDom);//加在列表的后面,上拉加载
-				} else {
-					listDom.insertBefore(liDom, liDom.firstChild);//加在列表的前面,下拉刷新
+					if (isAppend) {
+						listDom.appendChild(liDom);//加在列表的后面,上拉加载
+					} else {
+						listDom.insertBefore(liDom, liDom.firstChild);//加在列表的前面,下拉刷新
+					}
 				}
+			} else {
+				$(".form-label-divider").attr("style", "display: block;");
 			}
 		}
 		

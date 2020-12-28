@@ -1,24 +1,24 @@
 package com.sc.mp.bean;
 
 /**
- * 统计手术量封装类
+ * 统计封装类
  * @author aisino
  *
  */
 public class OperationCount {
-	// 手术量
+	// 数量
 	private Integer count;
+	private String pieConst = "const";	// 饼状图常量
 	
-	// 按年统计要素
+	// 按年统计手术量要素
 	private String year;
 	private String month;
 	
-	// 按省统计要素
+	// 按市统计手术量要素
 	private String cityCode;
 	private String cityName;
-	private String pieConst = "const";	// 饼状图常量
 	
-	// 报表统计
+	// 医疗机构手术量报表统计
 	private String orgId;
 	private String orgName;
 	private String province;
@@ -26,12 +26,24 @@ public class OperationCount {
 	private String area;
 	private String wholeDistrict;	// 完整的行政区划名称
 	
+	// 医生全职兼职统计要素
+	private int work;
+	private String workDesc;
+	
 	public Integer getCount() {
 		return count;
 	}
 	
 	public void setCount(Integer count) {
 		this.count = count;
+	}
+	
+	public String getPieConst() {
+		return pieConst;
+	}
+	
+	public void setPieConst(String pieConst) {
+		this.pieConst = pieConst;
 	}
 	
 	public String getYear() {
@@ -65,15 +77,6 @@ public class OperationCount {
 	public void setCityName(String proviceName) {
 		this.cityName = proviceName;
 	}
-	
-	public String getPieConst() {
-		return pieConst;
-	}
-	
-	public void setPieConst(String pieConst) {
-		this.pieConst = pieConst;
-	}
-	
 	
 	public String getOrgId() {
 		return orgId;
@@ -121,6 +124,22 @@ public class OperationCount {
 	
 	public void setWholeDistrict(String wholeDistrict) {
 		this.wholeDistrict = wholeDistrict;
+	}
+
+	public int getWork() {
+		return work;
+	}
+
+	public void setWork(int work) {
+		this.work = work;
+	}
+	
+	public String getWorkDesc() {
+		return workDesc;
+	}
+	
+	public void setWorkDesc(String workDesc) {
+		this.workDesc = workDesc;
 	}
 	
 }
