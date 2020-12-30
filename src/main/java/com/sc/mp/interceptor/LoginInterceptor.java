@@ -19,24 +19,17 @@ public class LoginInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		String ua = request.getHeader("user-agent");
-		if (!(ua.indexOf("MicroMessenger") != -1 && ua.indexOf("wxwork") != -1)) {
-			// 仅允许使用企业微信客户端
-			response.sendRedirect("/tip");
-			return false;
-		}
+//		String ua = request.getHeader("user-agent");
+//		if (!(ua.indexOf("MicroMessenger") != -1 && ua.indexOf("wxwork") != -1)) {
+//			// 仅允许使用企业微信客户端
+//			response.sendRedirect("/tip");
+//			return false;
+//		}
 		WebScUser user = (WebScUser) request.getSession().getAttribute(ScConstant.USER_SESSION_KEY);
 		if (user == null) {
-//			request.setAttribute("msg", "无权限请先登录");
-//			// 获取request返回页面到登录页
-//			request.getRequestDispatcher("/index.html").forward(request, response);
-			
-//			response.sendRedirect("/login");
-			
 			String code = request.getParameter("code");
 			log.info("code=" + code);
 			response.sendRedirect("/login?code=" + code);
-//			response.sendRedirect("/login?code=21122");
 			return false;
 		}
 		return true;

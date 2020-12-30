@@ -150,23 +150,53 @@ public class UserService {
 		String timeBtn = calendarInfo.getString("timeBtn");	// 上午/下午/全天
 		String title = null;	// 标题
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//		try {
+//			
+//			Date startTime = format.parse(day + " " + begin + ":00");
+//			Date endTime = format.parse(day + " " + end + ":00");
+//			calendar.setStartTime(startTime);
+//			calendar.setEndTime(endTime);
+//		} catch (ParseException e) {
+//			log.error("时间转换出错：" + (day + " " + begin + ":00") + " " + (day + " " + end + ":00"));
+//		}
+		
 		try {
 			Date startTime = format.parse(day + " " + begin + ":00");
-			Date endTime = format.parse(day + " " + end + ":00");
+			Date endTime = new Date();
+			switch (timeBtn) {
+				case ScConstant.AM:
+					endTime = format.parse(day + " " + end + ":00");
+					title = ScConstant.AM_TEXT;
+					break;
+				case ScConstant.PM:
+					endTime = format.parse(day + " " + end + ":59");
+					title = ScConstant.PM_TEXT;
+					break;
+				case ScConstant.ALL:
+					endTime = format.parse(day + " " + end + ":59");
+					title = ScConstant.ALL_TEXT;
+					break;
+				default:
+					endTime = format.parse(day + " " + end + ":00");
+					title = ScConstant.CAL_PREFIX + begin + ":00" + " - " + end + ":00";
+					break;
+			}
 			calendar.setStartTime(startTime);
 			calendar.setEndTime(endTime);
-		} catch (ParseException e) {
-			log.error("时间转换出错：" + (day + " " + begin + ":00") + " " + (day + " " + end + ":00"));
+		} catch (Exception e) {
+			log.error("时间转换出错：" + (day + " " + begin) + " " + (day + " " + end));
 		}
-		if (timeBtn.equals(ScConstant.AM)) {
-			title = ScConstant.AM_TEXT;
-		} else if (timeBtn.equals(ScConstant.PM)) {
-			title = ScConstant.PM_TEXT;
-		} else if (timeBtn.equals(ScConstant.ALL)) {
-			title = ScConstant.ALL_TEXT;
-		} else {
-			title = ScConstant.CAL_PREFIX + begin + ":00" + " - " + end + ":00";
-		}
+		
+		
+//		if (timeBtn.equals(ScConstant.AM)) {
+//			title = ScConstant.AM_TEXT;
+//		} else if (timeBtn.equals(ScConstant.PM)) {
+//			title = ScConstant.PM_TEXT;
+//		} else if (timeBtn.equals(ScConstant.ALL)) {
+//			title = ScConstant.ALL_TEXT;
+//		} else {
+//			title = ScConstant.CAL_PREFIX + begin + ":00" + " - " + end + ":00";
+//		}
 		calendar.setCalendarId(id);
 		calendar.setUserId(doctorId);
 		calendar.setTitle(title);
