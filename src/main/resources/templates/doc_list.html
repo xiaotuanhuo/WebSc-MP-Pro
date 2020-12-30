@@ -124,17 +124,21 @@
 								</div>
 							</div>
 					        <div class="content-row">
-					            <div class="content-col">
-					                <img src="/img/p1.png" alt="">
-					                <span>已完成</span>
+					            <div class="content-col" onclick="setDocListInit(0)">
+				                	<img src="/img/p1.png">
+				                	<span>待处理</span>
 					            </div>
-					            <div class="content-col">
-					                <img src="/img/p2.png" alt="">
+					            <div class="content-col" onclick="setDocListInit(1)">
+					                <img src="/img/p2.png">
 					                <span>历史订单</span>
 					            </div>
-					            <div class="content-col">
+					            <div class="content-col" onclick="setDocListInit(2)">
 					                <img src="/img/p3.png" alt="">
 					                <span>已取消</span>
+					            </div>
+					            <div class="content-col" onclick="setDocListInit(3)">
+					                <img src="/img/p3.png" alt="">
+					                <span>未评价</span>
 					            </div>
 					        </div>
 					    </div>
@@ -170,7 +174,7 @@
 	</div>
 	
 	<!-- JQuery library file. requared all pages -->
-	<script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+	<script th:src="@{/js/jquery.min.js}"></script>
 	<!-- Template global script file. requared all pages -->
 	<script th:src="@{/js/global.script.js}"></script>
 	<!-- 下拉刷新 下拉加载插件 -->
@@ -180,84 +184,67 @@
 	<script th:src="@{/js/Mdate.js}"></script>
 	
 	<script type="text/javascript">
-		var state = 1;
 		$(function() {
-			var mescroll = new MeScroll("mescroll", {
-				down: {
-					use: true,
-					auto: true,
-					callback: downCallback
+			setDocListInit(0);
+		});
+		
+		function goDetail(sId){
+			location.href = "toDocDetail?id=" + sId;
+		}
+		
+		function setDocListInit(ds){
+			
+			$.ajax({
+				url: '/doc/toDocListInit?ds=' + ds,
+				success: function(data) {
+					if(data.code == 1){
+						//设置数据
+ 						setListData(data.list, data.role, true);
+					}else{
+						alert(data.msg);
+					}
+				},
+				error: function(data) {
+					alert("系统错误，请重试！");
 				}
 			});
+		}
+		
+		/*设置列表数据*/
+		function setListData(data, role, isAppend) {
+			var listDom = $("#doclist");
 			
-			//下拉刷新的回调
-			function downCallback() {
-				$.ajax({
-					url: '/doc/toDocListInit?state=' + state,
-					success: function(data) {
-						if(data.code == 1){
-							mescroll.endSuccess(); //无参
-							//设置数据
-	 						setListData(data.list, true);
-						}else{
-							alert(data.msg);
-							mescroll.endErr();
-						}
-					},
-					error: function(data) {
-						alert("系统错误，请重试！");
-						mescroll.endErr();
-					}
-				});
-			}
+			//页面内容
+			var sHtml = '';
+			//临时参数
+			var sTmpDate = '';
 			
-			/*设置列表数据*/
-			function setListData(data, isAppend) {
-				var listDom = $("#doclist");
+			for (var i = 0; i < data.length; i++) {
+				var doc = data[i];
+				var sDate = doc.operateStartTime.substring(0, 10);
 				
-				//页面内容
-				var sHtml = '';
-				//临时参数
-				var sTmpDate = '';
-				
-				for (var i = 0; i < data.length; i++) {
-					var doc = data[i];
-					var sDate = doc.operateStartTime.substring(0, 10);
-					
-					if(sTmpDate != sDate){
-						if(sTmpDate == ''){
-							sTmpDate = sDate;
-							sHtml += "<div class='heading'>" +
-										"<div class='title'><strong>" + sDate + "</strong></div>" +
-									 "</div>";
-							sHtml += "<div class='list section'>";
-							sHtml += "<a class='item multi-lines with-avatar' onclick='goDetail(\"" + doc.documentId + "\")'> ";
-										if(doc.documentType == 0){
-											sHtml += "<div class='avatar circle green outline'>普</div> ";
-										}else{
-											sHtml += "<div class='avatar circle red outline'>急</div> ";
-										}
-									sHtml = setPatientInfo(sHtml, doc);
-									sHtml += "</div> " +
-											 "</a> ";
-						}else{
-							sTmpDate = sDate;
-							sHtml += "</div>";
-							sHtml += "<div class='heading'>" +
-										"<div class='title'><strong>" + sDate + "</strong></div>" +
-									 "</div>";
-							sHtml += "<div class='list section'>";
-							sHtml += "<a class='item multi-lines with-avatar' onclick='goDetail(\"" + doc.documentId + "\")'> ";
-							if(doc.documentType == 0){
-								sHtml += "<div class='avatar circle green outline'>普</div> ";
-							}else{
-								sHtml += "<div class='avatar circle red outline'>急</div> ";
-							}
-							sHtml = setPatientInfo(sHtml, doc);
-							sHtml += "</div> " +
-									 "</a> ";
-						}
+				if(sTmpDate != sDate){
+					if(sTmpDate == ''){
+						sTmpDate = sDate;
+						sHtml += "<div class='heading'>" +
+									"<div class='title'><strong>" + sDate + "</strong></div>" +
+								 "</div>";
+						sHtml += "<div class='list section'>";
+						sHtml += "<a class='item multi-lines with-avatar' onclick='goDetail(\"" + doc.documentId + "\")'> ";
+									if(doc.documentType == 0){
+										sHtml += "<div class='avatar circle green outline'>普</div> ";
+									}else{
+										sHtml += "<div class='avatar circle red outline'>急</div> ";
+									}
+								sHtml = setPatientInfo(sHtml, role, doc);
+								sHtml += "</div> " +
+										 "</a> ";
 					}else{
+						sTmpDate = sDate;
+						sHtml += "</div>";
+						sHtml += "<div class='heading'>" +
+									"<div class='title'><strong>" + sDate + "</strong></div>" +
+								 "</div>";
 						sHtml += "<div class='list section'>";
 						sHtml += "<a class='item multi-lines with-avatar' onclick='goDetail(\"" + doc.documentId + "\")'> ";
 						if(doc.documentType == 0){
@@ -265,35 +252,31 @@
 						}else{
 							sHtml += "<div class='avatar circle red outline'>急</div> ";
 						}
-						sHtml = setPatientInfo(sHtml, doc);
+						sHtml = setPatientInfo(sHtml, role, doc);
 						sHtml += "</div> " +
 								 "</a> ";
 					}
-	        		
-	        		if(sHtml != ''){
-	        			sHtml += "</div><div style='height:10px;'></div>";
-	        		}
-
-					listDom.html(sHtml);
+				}else{
+					sHtml += "<div class='list section'>";
+					sHtml += "<a class='item multi-lines with-avatar' onclick='goDetail(\"" + doc.documentId + "\")'> ";
+					if(doc.documentType == 0){
+						sHtml += "<div class='avatar circle green outline'>普</div> ";
+					}else{
+						sHtml += "<div class='avatar circle red outline'>急</div> ";
+					}
+					sHtml = setPatientInfo(sHtml, role, doc);
+					sHtml += "</div> " +
+							 "</a> ";
 				}
+        		
+        		if(sHtml != ''){
+        			sHtml += "</div><div style='height:10px;'></div>";
+        		}
+				listDom.html(sHtml);
 			}
-			
-			$("#dateSelector").focus(function() {
-				document.activeElement.blur();
-			});
-			new Mdate("dateSelector", null, dateCallback);
-			
-			//日期选择的回调
-			function dateCallback(data) {
-				alert(data);
-			};
-		});
-		
-		function goDetail(sId){
-			location.href = "toDocDetail?id=" + sId;
 		}
 		
-		function setPatientInfo(sHtml, doc){
+		function setPatientInfo(sHtml, role, doc){
 			sHtml += "<div class='content'> " +
 					 "<span style='font-size: 1.2rem;font-weight: bold;'>" + doc.patientName + "</span><br/>" +
 					 "<span class='title' style='font-size: 0.9rem;'>" + doc.orgName + "</span><br/>" +
@@ -301,16 +284,21 @@
 					 "<span>年龄：" + doc.patientAge + "</span>&nbsp;&nbsp;&nbsp;" +
 					 "<span>性别：" + (doc.patient_sex == "0"?"男":"女") + "</span> " +
 					 "<div> " +
-						"<small class='text-green'>" + doc.operateStartTime + "</small>&nbsp; " +
-						"<small class='muted'>" + (doc.qaUserName != null ? doc.qaUserName:"") + "</small> ";
+					 "<small class='text-green'>" + doc.operateStartTime + "</small>&nbsp; " +
+					 "<small class='muted'>" + (doc.qaUserName != null ? doc.qaUserName:"") + "</small> ";
+						
 			if(doc.documentState == '0')
-				sHtml += "<div class='pull-right label red-pale text-tint'>已提交</div> ";
+				sHtml += "<div class='pull-right label red-pale text-tint'>待审核</div> ";
 			else if(doc.documentState == '1')
-				sHtml += "<div class='pull-right label red-pale text-tint'>已发布</div> ";
-			else if(doc.documentState == '2')
+				sHtml += "<div class='pull-right label red-pale text-tint'>待分配</div> ";
+			else if(doc.documentState == '2' && role == '4')
 				sHtml += "<div class='pull-right label red-pale text-tint'>已匹配</div> ";
-			else if(doc.documentState == '3')
-				sHtml += "<div class='pull-right label red-pale text-tint'>已确认</div> ";
+			else if(doc.documentState == '2' && role == '5')
+				sHtml += "<div class='pull-right label red-pale text-tint'>待接单</div> ";
+			else if(doc.documentState == '3' && doc.oldDocumentState != '4')
+				sHtml += "<div class='pull-right label red-pale text-tint'>待手术</div> ";
+			else if(doc.documentState == '3' && doc.oldDocumentState == '4')
+				sHtml += "<div class='pull-right label red-pale text-tint'>退回待修改</div> ";
 			else if(doc.documentState == '4')
 				sHtml += "<div class='pull-right label red-pale text-tint'>待完成</div> ";
 			else if(doc.documentState == '5')

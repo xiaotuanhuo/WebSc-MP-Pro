@@ -1,6 +1,9 @@
 package com.sc.mp.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +23,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.sc.mp.model.WebScAnesthetic;
 import com.sc.mp.model.WebScDoc;
 import com.sc.mp.model.WebScUser;
+import com.sc.mp.model.WebScUser_Distribution;
 import com.sc.mp.service.DocService;
+import com.sc.mp.service.QaTeamService;
 import com.sc.mp.service.UserService;
 import com.sc.mp.util.WxUtil;
 
@@ -39,6 +44,9 @@ public class DocController {
 	DataController data;
 	
 	@Resource
+	QaTeamService qaTeamService;
+	
+	@Resource
 	private WxUtil wxUtil;
 	
 	@Value("${projectDomainName}")
@@ -50,6 +58,12 @@ public class DocController {
 	*/
 	@GetMapping(value="/toDocList")
 	public String toDocList() {
+		//测试用
+		WebScUser searchUser = new WebScUser();
+		searchUser.setUserId(5);
+		WebScUser user = userService.selectUserInfo(searchUser);
+		
+		
 		return "doc_list";
 	}
 	
@@ -60,8 +74,8 @@ public class DocController {
 	@RequestMapping("/toDocListInit")
 	@ResponseBody
     public JSONObject DocListInit(HttpServletRequest request, 
-    					  	HttpServletResponse response) {
-		response.setContentType("application/json;charset=UTF-8");
+    					  		  HttpServletResponse response,
+    					  		  @RequestParam(value = "ds") String sState){
 		JSONObject returnMap = new JSONObject();
 		
 //		//获取用户信息
@@ -95,25 +109,101 @@ public class DocController {
 					docQuery.setProvince(user.getProvince());
 					docQuery.setCity(user.getCity());
 					docQuery.setArea(user.getArea());
+				}else if(roleId.equals("4")){
+					//区域管理人员
+					//省，市，区   查询范围
+					docQuery.setProvince(user.getProvince());
+					docQuery.setCity(user.getCity());
+					docQuery.setArea(user.getArea());
+					
+					if(sState.equals("0")){
+						//待处理
+						docQuery.setDocumentState("'0','1','2','4','9'");
+					}else if(sState.equals("1")){
+						//已完成
+						docQuery.setDocumentState("'5'");
+					}else if(sState.equals("2")){
+						//待取消
+						docQuery.setDocumentState("'6'");
+					}
 				}else if(roleId.equals("5")){
 					//医生，查询主治医生
 					docQuery.setQaUserId(String.valueOf(user.getUserId()));
 					//省，市，区   查询范围
 					docQuery.setProvince(user.getProvince());
 					docQuery.setCity(user.getCity());
+					
+					if(sState.equals("0")){
+						//待处理
+						docQuery.setDocumentState("'2','3','4'");
+					}else if(sState.equals("1")){
+						//已完成
+						docQuery.setDocumentState("'5'");
+					}else if(sState.equals("3")){
+						//未评分订单
+						docQuery.setDocumentState("'5'");
+						docQuery.setDoctorEvaluate(-1);
+					}
 				}
 				
 				List<WebScDoc> docList = docService.selectWebScDocList(docQuery);
 				for(WebScDoc d : docList){
 		    		if(d.getStatus() != null && !d.getStatus().equals("")){
-		    			d.setPatientName(d.getTmpPatientName());
-		    			d.setPatientAge(d.getTmpPatientAge());
-		    			d.setPatientSex(d.getTmpPatientSex());
-		    			d.setOperativeId(d.getTmpOperativeId());
-		    			d.setOperativeName(d.getTmpOperativeName());
-		    			d.setAnestheticId(d.getTmpAnestheticId());
-		    			d.setAnestheticName(d.getTmpAnestheticName());
-
+		    			if(d.getTmpPatientName() != null)
+		    				d.setPatientName(d.getTmpPatientName());
+		    			if(d.getTmpPatientAge() != null)
+		    				d.setPatientAge(d.getTmpPatientAge());
+		    			if(d.getTmpPatientSex() != null)
+		    				d.setPatientSex(d.getTmpPatientSex());
+		    			if(d.getTmpOperativeId() != null)
+		    				d.setOperativeId(d.getTmpOperativeId());
+		    			if(d.getTmpOperativeName() != null)
+		    				d.setOperativeName(d.getTmpOperativeName());
+		    			if(d.getTmpAnestheticId() != null)
+		    				d.setAnestheticId(d.getTmpAnestheticId());
+		    			if(d.getTmpAnestheticName() != null)
+		    				d.setAnestheticName(d.getTmpAnestheticName());
+		    			
+		    			//呼吸系统
+		    			if(d.getYwsjHxxt() != null){
+		    				String[] hxxts = d.getYwsjHxxt().split(",");
+		    				d.setYwsjHxxtVal("");
+		    				for(int i = 0; i < hxxts.length; i++){
+		    					if(hxxts[i].equals("0")){
+		    						d.setYwsjHxxtVal(d.getYwsjHxxtVal() + "频繁舌后坠（≥3次）  ");
+		    					}else if(hxxts[i].equals("1")){
+		    						d.setYwsjHxxtVal(d.getYwsjHxxtVal() + "喉痉挛  ");
+		    					}else if(hxxts[i].equals("2")){
+		    						d.setYwsjHxxtVal(d.getYwsjHxxtVal() + "返流  ");
+		    					}else if(hxxts[i].equals("3")){
+		    						d.setYwsjHxxtVal(d.getYwsjHxxtVal() + "误吸  ");
+		    					}else if(hxxts[i].equals("4")){
+		    						d.setYwsjHxxtVal(d.getYwsjHxxtVal() + "支气管痉挛  ");
+		    					}else if(hxxts[i].equals("5")){
+		    						d.setYwsjHxxtVal(d.getYwsjHxxtVal() + "计划外插管  ");
+		    					}
+		    				}
+		    			}
+		    			
+		    			//循环系统
+		    			if(d.getYwsjXhxt() != null){
+		    				String[] xhxts = d.getYwsjXhxt().split(",");
+		    				d.setYwsjXhxtVal("");
+		    				for(int i = 0; i < xhxts.length; i++){
+		    					if(xhxts[i].equals("0")){
+		    						d.setYwsjXhxtVal(d.getYwsjXhxtVal() + "需纠正的低血压  ");
+		    					}else if(xhxts[i].equals("1")){
+		    						d.setYwsjXhxtVal(d.getYwsjXhxtVal() + "需纠正的高血压  ");
+		    					}else if(xhxts[i].equals("2")){
+		    						d.setYwsjXhxtVal(d.getYwsjXhxtVal() + "肺动脉栓塞  ");
+		    					}else if(xhxts[i].equals("3")){
+		    						d.setYwsjXhxtVal(d.getYwsjXhxtVal() + "心梗  ");
+		    					}else if(xhxts[i].equals("4")){
+		    						d.setYwsjXhxtVal(d.getYwsjXhxtVal() + "脑梗  ");
+		    					}
+		    				}
+		    			}
+		    			
 		    			String photo = "";
 		    			if(d.getPhoto_1() != null && !d.getPhoto_1().trim().equals("")){
 		    				photo = photo + d.getPhoto_1() + ",";
@@ -132,6 +222,7 @@ public class DocController {
 				returnMap.put("code", 1);
 				returnMap.put("msg", "");
 				returnMap.put("list", docList);
+				returnMap.put("role", user.getRoleId());
 			}else{
 				returnMap.put("code", 0);
 				returnMap.put("msg", "订单数据获取错误，请重试！");
@@ -161,7 +252,7 @@ public class DocController {
 //			WebScUser user = ControllerUtil.getUserInfo(request);
 			//测试用
 			WebScUser searchUser = new WebScUser();
-			searchUser.setUserId(5);
+			searchUser.setUserId(4);
 			WebScUser user = userService.selectUserInfo(searchUser);
 			
 			WebScDoc searchDoc = new WebScDoc();
@@ -169,14 +260,61 @@ public class DocController {
 			WebScDoc doc = docService.selectWebScDoc(searchDoc);
 			
 			if(doc.getStatus() != null && !doc.getStatus().equals("")){
-    			doc.setPatientName(doc.getTmpPatientName());
-    			doc.setPatientAge(doc.getTmpPatientAge());
-    			doc.setPatientSex(doc.getTmpPatientSex());
-    			doc.setOperativeId(doc.getTmpOperativeId());
-    			doc.setOperativeName(doc.getTmpOperativeName());
-    			doc.setAnestheticId(doc.getTmpAnestheticId());
-    			doc.setAnestheticName(doc.getTmpAnestheticName());
+				if(doc.getTmpPatientName() != null)
+    				doc.setPatientName(doc.getTmpPatientName());
+    			if(doc.getTmpPatientAge() != null)
+    				doc.setPatientAge(doc.getTmpPatientAge());
+    			if(doc.getTmpPatientSex() != null)
+    				doc.setPatientSex(doc.getTmpPatientSex());
+    			if(doc.getTmpOperativeId() != null)
+    				doc.setOperativeId(doc.getTmpOperativeId());
+    			if(doc.getTmpOperativeName() != null)
+    				doc.setOperativeName(doc.getTmpOperativeName());
+    			if(doc.getTmpAnestheticId() != null)
+    				doc.setAnestheticId(doc.getTmpAnestheticId());
+    			if(doc.getTmpAnestheticName() != null)
+    				doc.setAnestheticName(doc.getTmpAnestheticName());
 
+    			//呼吸系统
+    			if(doc.getYwsjHxxt() != null){
+    				String[] hxxts = doc.getYwsjHxxt().split(",");
+    				doc.setYwsjHxxtVal("");
+    				for(int i = 0; i < hxxts.length; i++){
+    					if(hxxts[i].equals("0")){
+    						doc.setYwsjHxxtVal(doc.getYwsjHxxtVal() + "频繁舌后坠（≥3次）  ");
+    					}else if(hxxts[i].equals("1")){
+    						doc.setYwsjHxxtVal(doc.getYwsjHxxtVal() + "喉痉挛  ");
+    					}else if(hxxts[i].equals("2")){
+    						doc.setYwsjHxxtVal(doc.getYwsjHxxtVal() + "返流  ");
+    					}else if(hxxts[i].equals("3")){
+    						doc.setYwsjHxxtVal(doc.getYwsjHxxtVal() + "误吸  ");
+    					}else if(hxxts[i].equals("4")){
+    						doc.setYwsjHxxtVal(doc.getYwsjHxxtVal() + "支气管痉挛  ");
+    					}else if(hxxts[i].equals("5")){
+    						doc.setYwsjHxxtVal(doc.getYwsjHxxtVal() + "计划外插管  ");
+    					}
+    				}
+    			}
+    			
+    			//循环系统
+    			if(doc.getYwsjXhxt() != null){
+    				String[] xhxts = doc.getYwsjXhxt().split(",");
+    				doc.setYwsjXhxtVal("");
+    				for(int i = 0; i < xhxts.length; i++){
+    					if(xhxts[i].equals("0")){
+    						doc.setYwsjXhxtVal(doc.getYwsjXhxtVal() + "需纠正的低血压  ");
+    					}else if(xhxts[i].equals("1")){
+    						doc.setYwsjXhxtVal(doc.getYwsjXhxtVal() + "需纠正的高血压  ");
+    					}else if(xhxts[i].equals("2")){
+    						doc.setYwsjXhxtVal(doc.getYwsjXhxtVal() + "肺动脉栓塞  ");
+    					}else if(xhxts[i].equals("3")){
+    						doc.setYwsjXhxtVal(doc.getYwsjXhxtVal() + "心梗  ");
+    					}else if(xhxts[i].equals("4")){
+    						doc.setYwsjXhxtVal(doc.getYwsjXhxtVal() + "脑梗  ");
+    					}
+    				}
+    			}
+    			
     			String photo = "";
     			if(doc.getPhoto_1() != null && !doc.getPhoto_1().trim().equals("")){
     				photo = photo + doc.getPhoto_1() + ",";
@@ -193,6 +331,7 @@ public class DocController {
 			
 			model.addAttribute("doc", doc);
 			model.addAttribute("user", user);
+			
 			//微信网页jsdk，初始化参数生成
 			String nonceStr = wxUtil.getNonceStr();
 			String timestamp = wxUtil.getTimestamp();
@@ -215,4 +354,472 @@ public class DocController {
 		
 		return "doc_detail";
 	}
+
+	/**
+	 * @Description: 订单更新
+	 * @Title: updateOrderInfo
+	 * @return 
+	*/
+	@RequestMapping("/updateDocInfo")
+	@ResponseBody
+	public JSONObject updateDocInfo(HttpServletRequest request, 
+							  		HttpServletResponse response){
+		JSONObject returnMap = new JSONObject();
+		
+		try{
+//			//获取用户信息
+//			WebScUser user = ControllerUtil.getUserInfo(request);
+			
+			//测试用
+			WebScUser searchUser = new WebScUser();
+			searchUser.setUserId(4);
+			WebScUser user = userService.selectUserInfo(searchUser);
+			
+			//参数
+			String sFormJson = request.getParameter("jsondata");
+			JSONObject jo = JSONObject.parseObject(sFormJson);
+			Map<String, Object> updateMap = new HashMap<String, Object>();
+			
+			String sType = jo.get("type").toString();
+			//更新状态位
+			String id = jo.get("id").toString();
+			updateMap.put("documentId", id);
+			
+			if(sType.equals("s")){
+				String ds = jo.get("ds").toString();
+				updateMap.put("documentState", ds);
+				String ods = jo.get("ods").toString();
+				updateMap.put("oldDocumentState", ods);
+				
+				if(ods.equals("0") && ds.equals("1")){
+					//审核订单		区域管理员操作
+					updateMap.put("adminUserId", user.getUserId());
+					log.info("区域管理员：" + user.getUserName() + "	审核订单：" + id + " 操作开始！");
+				}else if(ods.equals("1") && ds.equals("2")){
+					//订单分配		区域管理员操作
+					String qid = jo.get("qid").toString();
+					updateMap.put("qaUserId", qid);
+					log.info("区域管理员：" + user.getUserName() + "	分配订单：" + id + "	医生:" + qid + " 操作开始！");
+				}else if(ods.equals("2") && ds.equals("1")){
+					//取消分配		区域管理员操作
+					updateMap.put("qaUserId", "");
+					log.info("区域管理员：" + user.getUserName() + "	取消分配订单：" + id + " 操作开始！");
+				}else if(ods.equals("2") && ds.equals("3")){
+					//确认接单		医生操作
+					log.info("医生：" + user.getUserName() + "	确认接取订单：" + id + " 操作开始！");
+				}else if(ods.equals("3") && ds.equals("2")){
+					//撤销分配单	医生操作
+					log.info("医生：" + user.getUserName() + "	撤销分配订单：" + id + " 操作开始！");
+				}else if(ods.equals("3") && ds.equals("3")){
+					//撤销转单		医生操作
+					String qid = jo.get("qid").toString();
+					updateMap.put("qaUserId", qid);
+					updateMap.put("transferUserId", "");
+					log.info("医生：" + user.getUserName() + "	撤销转单：" + id + " 操作开始！");
+				}else if(ods.equals("4") && ds.equals("5")){
+					//完成订单		管理员操作
+					log.info("区域管理员：" + user.getUserName() + "	完成订单：" + id + " 操作开始！");
+				}
+				
+				int iRet = docService.updateDocInfoByMap(updateMap);
+				
+				if(iRet > 0){
+					returnMap.put("code", 1);
+					
+					if(ods.equals("0") && ds.equals("1")){
+						//审核成功		区域管理员操作
+						log.info("区域管理员：" + user.getUserName() + "	审核订单：" + id + " 成功！");
+						//数据库日志记录		暂定
+					}else if(ods.equals("1") && ds.equals("2")){
+						//分配成功		区域管理员操作
+						log.info("区域管理员：" + user.getUserName() + "	分配订单：" + id + " 成功！");
+					}else if(ods.equals("2") && ds.equals("1")){
+						//取消分配		区域管理员操作
+						log.info("区域管理员：" + user.getUserName() + "	取消分配订单：" + id + " 成功！");
+					}else if(ods.equals("2") && ds.equals("3")){
+						//确认接单		医生操作
+						log.info("医生：" + user.getUserName() + "	确认接取订单：" + id + "  成功！");
+					}else if(ods.equals("3") && ds.equals("2")){
+						//撤销分配单	医生操作
+						log.info("医生：" + user.getUserName() + "	撤销分配订单：" + id + "  成功！");
+					}else if(ods.equals("3") && ds.equals("3")){
+						//撤销转单		医生操作
+						log.info("医生：" + user.getUserName() + "	撤销转单：" + id + "  成功！");
+					}else if(ods.equals("4") && ds.equals("5")){
+						//完成订单		管理员操作
+						log.info("区域管理员：" + user.getUserName() + "	完成订单：" + id + " 成功！");
+					}
+				}else{
+					returnMap.put("code", 0);
+					log.info("人员：" + user.getUserName() + "	操作订单：" + id + " 系统错误！");
+				}
+			}else if(sType.equals("zd")){
+				String ds = jo.get("ds").toString();
+				updateMap.put("documentState", ds);
+				String ods = jo.get("ods").toString();
+				updateMap.put("oldDocumentState", ods);
+				
+				String qid = jo.get("qid").toString();
+				updateMap.put("qaUserId", qid);
+				updateMap.put("transferUserId", user.getUserId());
+				log.info("医生：" + user.getUserName() + "  转单：" + id + " 给医生：" + qid + "	操作开始！");
+				
+				int iRet = docService.updateDocInfoByMap(updateMap);
+				
+				if(iRet > 0){
+					returnMap.put("code", 1);
+					log.info("医生：" + user.getUserName() + "	转单：" + id + " 成功！");
+				}else{
+					returnMap.put("code", 0);
+					log.info("区域管理员：" + user.getUserName() + "	操作订单：" + id + " 系统错误！");
+				}
+			}else if(sType.equals("t")){
+				String ds = jo.get("ds").toString();
+				updateMap.put("documentState", ds);
+				String ods = jo.get("ods").toString();
+				updateMap.put("oldDocumentState", ods);
+				
+				Map<String, Object> tmpUpdateMap = jo.getInnerMap();
+				tmpUpdateMap.put("documentId", id);
+				
+				//医生备注
+				String doctorMemo = jo.get("doctorMemo").toString();
+				updateMap.put("qaMemo", doctorMemo);
+				
+				if(ods.equals("3") && ds.equals("4")){
+					//完成订单
+					tmpUpdateMap.put("status", "1");
+					log.info("医生：" + user.getUserName() + "	完成订单：" + id + " 开始！");
+				}else if(ods.equals("3") && ds.equals("3")){
+					//保存草稿
+					tmpUpdateMap.put("status", "0");
+					updateMap.put("oldDocumentState", "");
+					
+					log.info("医生：" + user.getUserName() + "	保存草稿：" + id + " 开始！");
+				}else if(ods.equals("5") && ds.equals("4")){
+					//退回待完成订单		管理员操作
+					log.info("区域管理员：" + user.getUserName() + "	退回待完成订单：" + id + " 操作开始！");
+					String qid = jo.get("adminMemo").toString();
+					updateMap.put("adminMemo", qid);
+					
+					tmpUpdateMap.put("status", "0");
+				}
+				
+				int iRet = docService.updateTmpDoc(updateMap, tmpUpdateMap);
+				
+				if(iRet > 0){
+					returnMap.put("code", 1);
+					if(ods.equals("3") && ds.equals("4")){
+						//完成订单
+						log.info("医生：" + user.getUserName() + "	完成订单：" + id + " 成功！");
+					}else if(ods.equals("3") && ds.equals("3")){
+						//保存草稿
+						log.info("医生：" + user.getUserName() + "	保存草稿：" + id + " 成功！");
+					}else if(ods.equals("5") && ds.equals("4")){
+						//退回待完成订单		管理员操作
+						log.info("区域管理员：" + user.getUserName() + "	退回待完成订单：" + id + " 成功！");
+					}
+				}else{
+					returnMap.put("code", 0);
+					log.info("医生：" + user.getUserName() + "	操作订单：" + id + " 系统错误！");
+				}
+			}else if(sType.equals("df")){
+				String doctorEvaluate = jo.get("de").toString();
+				String doctorEvaluateMemo = jo.get("dem").toString();
+				updateMap.put("doctorEvaluate", doctorEvaluate);
+				updateMap.put("doctorEvaluateMemo", doctorEvaluateMemo);
+				log.info("医生：" + user.getUserName() + "  评价订单：" + id + " 操作开始！");
+				
+				int iRet = docService.updateDocInfoByMap(updateMap);
+				
+				if(iRet > 0){
+					returnMap.put("code", 1);
+					log.info("医生：" + user.getUserName() + "	转单：" + id + " 成功！");
+				}else{
+					returnMap.put("code", 0);
+					log.info("区域管理员：" + user.getUserName() + "	操作订单：" + id + " 系统错误！");
+				}
+			}else if(sType.equals("twc")){
+				String ds = jo.get("ds").toString();
+				updateMap.put("documentState", ds);
+				String ods = jo.get("ods").toString();
+				updateMap.put("oldDocumentState", ods);
+				
+				Map<String, Object> tmpUpdateMap = new HashMap<String, Object>();
+				tmpUpdateMap.put("documentId", id);
+				tmpUpdateMap.put("status", "0");
+				
+				//管理员备注
+				String adminMemo = jo.get("adminMemo").toString();
+				updateMap.put("adminMemo", adminMemo);
+				
+				//退回待完成订单		管理员操作
+				log.info("区域管理员：" + user.getUserName() + "	退回待完成订单：" + id + " 操作开始！");
+				
+				int iRet = docService.updateTmpDoc2(updateMap, tmpUpdateMap);
+				
+				if(iRet > 0){
+					returnMap.put("code", 1);
+					//退回待完成订单		管理员操作
+					log.info("区域管理员：" + user.getUserName() + "	退回待完成订单：" + id + " 成功！");
+				}else{
+					returnMap.put("code", 0);
+					log.info("区域管理员：" + user.getUserName() + "	退回待完成订单：" + id + " 系统错误！");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			returnMap.put("code", 0);
+		}
+		
+		return JSONObject.parseObject(returnMap.toJSONString());
+	}
+
+	/**
+	 * @Description: 获取医生分配列表
+	 * @Title: getDistributionDrGridList
+	 * @return 
+	*/
+	@RequestMapping("/getDistributionDrGridList")
+	@ResponseBody
+	public JSONObject getDistributionDrGridList(HttpServletRequest request, 
+	  											HttpServletResponse response,
+	  											@RequestParam(value = "id") String sDocumentId,
+	  											@RequestParam(value = "searchVal") String searchVal){
+		JSONObject returnMap = new JSONObject();
+		try{
+	//		//获取用户信息
+	//		WebScUser user = ControllerUtil.getUserInfo(request);
+			
+			//测试用
+			WebScUser searchUser = new WebScUser();
+			searchUser.setUserId(5);
+			WebScUser user = userService.selectUserInfo(searchUser);
+			
+			//获取医生名单
+			List<WebScUser_Distribution> drList = docService.getDistributionDrGridList(sDocumentId, searchVal, user);
+		
+			returnMap.put("code", 1);
+			returnMap.put("list", drList);
+			
+		}catch(Exception e){
+			returnMap.put("code", 0);
+		}
+		
+		return JSONObject.parseObject(returnMap.toJSONString());
+	}
+	
+	/**
+	 * 
+	 * @Title: transferuser   
+	 * @Description: 获取转单医生列表
+	 * @param: @param documentId
+	 * @param: @param userName
+	 * @param: @return      
+	 * @return: JSONObject      
+	 * @throws
+	 */
+	@RequestMapping("/transferuser")
+    @ResponseBody
+    public JSONObject transferuser(HttpServletRequest request, 
+								   HttpServletResponse response,
+								   @RequestParam(value = "id") String documentId,
+    							   @RequestParam(value = "searchVal") String searchVal) {
+		JSONObject returnMap = new JSONObject();
+		
+		try{
+	//		//获取用户信息
+	//		WebScUser user = ControllerUtil.getUserInfo(request);
+			
+			//测试用
+			WebScUser searchUser = new WebScUser();
+			searchUser.setUserId(4);
+			WebScUser user = userService.selectUserInfo(searchUser);
+			
+	    	//获取订单数据
+			WebScDoc searchDoc = new WebScDoc();
+			searchDoc.setDocumentId(documentId);
+	    	List<WebScDoc> docs = docService.selectWebScDocList(searchDoc);
+	    	
+			if(docs != null){
+				//查询订单当日医院情况
+				WebScDoc doc = docs.get(0);
+				if(doc.getStatus() != null && !doc.getStatus().equals("")){
+	    			doc.setPatientName(doc.getTmpPatientName());
+	    			doc.setPatientAge(doc.getTmpPatientAge());
+	    			doc.setPatientSex(doc.getTmpPatientSex());
+	    			doc.setOperativeId(doc.getTmpOperativeId());
+	    			doc.setOperativeName(doc.getTmpOperativeName());
+	    			doc.setAnestheticId(doc.getTmpAnestheticId());
+	    			doc.setAnestheticName(doc.getTmpAnestheticName());
+
+	    			String photo = "";
+	    			if(doc.getPhoto_1() != null && !doc.getPhoto_1().trim().equals("")){
+	    				photo = photo + doc.getPhoto_1() + ",";
+	    			}
+	    			if(doc.getPhoto_2() != null && !doc.getPhoto_2().trim().equals("")){
+	    				photo = photo + doc.getPhoto_2() + ",";
+	    			}
+	    			if(doc.getPhoto_3() != null && !doc.getPhoto_3().trim().equals("")){
+	    				photo = photo + doc.getPhoto_3() + ",";
+	    			}
+	    			if(!photo.equals(""))	photo = photo.substring(0, photo.length() - 1);
+	    			doc.setPhoto(photo);
+	    		}
+				
+				//获取可转单医生名单
+				Map<String, String> searchMap = new HashMap<String, String>();
+				searchMap.put("operateStartTime", doc.getOperateStartTime());
+				searchMap.put("orgId", doc.getOrgId());
+				searchMap.put("userName", searchVal);
+				searchMap.put("NoUserId", user.getUserId() + "");
+				
+				List<WebScUser> userls = docService.getTransferUser(searchMap);
+				
+				if(userls != null && userls.size() > 0){
+					returnMap.put("code", 1);
+					returnMap.put("list", userls);
+				}else{
+					returnMap.put("code", 0);
+				}
+			}else{
+				returnMap.put("code", 0);
+			}
+		}catch(Exception e){
+			returnMap.put("code", 0);
+		}
+		
+		return JSONObject.parseObject(returnMap.toJSONString());
+	}
+	
+	@RequestMapping("/showTeam")
+	@ResponseBody
+    public JSONObject showTeam(@RequestParam(value = "id") String documentId) {
+		JSONObject returnMap = new JSONObject();
+		
+		List<WebScUser> userls = qaTeamService.getQaTeamInfo(documentId);
+		
+		if(userls == null){
+			userls = new ArrayList<WebScUser>();
+		}
+
+		returnMap.put("list", userls);
+		
+		return JSONObject.parseObject(returnMap.toJSONString());
+	}
+	
+	//获取团队人员列表
+	@RequestMapping("/getQaUserInfo")
+    @ResponseBody
+    public JSONObject getQaUserInfo(@RequestParam(value = "id") String documentId,
+    								@RequestParam(value = "type") String roleId,
+    								@RequestParam(value = "searchVal") String userName) {
+		JSONObject returnMap = new JSONObject();
+		List<WebScUser> userls = new ArrayList<WebScUser>();
+
+		try{
+	//		//获取用户信息
+	//		WebScUser user = ControllerUtil.getUserInfo(request);
+			
+			//测试用
+			WebScUser searchUser = new WebScUser();
+			searchUser.setUserId(4);
+			WebScUser user = userService.selectUserInfo(searchUser);
+			
+	    	//获取订单数据
+			WebScDoc searchDoc = new WebScDoc();
+			searchDoc.setDocumentId(documentId);
+			WebScDoc doc = docService.selectWebScDoc(searchDoc);
+			
+			if(doc != null){
+				//查询订单当日医院情况
+				Map<String, String> searchMap = new HashMap<String, String>();
+				searchMap.put("userName", userName);
+				searchMap.put("roleId", roleId);
+				searchMap.put("province", doc.getOrgProvince());
+				searchMap.put("NoUserId", user.getUserId() + "");
+				
+				userls = docService.getQaUserInfo(searchMap);
+				
+				if(userls != null && userls.size() > 0){
+					if(doc.getQaTeamId() != null){
+						List<WebScUser> ls = qaTeamService.getQaTeamInfo(doc.getQaTeamId());
+						for(WebScUser u : ls){
+							for(WebScUser tu : userls){
+								if(tu.getUserId() == u.getUserId()){
+									userls.remove(tu);
+									break;
+								}
+							}
+						}
+					}
+				}
+				
+				returnMap.put("code", 1);
+				returnMap.put("list", userls);
+			}else{
+				returnMap.put("code", 0);
+				returnMap.put("errmsg", "订单不存在");
+			}
+		}catch(Exception e){
+			returnMap.put("code", 0);
+		}
+		
+		return JSONObject.parseObject(returnMap.toJSONString());
+	}
+	
+	@RequestMapping("/addQaTeamUser")
+    @ResponseBody
+    public JSONObject addQaTeamUser(@RequestParam(value = "id") String documentId,
+    						  		@RequestParam(value = "uid") String userId,
+    						  		@RequestParam(value = "type") String roleId) {
+		JSONObject returnMap = new JSONObject();
+		
+		try{
+			
+			Map<String, String> insertMap = new HashMap<String, String>();
+			insertMap.put("documentId", documentId);
+			insertMap.put("userId", userId);
+			insertMap.put("roleId", roleId);
+			
+			qaTeamService.insertQaUser(insertMap);
+			
+			//查询用户信息
+			List<WebScUser> userls = qaTeamService.getQaTeamInfo(documentId);
+			for(WebScUser u : userls){
+				if(u.getUserId().toString().trim().equals(userId)){
+					returnMap.put("user", u);
+					System.out.println(u);
+					break;
+				}
+			}
+			
+			returnMap.put("code", 1);
+		}catch(Exception e){
+			returnMap.put("code", 0);
+		}
+		
+		return JSONObject.parseObject(returnMap.toJSONString());
+    }
+	
+	@RequestMapping("/delQaTeamUser")
+    @ResponseBody
+    public JSONObject delQaTeamUser(@RequestParam(value = "id") String documentId,
+    						  		@RequestParam(value = "uid") String userId) {
+		JSONObject returnMap = new JSONObject();
+		
+		try{
+			Map<String, String> deleteMap = new HashMap<String, String>();
+			deleteMap.put("documentId", documentId);
+			deleteMap.put("userId", userId);
+			
+			qaTeamService.deleteQaUser(deleteMap);
+			
+			returnMap.put("code", 1);
+		}catch(Exception e){
+			returnMap.put("code", 0);
+		}
+		
+		return JSONObject.parseObject(returnMap.toJSONString());
+    }
 }

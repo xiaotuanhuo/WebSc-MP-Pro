@@ -1,10 +1,10 @@
 .starbox{width:480px;margin:20px auto;height:30px;}
 .fl{float:left;display:inline;}
 .s_name{float:left;display:block;width:60px;text-align:right;}
-.star_ul{background:url(../images/star.png) no-repeat 0 -150px;width:132px;z-index:10;position:relative;height:28px;list-style-type:none}
+.star_ul{background:url(../img/star.png) no-repeat 0 -150px;width:132px;z-index:10;position:relative;height:28px;list-style-type:none}
 .star_ul li{float:left;margin-right:1px;width:28px;height:28px;}
 .star_ul li a{display:block;height:28px;position:absolute;left:0;top:0;text-indent:-999em;}
-.star_ul li .active-star{background:url(../images/star.png) no-repeat;}
+.star_ul li .active-star{background:url(../img/star.png) no-repeat;}
 .star_ul li .one-star{width:28px;background-position:0 -120px;z-index:50;}
 .star_ul li .two-star{width:51px;background-position:0 -90px;z-index:40;}
 .star_ul li .three-star{width:79px;background-position:0 -60px;z-index:30;}
@@ -12,10 +12,10 @@
 .star_ul li .five-star{width:129px;margin-right:0;background-position:0 0;z-index:10;}
 .s_result{padding:6px 0 0 5px;}
 
-.square_ul{background:url(../images/star.png) no-repeat 0 -222px;width:146px;z-index:10;position:relative;height:20px;}
+.square_ul{background:url(../img/star.png) no-repeat 0 -222px;width:146px;z-index:10;position:relative;height:20px;}
 .square_ul li{float:left;margin-right:1px;width:29px;height:20px;}
 .square_ul li a{display:block;height:20px;position:absolute;left:0;top:0;text-indent:-999em;}
-.square_ul li .active-square{background:url(../images/star.png) no-repeat;}
+.square_ul li .active-square{background:url(../img/star.png) no-repeat;}
 .square_ul li .square-1{width:29px;background-position:0 -243px;z-index:50;}
 .square_ul li .square-2{width:58px;background-position:0 -264px;z-index:40;}
 .square_ul li .square-3{width:87px;background-position:0 -285px;z-index:30;}

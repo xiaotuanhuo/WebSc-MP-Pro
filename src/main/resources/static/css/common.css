@@ -212,3 +212,50 @@
 .dialog-modal{
 	width: 90%;
 }
+
+
+/* 患者信息列表*/
+.patient_table th {
+    font-weight: 700;
+    position: relative;
+}
+
+.patient_table th:after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: block;
+    content: ' ';
+}
+
+.patient_table .title{
+	width:80px;
+	padding:5;
+	vertical-align: top;
+	font-size: .7rem;
+}
+.patient_table .title2{
+	width:120px;
+	padding:5;
+	vertical-align: top;
+	font-size: .7rem;
+}
+.patient_table .title3{
+	width:150px;
+	padding:5;
+	vertical-align: top;
+	font-size: .7rem;
+}
+.patient_table .patient_mainval{
+	padding:5;
+	vertical-align:middle;
+	font-size: .7rem;
+}
+.patient_table .patient_val{
+	padding:5;
+	vertical-align:top;
+	font-size: .7rem;
+	font-weight: normal;
+}

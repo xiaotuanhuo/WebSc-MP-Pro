@@ -86,8 +86,10 @@ public class WebScDoc implements Serializable {
 	private Integer sssc;
 	private String jmjs;
 	private String ywsjHxxt;
+	private String ywsjHxxtVal;
 	private String ywsjHxxtQt;
 	private String ywsjXhxt;
+	private String ywsjXhxtVal;
 	private String ywsjXhxtQt;
 	private String ywsjGm;
 	private String ywsjGmAocre;
@@ -818,5 +820,21 @@ public class WebScDoc implements Serializable {
 
 	public void setAdminUserName(String adminUserName) {
 		this.adminUserName = adminUserName;
+	}
+
+	public String getYwsjHxxtVal() {
+		return ywsjHxxtVal;
+	}
+
+	public void setYwsjHxxtVal(String ywsjHxxtVal) {
+		this.ywsjHxxtVal = ywsjHxxtVal;
+	}
+
+	public String getYwsjXhxtVal() {
+		return ywsjXhxtVal;
+	}
+
+	public void setYwsjXhxtVal(String ywsjXhxtVal) {
+		this.ywsjXhxtVal = ywsjXhxtVal;
 	}
 }

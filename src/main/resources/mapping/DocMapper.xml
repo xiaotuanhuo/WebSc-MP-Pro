@@ -325,6 +325,222 @@
         where document_id = #{documentId,jdbcType=VARCHAR}
     </update>
     
+    <update id="updateDocInfoByMap" parameterType="java.util.Map">
+    	update WSC_DOCUMENT 
+    	<set>
+            <if test="operativeId != null">
+                operative_id = #{operativeId,jdbcType=VARCHAR},
+            </if>
+            <if test="anestheticId != null">
+                anesthetic_id = #{anestheticId,jdbcType=VARCHAR},
+            </if>
+            <if test="patientName != null">
+                patient_name = #{patientName,jdbcType=VARCHAR},
+            </if>
+            <if test="patientAge != null">
+                patient_age = #{patientAge,jdbcType=INTEGER},
+            </if>
+            <if test="patientSex != null">
+                patient_sex = #{patientSex,jdbcType=VARCHAR},
+            </if>
+            <if test="patientNum != null">
+                patient_num = #{patientNum,jdbcType=VARCHAR},
+            </if>
+            <if test="patientBednum != null">
+                patient_bednum = #{patientBednum,jdbcType=VARCHAR},
+            </if>
+            <if test="patienttypeId != null">
+                patienttype_id = #{patienttypeId,jdbcType=VARCHAR},
+            </if>
+            <if test="operationtypeId != null">
+                operationtype_id = #{operationtypeId,jdbcType=VARCHAR},
+            </if>
+            <if test="documentTitle != null">
+                document_title = #{documentTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="documentType != null">
+                document_type = #{documentType,jdbcType=VARCHAR},
+            </if>
+            <if test="operateUser != null">
+                operate_user = #{operateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="operateQide != null">
+                operate_aide = #{operateQide,jdbcType=VARCHAR},
+            </if>
+            <if test="applyUserId != null">
+                apply_user_id = #{applyUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="adminUserId != null">
+                admin_user_id = #{adminUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="qaUserId != null">
+                qa_user_id = #{qaUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="qaTeamId != null">
+                qa_team_id = #{qaTeamId,jdbcType=VARCHAR},
+            </if>
+            <if test="hospitalMemo != null">
+                hospital_memo = #{hospitalMemo,jdbcType=VARCHAR},
+            </if>
+            <if test="qaMemo != null">
+                qa_memo = #{qaMemo,jdbcType=VARCHAR},
+            </if>
+            <if test="adminMemo != null">
+                admin_memo = #{adminMemo,jdbcType=VARCHAR},
+            </if>
+            <if test="memo != null">
+                memo = #{memo,jdbcType=VARCHAR},
+            </if>
+            <if test="documentState != null">
+                document_state = #{documentState,jdbcType=VARCHAR},
+            </if>
+            <if test="operateStartTime != null">
+                operate_start_time = #{operateStartTime,jdbcType=VARCHAR},
+            </if>
+            <if test="operateEndTime != null">
+                operate_end_time = #{operateEndTime,jdbcType=VARCHAR},
+            </if>
+            <if test="hospitalEvaluate != null">
+                hospital_evaluate = #{hospitalEvaluate,jdbcType=INTEGER},
+            </if>
+            <if test="hospitalEvaluateMemo != null">
+                hospital_evaluate_memo = #{hospitalEvaluateMemo,jdbcType=VARCHAR},
+            </if>
+            <if test="doctorEvaluate != null">
+                doctor_evaluate = #{doctorEvaluate,jdbcType=INTEGER},
+            </if>
+            <if test="doctorEvaluateMemo != null">
+                doctor_evaluate_memo = #{doctorEvaluateMemo,jdbcType=VARCHAR},
+            </if>
+            <if test="transferUserId != null">
+                transfer_user_id = #{transferUserId,jdbcType=VARCHAR},
+            </if>
+            <if test="oldDocumentState != null">
+                old_document_state = #{oldDocumentState,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteReason != null">
+                delete_reason = #{deleteReason,jdbcType=VARCHAR},
+            </if>
+		</set>
+        where document_id = #{documentId,jdbcType=VARCHAR}
+    </update>
+    
+    <update id="updateTmpDocInfoByMap" parameterType="java.util.Map">
+    	insert into WSC_DOCUMENT_TMP(document_id,
+									patient_name,
+									patient_age,
+									patient_sex,
+									operative_id,
+									anesthetic_id,
+									height,
+									weight,
+									asa,
+									xtbs,
+									shs,
+									shcs,
+									sskssj,
+									ssjssj,
+									sssc,
+									jmjs,
+									ywsj_hxxt,
+									ywsj_hxxt_qt,
+									ywsj_xhxt,
+									ywsj_xhxt_qt,
+									ywsj_gm,
+									ywsj_gm_socre,
+									ywsj_qt,
+									shbl_zw,
+									shbl_hbtt,
+									shbl_ex,
+									shbl_xy,
+									shbl_ot,
+									shbl_ot_score,
+									shttzl,
+									photo_1,
+									photo_2,
+									photo_3,
+									photo_4,
+									photo_5,
+									status)
+						values(#{documentId,jdbcType=VARCHAR},
+							   #{patientName,jdbcType=VARCHAR},
+							   #{patientAge,jdbcType=NUMERIC},
+							   #{patientSex,jdbcType=VARCHAR},
+							   #{operativeId,jdbcType=VARCHAR},
+							   #{anestheticId,jdbcType=VARCHAR},
+							   #{height,jdbcType=NUMERIC},
+							   #{weight,jdbcType=NUMERIC},
+							   #{asa,jdbcType=VARCHAR},
+							   #{xtbs,jdbcType=VARCHAR},
+							   #{shs,jdbcType=VARCHAR},
+							   #{shcs,jdbcType=NUMERIC},
+							   #{sskssj,jdbcType=VARCHAR},
+							   #{ssjssj,jdbcType=VARCHAR},
+							   #{sssc,jdbcType=NUMERIC},
+							   #{jmjs,jdbcType=VARCHAR},
+							   #{ywsjHxxt,jdbcType=VARCHAR},
+							   #{ywsjHxxtQt,jdbcType=VARCHAR},
+							   #{ywsjXhxt,jdbcType=VARCHAR},
+							   #{ywsjXhxtQt,jdbcType=VARCHAR},
+							   #{ywsjGm,jdbcType=VARCHAR},
+							   #{ywsjGmAocre,jdbcType=VARCHAR},
+							   #{ywsjQt,jdbcType=VARCHAR},
+							   #{shblZw,jdbcType=VARCHAR},
+							   #{shblHbtt,jdbcType=VARCHAR},
+							   #{shblEx,jdbcType=VARCHAR},
+							   #{shblXy,jdbcType=VARCHAR},
+							   #{shblOt,jdbcType=VARCHAR},
+							   #{shblOtScore,jdbcType=NUMERIC},
+							   #{shttzl,jdbcType=VARCHAR},
+							   #{photo_1,jdbcType=VARCHAR},
+							   #{photo_2,jdbcType=VARCHAR},
+							   #{photo_3,jdbcType=VARCHAR},
+							   #{photo_4,jdbcType=VARCHAR},
+							   #{photo_5,jdbcType=VARCHAR},
+							   #{status,jdbcType=VARCHAR}
+							   ) 
+		on duplicate key UPDATE 
+            	anesthetic_id = #{anestheticId,jdbcType=VARCHAR},
+            	height = #{height,jdbcType=NUMERIC},
+            	weight = #{weight,jdbcType=NUMERIC},
+            	asa = #{asa,jdbcType=VARCHAR},
+            	xtbs = #{xtbs,jdbcType=VARCHAR},
+            	shs = #{shs,jdbcType=VARCHAR},
+            	shcs = #{shcs,jdbcType=NUMERIC},
+            	sskssj = #{sskssj,jdbcType=VARCHAR},
+            	ssjssj = #{ssjssj,jdbcType=VARCHAR},
+            	sssc = #{sssc,jdbcType=NUMERIC},
+            	jmjs = #{jmjs,jdbcType=VARCHAR},
+            	ywsj_hxxt = #{ywsjHxxt,jdbcType=VARCHAR},
+            	ywsj_hxxt_qt = #{ywsjHxxtQt,jdbcType=VARCHAR},
+            	ywsj_xhxt = #{ywsjXhxt,jdbcType=VARCHAR},
+            	ywsj_xhxt_qt = #{ywsjHxxtQt,jdbcType=VARCHAR},
+            	ywsj_xhxt = #{ywsjXhxt,jdbcType=VARCHAR},
+            	ywsj_xhxt_qt = #{ywsjXhxtQt,jdbcType=VARCHAR},
+            	ywsj_gm = #{ywsjGm,jdbcType=VARCHAR},
+            	ywsj_gm_socre = #{ywsjGmAocre,jdbcType=VARCHAR},
+            	ywsj_qt = #{ywsjQt,jdbcType=VARCHAR},
+            	shbl_zw = #{shblZw,jdbcType=VARCHAR},
+            	shbl_hbtt = #{shblHbtt,jdbcType=VARCHAR},
+            	shbl_ex = #{shblEx,jdbcType=VARCHAR},
+            	shbl_xy = #{shblXy,jdbcType=VARCHAR},
+            	shbl_ot = #{shblOt,jdbcType=VARCHAR},
+            	shbl_ot_score = #{shblOtScore,jdbcType=NUMERIC},
+            	shttzl = #{shttzl,jdbcType=VARCHAR},
+            	photo_1 = #{photo_1,jdbcType=VARCHAR},
+            	photo_2 = #{photo_2,jdbcType=VARCHAR},
+            	photo_3 = #{photo_3,jdbcType=VARCHAR},
+            	photo_4 = #{photo_4,jdbcType=VARCHAR},
+            	photo_5 = #{photo_5,jdbcType=VARCHAR},
+            	status = #{status,jdbcType=VARCHAR}
+    </update>
+    
+    <update id="updateTmpDocInfoByMapOnlyState" parameterType="java.util.Map">
+		update WSC_DOCUMENT_TMP 
+		set status = #{status,jdbcType=VARCHAR} 
+		where document_id = #{documentId,jdbcType=VARCHAR} 
+    </update>
+    
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     	delete from WSC_DOCUMENT where document_id = #{documentId,jdbcType=VARCHAR}
     </delete>
@@ -512,6 +728,9 @@
       	<if test="patientName != null and patientName != ''">
       		and doc.patient_name like concat(#{patientName,jdbcType=VARCHAR}, '%')
       	</if>
+      	<if test="doctorEvaluate != null and doctorEvaluate == -1">
+      		and doc.doctor_evaluate is not null
+      	</if>
       	) tmpTab 
       	where 1=1 
       	<if test="qaUserName != null and qaUserName != ''">
@@ -594,7 +813,9 @@
     	and wd.qa_user_id <> #{NoUserId,jdbcType=VARCHAR}
     	]]>
     	<if test="userName != null and userName != ''">
-      		and wu.user_name = #{userName,jdbcType=VARCHAR} 
+    		<![CDATA[
+    		and wu.user_name like concat(#{userName,jdbcType=VARCHAR}, '%')
+    		]]>
       	</if>
     </select>
     
