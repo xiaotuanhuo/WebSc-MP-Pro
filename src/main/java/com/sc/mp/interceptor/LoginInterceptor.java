@@ -27,16 +27,9 @@ public class LoginInterceptor implements HandlerInterceptor {
 //		}
 		WebScUser user = (WebScUser) request.getSession().getAttribute(ScConstant.USER_SESSION_KEY);
 		if (user == null) {
-//			request.setAttribute("msg", "无权限请先登录");
-//			// 获取request返回页面到登录页
-//			request.getRequestDispatcher("/index.html").forward(request, response);
-			
-//			response.sendRedirect("/login");
-			
 			String code = request.getParameter("code");
 			log.info("code=" + code);
 			response.sendRedirect("/login?code=" + code);
-//			response.sendRedirect("/login?code=21122");
 			return false;
 		}
 		return true;

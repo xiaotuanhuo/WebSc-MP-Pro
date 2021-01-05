@@ -115,7 +115,8 @@
 			<main id="mescroll" class="margin mt-0 mescroll">
 				<div class="dash-balance">
 					<div class="dash-content relative">
-						<h3 class="w-text">SuCheng</h3>
+						<!-- <h3 class="w-text">SuCheng</h3> -->
+						<img alt="" src="/img/logo.png">
 					</div>
 				</div>
 				
@@ -294,6 +295,7 @@
 				    color: '#66CDAA', // Unlimited
 				    color2: '#8FBC8F', // Unlimited
 				    lang: 'CN',
+				    selectingAfterToday: true,
 				    done: function(data) {
 				    	console.log(000);
 				    	if (data.type == "del") {
@@ -346,16 +348,16 @@
 				$(".radioCheck").removeAttr("checked");
 				$(this).prop("checked", true);
 				if ($(this).attr('id') == "am") {
-					$("#picktime_begin").val("08:30");
+					$("#picktime_begin").val("00:00");
 					$("#picktime_end").val("12:00");
 					$("#timeBtn").val("am");
 				} else if ($(this).attr('id') == "pm") {
-					$("#picktime_begin").val("13:00");
-					$("#picktime_end").val("17:00");
+					$("#picktime_begin").val("12:00");
+					$("#picktime_end").val("23:59");
 					$("#timeBtn").val("pm");
 				} else {
-					$("#picktime_begin").val("08:30");
-					$("#picktime_end").val("17:00");
+					$("#picktime_begin").val("00:00");
+					$("#picktime_end").val("23:59");
 					$("#timeBtn").val("all");
 				}
 			});
@@ -363,15 +365,15 @@
 			//时间输入框选择后与时间段按钮的联动
 			//监听时间变化
 			$("#picktime_begin").on("change", function() {
-				if (($("#picktime_begin").val() == "08:30") && ($("#picktime_end").val() == "12:00")) {
+				if (($("#picktime_begin").val() == "00:00") && ($("#picktime_end").val() == "12:00")) {
 					$(".radioCheck").removeAttr("checked");
 					$("#am").prop("checked", true);
 					$("#timeBtn").val("am");
-				} else if (($("#picktime_begin").val() == "13:00") && ($("#picktime_end").val() == "17:00")) {
+				} else if (($("#picktime_begin").val() == "12:00") && ($("#picktime_end").val() == "23:59")) {
 					$(".radioCheck").removeAttr("checked");
 					$("#pm").prop("checked", true);
 					$("#timeBtn").val("pm");
-				} else if (($("#picktime_begin").val() == "08:00") && ($("#picktime_end").val() == "17:00")) {
+				} else if (($("#picktime_begin").val() == "00:00") && ($("#picktime_end").val() == "23:59")) {
 					$(".radioCheck").removeAttr("checked");
 					$("#all").prop("checked", true);
 					$("#timeBtn").val("all");
@@ -381,15 +383,15 @@
 				}
 			});
 			$("#picktime_end").on("change", function() {
-				if (($("#picktime_begin").val() == "08:30") && ($("#picktime_end").val() == "12:00")) {
+				if (($("#picktime_begin").val() == "00:00") && ($("#picktime_end").val() == "12:00")) {
 					$(".radioCheck").removeAttr("checked");
 					$("#am").prop("checked", true);
 					$("#timeBtn").val("am");
-				} else if (($("#picktime_begin").val() == "13:00") && ($("#picktime_end").val() == "17:00")) {
+				} else if (($("#picktime_begin").val() == "12:00") && ($("#picktime_end").val() == "23:59")) {
 					$(".radioCheck").removeAttr("checked");
 					$("#pm").prop("checked", true);
 					$("#timeBtn").val("pm");
-				} else if (($("#picktime_begin").val() == "08:00") && ($("#picktime_end").val() == "17:00")) {
+				} else if (($("#picktime_begin").val() == "00:00") && ($("#picktime_end").val() == "23:59")) {
 					$(".radioCheck").removeAttr("checked");
 					$("#all").prop("checked", true);
 					$("#timeBtn").val("all");

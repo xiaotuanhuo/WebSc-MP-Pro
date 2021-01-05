@@ -76,4 +76,10 @@ public interface UserMapper {
 	 * @return
 	 */
 	List<OperationCount> statsDoctorWork();
+	
+	/**
+	 * 查询所有的医生和护士
+	 * @return
+	 */
+	List<WebScUser> selectDoctorAndNurse();
 }

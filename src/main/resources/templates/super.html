@@ -17,6 +17,7 @@
 	<!-- <link rel="stylesheet" th:href="@{/css/animate.min.css}"> -->
 	<link rel="stylesheet" th:href="@{/css/mescroll.min.css}">
 	<link rel="stylesheet" th:href="@{/css/Mdate.css}">
+	<link rel="stylesheet" th:href="@{css/jquery.autocompleter.css}">
 </head>
 
 <body>
@@ -114,7 +115,7 @@
 			<main class="margin mt-0">
 				<div class="dash-balance">
 					<div class="dash-content relative">
-						<h3 class="w-text">SuCheng</h3>
+						<img alt="" src="/img/logo.png">
 					</div>
 				</div>
 				
@@ -179,7 +180,6 @@
 				</section>
 				
 				<!-- charts area end -->
-				
 				<section class="wallets-list container">
 					<!--expendable list item -->
 					<div class="expandable-item accordion" data-group="accordion">
@@ -190,6 +190,17 @@
 						<div class="expandable-content">
 							<div class="padding-content">
 								<div class="recent-trans">
+									
+									<!-- <input type="text" class="form-control input-style" id="username" data-id=""> -->
+									<!-- <div class="form-group">
+										<input type="text" name="username" id="username" placeholder="医生或者护士" maxlength="40" />
+										<span>人员姓名</span>
+										<input type="text" id="username" class="form-field">
+									</div> -->
+									<div class="form-group">
+										<span>人员姓名</span>
+										<input type="text" id="username" class="form-field" style="border-radius: 0 6px 6px 0;">
+									</div>
 									<div class="form-group">
 										<span>开始时间</span>
 										<input type="text" id="dateSelector_begin" class="form-field">
@@ -221,7 +232,7 @@
 									<div>
 										<a id="reportingBtn" class="button circle block" style="background: #00b4ef; color: #fff;">查询</a>
 									</div>
-                                </div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -260,6 +271,7 @@
 	
 	<script th:src="@{/js/distpicker.data.js}"></script>
 	<script th:src="@{/js/distpicker.js}"></script>
+	<script th:src="@{/js/jquery.autocompleter.min.js}"></script>
 	<!-- <script th:src="@{/js/main.js}"></script> -->
 	
 	<script type="text/javascript">
@@ -268,8 +280,26 @@
 			drawTopCity();
 			drawDoctorWork();
 			getOrganizations("", "", "");
-			getReporting("", "", "", "", "");
+			//getOccupation();
+			getReporting("", "", "", "", "", "", "");
 		});
+		
+		// 自动检索
+		/* var emails = [
+            { name: "Peter Pan", to: "peter@pan.de" },
+            { name: "Molly", to: "molly@yahoo.com" },
+            { name: "Forneria Marconi", to: "live@japan.jp" },
+            { name: "Master <em>Sync</em>", to: "205bw@samsung.com" },
+            { name: "Dr. <strong>Tech</strong> de Log", to: "g15@logitech.com" },
+            { name: "Don Corleone", to: "don@vegas.com" },
+            { name: "Mc Chick", to: "info@donalds.org" },
+            { name: "Donnie Darko", to: "dd@timeshift.info" },
+            { name: "Quake The Net", to: "webmaster@quakenet.org" },
+            { name: "Dr. Write", to: "write@writable.com" },
+            { name: "GG Bond", to: "Bond@qq.com" },
+            { name: "Zhuzhu Xia", to: "zhuzhu@qq.com" }
+        ]; */
+		
 		
 		// 监听省市区的变化 更新机构列表
 		$("#province").on("change", function() {
@@ -313,10 +343,12 @@
 			var cCode = $("#city").find(':selected').data('code');
 			var dCode = $("#district").find(':selected').data('code');
 			var oCode = $("#orgs").find(':selected').data('code');
+			var userId = $("#username").data('id');
 			$("#reporting").empty();
-			getReporting(begin, end, pCode, cCode, dCode, oCode);
-			$(".expandable-item").removeClass("active");
-			$(".expandable-content").removeAttr("style");
+			$("#username").attr("data-id", "");
+			getReporting(begin, end, pCode, cCode, dCode, oCode, userId);
+			//$(".expandable-item").removeClass("active");
+			//$(".expandable-content").removeAttr("style");
 		});
 		
 		/* 近3年每月手术统计 */
@@ -515,8 +547,33 @@
 			});
 		}
 		
-		function getReporting(begin, end, province, city, area, orgId) {
-			var jsonData = JSON.stringify({'beginTime': begin, 'endTime': end, 'province': province, 'city': city, 'area': area, 'orgId': orgId});
+		function getOccupation(province, city, area) {
+			$.ajax({
+		    	type: "POST",
+		    	dataType: "json",
+		    	url: 'occupation?province=' + province + "&city=" + city + "&area=" + area,
+		    	contentType: "application/json",
+		    	success: function (result) {
+		    		var organizations = result.data;
+		    		if (organizations.length > 0) {
+		    			var organizationDom = document.getElementById("occupation");
+		    			for (var i = 0; i < organizations.length; i++) {
+		    				var orgName = organizations[i].name;
+		    				var optionDom = document.createElement("option");
+		    				optionDom.setAttribute("data-code", organizations[i].id);
+		    				optionDom.innerHTML = orgName;
+		    				organizationDom.appendChild(optionDom);
+		    			}
+		    		}
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
+		
+		function getReporting(begin, end, province, city, area, orgId, userId) {
+			var jsonData = JSON.stringify({'beginTime': begin, 'endTime': end, 'province': province, 'city': city, 'area': area, 'orgId': orgId, 'userId': userId});
 			$.ajax({
 		    	type: "POST",
 		    	data: jsonData,
@@ -575,6 +632,26 @@
 
 		$(".menu-logout").on("click", function() {
 			location.href = "logout";
+		});
+		
+		$('#username').autocompleter({
+			// marker for autocomplete matches
+			highlightMatches: true,
+			// object to local or url to remote search
+			source: "searchUser",
+			// custom template
+			template: '{{ label }} <span>({{ hex }})</span>',
+			// show hint
+			hint: true,
+			// abort source if empty field
+			empty: false,
+			// max results
+			limit: 5,
+			callback: function (value, index, selected) {
+				if (selected) {
+					$("#username").attr("data-id", selected.id);
+				}
+			}
 		});
 	</script>
 </body>

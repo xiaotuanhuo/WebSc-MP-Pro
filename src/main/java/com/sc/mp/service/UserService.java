@@ -1,7 +1,6 @@
 package com.sc.mp.service;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,6 +32,7 @@ import com.sc.mp.model.WebScOrganization;
 import com.sc.mp.model.WebScUser;
 import com.sc.mp.util.ScConstant;
 import com.sc.mp.util.DistrictUtil;
+import com.sc.mp.util.LuceneUtil;
 import com.sc.mp.util.UUID19;
 import com.sc.mp.util.WxUtil;
 
@@ -63,6 +63,8 @@ public class UserService {
 	
 	@Value("${sc.stats.top}")
 	private int top;			// 超级管理员角色id
+	@Value("${userName-lucene-path}")
+	private String indexPath;	// 用户索引路径
 	
 	public WebScUser selectUserInfo(WebScUser user) {
 		return userMapper.selectUserInfo(user);
@@ -150,23 +152,34 @@ public class UserService {
 		String timeBtn = calendarInfo.getString("timeBtn");	// 上午/下午/全天
 		String title = null;	// 标题
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
 		try {
 			Date startTime = format.parse(day + " " + begin + ":00");
-			Date endTime = format.parse(day + " " + end + ":00");
+			Date endTime = new Date();
+			switch (timeBtn) {
+				case ScConstant.AM:
+					endTime = format.parse(day + " " + end + ":00");
+					title = ScConstant.AM_TEXT;
+					break;
+				case ScConstant.PM:
+					endTime = format.parse(day + " " + end + ":59");
+					title = ScConstant.PM_TEXT;
+					break;
+				case ScConstant.ALL:
+					endTime = format.parse(day + " " + end + ":59");
+					title = ScConstant.ALL_TEXT;
+					break;
+				default:
+					endTime = format.parse(day + " " + end + ":00");
+					title = ScConstant.CAL_PREFIX + begin + ":00" + " - " + end + ":00";
+					break;
+			}
 			calendar.setStartTime(startTime);
 			calendar.setEndTime(endTime);
-		} catch (ParseException e) {
-			log.error("时间转换出错：" + (day + " " + begin + ":00") + " " + (day + " " + end + ":00"));
+		} catch (Exception e) {
+			log.error("时间转换出错：" + (day + " " + begin) + " " + (day + " " + end));
 		}
-		if (timeBtn.equals(ScConstant.AM)) {
-			title = ScConstant.AM_TEXT;
-		} else if (timeBtn.equals(ScConstant.PM)) {
-			title = ScConstant.PM_TEXT;
-		} else if (timeBtn.equals(ScConstant.ALL)) {
-			title = ScConstant.ALL_TEXT;
-		} else {
-			title = ScConstant.CAL_PREFIX + begin + ":00" + " - " + end + ":00";
-		}
+		
 		calendar.setCalendarId(id);
 		calendar.setUserId(doctorId);
 		calendar.setTitle(title);
@@ -266,6 +279,7 @@ public class UserService {
 		map.put("city", data.getString("city"));
 		map.put("area", data.getString("area"));
 		map.put("orgId", data.getString("orgId"));
+		map.put("userId", data.getString("userId"));
 		List<OperationCount> operationCounts = docMapper.selectReporting(map);
 		// 组织完整行政区划名称
 		for (OperationCount oc : operationCounts) {
@@ -274,6 +288,26 @@ public class UserService {
 					+ DistrictUtil.getDistrictByCode(oc.getArea()).getName());
 		}
 		return operationCounts;
+	}
+	
+	public void createDoctorAndNurseIndex() {
+		List<WebScUser> users = userMapper.selectDoctorAndNurse();
+		try {
+			LuceneUtil.createUserNameIndex(indexPath, users);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+	}
+	
+	public String searchIndex(String key, int limit) {
+		String result = null;
+		try {
+			result = LuceneUtil.searchUserNames(indexPath, key, limit);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+		log.info("result=" + result);
+		return result;
 	}
 	
 	/**
@@ -302,7 +336,24 @@ public class UserService {
 	 * @return
 	 */
 	public WebScUser getUserByOpenid(String openid) {
-		return userMapper.selectUserByOpenid(openid);
+		WebScUser user = userMapper.selectUserByOpenid(openid);
+		if (user != null) {
+			if (user.getArea() != null) {
+				user.setDistrictName(DistrictUtil.getDistrictByCode(user.getProvince()).getName() + "-"
+						+ DistrictUtil.getDistrictByCode(user.getCity()).getName() + "-"
+						+ DistrictUtil.getDistrictByCode(user.getArea()).getName());
+			} else if (user.getCity() != null) {
+				user.setDistrictName(DistrictUtil.getDistrictByCode(user.getProvince()).getName() + "-"
+						+ DistrictUtil.getDistrictByCode(user.getCity()).getName());
+			} else if (user.getProvince() != null) {
+				user.setDistrictName(DistrictUtil.getDistrictByCode(user.getProvince()).getName());
+			}
+			WebScRole role = roleMapper.selectByPrimaryKey(Integer.parseInt(user.getRoleId()));
+			user.setRoleName(role.getRoleName());
+			WebScDept dept = deptMapper.selectByPrimaryKey(user.getRoleTypeId());
+			user.setDeptName(dept.getDeptName());
+		}
+		return user;
 	}
 	
 	public boolean unbind(WebScUser user) {
