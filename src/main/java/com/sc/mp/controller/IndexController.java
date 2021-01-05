@@ -24,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
+import com.sc.mp.annotation.OperationLog;
 import com.sc.mp.bean.OperationCount;
 import com.sc.mp.bean.PageResultBean;
 import com.sc.mp.bean.ResultBean;
@@ -31,6 +32,7 @@ import com.sc.mp.model.WebScCalendar;
 import com.sc.mp.model.WebScOrganization;
 import com.sc.mp.model.WebScUser;
 import com.sc.mp.service.UserService;
+import com.sc.mp.util.LuceneUtil;
 import com.sc.mp.util.ScConstant;
 
 @Controller
@@ -54,6 +56,9 @@ public class IndexController {
 	private String regionalPage;		// 区域管理员角色登录后首页
 	@Value("${sc.page.doctor}")
 	private String doctorPage;			// 医生角色登录后首页
+	
+	@Value("${operativeName-lucene-path}")
+	private String operativeNameLucenePath;
 	
 	/**
 	 * 登录页面
@@ -287,5 +292,31 @@ public class IndexController {
 		List<OperationCount> operationCounts = userService.getReporting(jsonData);
 		return ResultBean.success(operationCounts);
 	}
-
+	
+	@OperationLog("搜索用户名称列表")
+    @GetMapping(value = "/searchUser")
+    @ResponseBody
+	public String searchOperativeNames(@RequestParam(value = "query", required = true) String name,
+			@RequestParam(value = "limit", required = true) Integer limit) {
+		return userService.searchIndex(name, limit);
+//		ResultBean resultBean = null;
+//		try {
+//			resultBean = ResultBean.success(
+//					LuceneUtil.searchOperativeNames(
+//							operativeNameLucenePath, fptt, 5));
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			resultBean = ResultBean.error("搜索手术名称列表失败，请重试...");
+//		}
+//		return resultBean;
+		
+//		String data = "{label:'LinkA', hex:'/page1'} \n {label:'Link B', hex: '/page2'}";
+//		return data;
+		
+//		String data = "[{\"label\":\"张三\",\"hex\":\"123\",\"id\":\"c00\"},{\"label\":\"张麻子\",\"hex\":\"234\",\"id\":\"c01\"},{\"label\":\"李四\",\"hex\":\"345\",\"id\":\"c02\"},{\"label\":\"王五\",\"hex\":\"456\",\"id\":\"c03\"},{\"label\":\"张1\",\"hex\":\"567\",\"id\":\"c04\"},{\"label\":\"张2\",\"hex\":\"678\",\"id\":\"c05\"},{\"label\":\"刘3\",\"hex\":\"789\",\"id\":\"c06\"}]";
+//		return data;
+		
+//		String data = "[{\"name\":\"张三\",\"role\":\"123\",\"id\":\"c00\"},{\"name\":\"张麻子\",\"role\":\"234\",\"id\":\"c01\"},{\"name\":\"李四\",\"role\":\"345\",\"id\":\"c02\"},{\"name\":\"王五\",\"role\":\"456\",\"id\":\"c03\"},{\"name\":\"张1\",\"role\":\"567\",\"id\":\"c04\"},{\"name\":\"张2\",\"role\":\"678\",\"id\":\"c05\"},{\"name\":\"张3\",\"role\":\"789\",\"id\":\"c06\"}]";
+//		return data;
+	}
 }

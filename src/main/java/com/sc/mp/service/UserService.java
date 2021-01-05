@@ -32,6 +32,7 @@ import com.sc.mp.model.WebScOrganization;
 import com.sc.mp.model.WebScUser;
 import com.sc.mp.util.ScConstant;
 import com.sc.mp.util.DistrictUtil;
+import com.sc.mp.util.LuceneUtil;
 import com.sc.mp.util.UUID19;
 import com.sc.mp.util.WxUtil;
 
@@ -62,6 +63,8 @@ public class UserService {
 	
 	@Value("${sc.stats.top}")
 	private int top;			// 超级管理员角色id
+	@Value("${userName-lucene-path}")
+	private String indexPath;	// 用户索引路径
 	
 	public WebScUser selectUserInfo(WebScUser user) {
 		return userMapper.selectUserInfo(user);
@@ -276,6 +279,7 @@ public class UserService {
 		map.put("city", data.getString("city"));
 		map.put("area", data.getString("area"));
 		map.put("orgId", data.getString("orgId"));
+		map.put("userId", data.getString("userId"));
 		List<OperationCount> operationCounts = docMapper.selectReporting(map);
 		// 组织完整行政区划名称
 		for (OperationCount oc : operationCounts) {
@@ -286,18 +290,38 @@ public class UserService {
 		return operationCounts;
 	}
 	
+	public void createDoctorAndNurseIndex() {
+		List<WebScUser> users = userMapper.selectDoctorAndNurse();
+		try {
+			LuceneUtil.createUserNameIndex(indexPath, users);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+	}
+	
+	public String searchIndex(String key, int limit) {
+		String result = null;
+		try {
+			result = LuceneUtil.searchUserNames(indexPath, key, limit);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+		log.info("result=" + result);
+		return result;
+	}
+	
 	/**
 	 * 获取企业微信用户openid userid
 	 * @param code
 	 * @return
 	 */
 	public WebScUser getOpenid(String code) {
-		WebScUser user = wxUtil.getWxUserOpenid(code, null);
+//		WebScUser user = wxUtil.getWxUserOpenid(code, null);
 		
-//		// 模拟从企业微信获取userid openid
-//		WebScUser user = new WebScUser();
-//		user.setWxUserid("111");
-//		user.setWxOpenid("222");
+		// 模拟从企业微信获取userid openid
+		WebScUser user = new WebScUser();
+		user.setWxUserid("333");
+		user.setWxOpenid("444");
 		
 //		// 获取openid失败的处理
 //		if (user.getWxOpenid() == null) {
