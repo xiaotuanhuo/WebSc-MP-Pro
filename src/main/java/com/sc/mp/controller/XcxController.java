@@ -68,7 +68,7 @@ public class XcxController {
 	@Value("${lucene-token}")
 	private String luceneToken;
 	
-	@OperationLog("获取麻醉方法列表和手术名列表")
+	@OperationLog("获取麻醉方法列表")
     @GetMapping(value = "/getAnestheticsAndOperatives")
     @ResponseBody
     public ResultBean getAnestheticsAndOperatives() {
@@ -80,8 +80,8 @@ public class XcxController {
 			resultBean = ResultBean.success(resMap);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("获取麻醉方法列表和手术名列表失败，"+e.getMessage());
-			resultBean = ResultBean.error("获取麻醉方法列表和手术名列表失败");
+			logger.error("获取麻醉方法列表失败，"+e.getMessage());
+			resultBean = ResultBean.error("获取麻醉方法列表失败，"+e.getMessage());
 		}
 		
         return resultBean;
@@ -93,8 +93,8 @@ public class XcxController {
 	public ResultBean saveOrder(@RequestBody() WebScDoc doc) {
 		ResultBean resultBean = null;
 		try {
-			logger.info(doc.toString());
-			doc.setDocumentId(UUID19.uuid());
+			String docId = UUID19.uuid();
+			doc.setDocumentId(docId);
 			doc.setDocumentState("0");
 			
 			if(0 == userMapper.isExistByDoctorName(doc.getOperateUser())) {
@@ -106,7 +106,7 @@ public class XcxController {
 			
 			docMapper.insert(doc);
 			
-			resultBean = ResultBean.success("订单发布成功");
+			resultBean = ResultBean.success("订单发布成功（订单号："+docId+"）");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -146,7 +146,7 @@ public class XcxController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("获取订单明细失败，"+e.getMessage());
-			resultBean = ResultBean.error("获取订单明细失败");
+			resultBean = ResultBean.error("获取订单明细失败，"+e.getMessage());
 		}
 		
         return resultBean;
@@ -209,8 +209,8 @@ public class XcxController {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("评价失败，"+e.getMessage());
-			resultBean = ResultBean.error("评价失败，请重试...");
+			logger.error("评价失败（订单号："+paraMap.get("documentId").toString()+"），"+e.getMessage());
+			resultBean = ResultBean.error("评价失败（订单号："+paraMap.get("documentId").toString()+"），"+e.getMessage());
 		}
 		
         return resultBean;
@@ -265,7 +265,7 @@ public class XcxController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("登录失败，"+e.getMessage());
-			resultBean = ResultBean.error("登录失败，请重试...");
+			resultBean = ResultBean.error("登录失败，"+e.getMessage());
 		}
 		
         return resultBean;
@@ -285,7 +285,7 @@ public class XcxController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("登出失败，"+e.getMessage());
-			resultBean = ResultBean.error("登出失败，请重试...");
+			resultBean = ResultBean.error("登出失败，"+e.getMessage());
 		}
 		
         return resultBean;
@@ -321,7 +321,7 @@ public class XcxController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("自动登录失败，"+e.getMessage());
-			resultBean = ResultBean.error("自动登录失败，请重试...");
+			resultBean = ResultBean.error("自动登录失败，"+e.getMessage());
 		}
 		
         return resultBean;
@@ -339,18 +339,18 @@ public class XcxController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("搜索手术名称列表失败，"+e.getMessage());
-			resultBean = ResultBean.error("搜索手术名称列表失败，请重试...");
+			resultBean = ResultBean.error("搜索手术名称列表失败，"+e.getMessage());
 		}
 		return resultBean;
 	}
 	
-	@OperationLog("获取手术量信息")
-    @GetMapping(value = "/getOperativeCount")
+	@OperationLog("获取前七天手术量信息")
+    @GetMapping(value = "/getBeforeSevenOperativeCount")
     @ResponseBody
-	public ResultBean getOperativeCount(@RequestParam("orgId") String orgId) {
+	public ResultBean getBeforeSevenOperativeCount(@RequestParam("orgId") String orgId) {
+		
 		ResultBean resultBean = null;
 		try {
-			Map<String, Object> sourceMap = new HashMap<String, Object>();
 			//1、获取前七天的手术量
 			List<Map<String, Object>> operativeCountList = new ArrayList<Map<String,Object>>();
 			long nowDate = UnixtimeUtil.getUnixDay(new Date().getTime());
@@ -368,8 +368,24 @@ public class XcxController {
 				
 				operativeCountList.add(operativeCountMap);
 			}
+			resultBean = ResultBean.success(operativeCountList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("搜索手术名称列表失败，"+e.getMessage());
+			resultBean = ResultBean.error("搜索手术名称列表失败，"+e.getMessage());
+		}
+		return resultBean;
+	}
+	
+	@OperationLog("获取当天手术量信息")
+    @GetMapping(value = "/getOperativeCount")
+    @ResponseBody
+	public ResultBean getOperativeCount(@RequestParam("orgId") String orgId) {
+		ResultBean resultBean = null;
+		try {
+			Map<String, Object> sourceMap = new HashMap<String, Object>();
+			long nowDate = UnixtimeUtil.getUnixDay(new Date().getTime());
 			
-			sourceMap.put("source", operativeCountList);
 			//2、获取当天的手术量
 			int curDayCount = docMapper.selectOperativeCount(
 					orgId,
@@ -379,15 +395,15 @@ public class XcxController {
 			//3、获取前一周总手术量
 			int curWeekCount = docMapper.selectOperativeCount(
 					orgId,
-					UnixtimeUtil.getStringDay(nowDate-7), 
-					UnixtimeUtil.getStringDay(nowDate));
+					UnixtimeUtil.getStringDay(nowDate-6), 
+					UnixtimeUtil.getStringDay(nowDate+1));
 			sourceMap.put("curWeekCount", curWeekCount);
 			//4、当月总手术量
 			Date date = new Date();
 			int curMonthCount = docMapper.selectOperativeCount(
 					orgId,
 					CalendarUtil.getYear(date)+"-"+CalendarUtil.getMonth(date)+"-01", 
-					CalendarUtil.getYear(date)+"-"+CalendarUtil.getMonth(date)+"-30");
+					CalendarUtil.getYear(date)+"-"+CalendarUtil.getMonth(date)+"-32");
 			sourceMap.put("curMonthCount", curMonthCount);
 			//5、当月平均手术时间
 			List<WebScDoc> webScDocs = docMapper.selectWebScDocs(orgId, "5", 30);
@@ -401,14 +417,14 @@ public class XcxController {
 					sumTime = operativeEndTime-operativeStartTime;
 				}
 			}
-			long aveTime = sumTime/webScDocs.size();
+			long aveTime = webScDocs.size()==0?0l:sumTime/webScDocs.size();
 			sourceMap.put("averageDuration", aveTime);
 			
 			resultBean = ResultBean.success(sourceMap);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("获取手术量信息失败，"+e.getMessage());
-			resultBean = ResultBean.error("获取手术量信息");
+			logger.error("获取当天手术量信息失败，"+e.getMessage());
+			resultBean = ResultBean.error("获取当天手术量信息失败，"+e.getMessage());
 		}
 		return resultBean;
 	}
@@ -430,7 +446,7 @@ public class XcxController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("更新手术名Lucene文件失败，"+e.getMessage());
-			resultBean = ResultBean.error("更新手术名Lucene文件失败，请重试...");
+			resultBean = ResultBean.error("更新手术名Lucene文件失败，"+e.getMessage());
 		}
 		return resultBean;
 	}
