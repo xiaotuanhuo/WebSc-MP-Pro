@@ -47,7 +47,7 @@ public class WxUtil {
 	
 	public static String sCorpid = "ww0a5757d175c0cfc6";
 	
-	public static String sCorpsecret = "PockS2IzU46F1xGD3hXm1rz2xM69fn0sx9_L9F7GX0Q";
+	public static String sCorpsecret = "tnRFaSEmGEXg1mWMpox527dQFhBQgWE2JBLRhZ7xyew";
 	
 	private Map<String, Date> AccessTokenMap = new HashMap<String, Date>();
 	private String qAccessToken;

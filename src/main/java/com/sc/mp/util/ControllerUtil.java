@@ -13,7 +13,7 @@ import com.sc.mp.model.WebScUser;
 
 @Component
 public class ControllerUtil {
-	
+
 	/**
 	 * 获取用户信息
 	 * @param request

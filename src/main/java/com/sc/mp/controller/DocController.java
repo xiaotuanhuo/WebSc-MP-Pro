@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +28,10 @@ import com.sc.mp.model.WebScUser_Distribution;
 import com.sc.mp.service.DocService;
 import com.sc.mp.service.QaTeamService;
 import com.sc.mp.service.UserService;
+import com.sc.mp.util.ScConstant;
 import com.sc.mp.util.WxUtil;
 
 @Controller
-@RequestMapping(value="doc")
 public class DocController {
 	private static final Logger log = LoggerFactory.getLogger(DocController.class);
 			
@@ -57,12 +58,15 @@ public class DocController {
 	*  	@Description: 订单列表跳转
 	*/
 	@GetMapping(value="/toDocList")
-	public String toDocList() {
-		//测试用
-		WebScUser searchUser = new WebScUser();
-		searchUser.setUserId(5);
-		WebScUser user = userService.selectUserInfo(searchUser);
+	public String toDocList(HttpServletRequest request, 
+	  		  				HttpServletResponse response,
+	  		  				Model model,
+	  		  				@RequestParam(value = "ds") String sState) {
+		HttpSession session = request.getSession();
+		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
 		
+		model.addAttribute("state", sState);
+		model.addAttribute("user", user);
 		
 		return "doc_list";
 	}
@@ -78,13 +82,14 @@ public class DocController {
     					  		  @RequestParam(value = "ds") String sState){
 		JSONObject returnMap = new JSONObject();
 		
-//		//获取用户信息
-//		WebScUser user = ControllerUtil.getUserInfo(request);
+		//获取用户信息
+		HttpSession session = request.getSession();
+		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
 		
 		//测试用
-		WebScUser searchUser = new WebScUser();
-		searchUser.setUserId(5);
-		WebScUser user = userService.selectUserInfo(searchUser);
+//		WebScUser searchUser = new WebScUser();
+//		searchUser.setUserId(5);
+//		WebScUser user = userService.selectUserInfo(searchUser);
 		
 		try{
 			if(user != null){
@@ -246,14 +251,17 @@ public class DocController {
     public String toDocDetail(HttpServletRequest request, 
     					 	  HttpServletResponse response, 
     					  	  Model model,
-    					  	  @RequestParam(value = "id") String sDocId) {
+    					  	  @RequestParam(value = "id") String sDocId,
+    					  	  @RequestParam(value = "state") String sState) {
 		try{
-//			//获取用户信息
-//			WebScUser user = ControllerUtil.getUserInfo(request);
+			//获取用户信息
+			HttpSession session = request.getSession();
+			WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
+			
 			//测试用
-			WebScUser searchUser = new WebScUser();
-			searchUser.setUserId(4);
-			WebScUser user = userService.selectUserInfo(searchUser);
+//			WebScUser searchUser = new WebScUser();
+//			searchUser.setUserId(4);
+//			WebScUser user = userService.selectUserInfo(searchUser);
 			
 			WebScDoc searchDoc = new WebScDoc();
 			searchDoc.setDocumentId(sDocId);
@@ -343,6 +351,8 @@ public class DocController {
 			model.addAttribute("appId", appId);
 			model.addAttribute("signature",signature);
 			
+			model.addAttribute("state",sState);
+			
 			//数据缓存
 			//获取麻醉方法
 			List<WebScAnesthetic> anestheticls = data.getWebScAnestheticList();
@@ -367,13 +377,14 @@ public class DocController {
 		JSONObject returnMap = new JSONObject();
 		
 		try{
-//			//获取用户信息
-//			WebScUser user = ControllerUtil.getUserInfo(request);
+			//获取用户信息
+			HttpSession session = request.getSession();
+			WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
 			
 			//测试用
-			WebScUser searchUser = new WebScUser();
-			searchUser.setUserId(4);
-			WebScUser user = userService.selectUserInfo(searchUser);
+//			WebScUser searchUser = new WebScUser();
+//			searchUser.setUserId(4);
+//			WebScUser user = userService.selectUserInfo(searchUser);
 			
 			//参数
 			String sFormJson = request.getParameter("jsondata");
@@ -419,6 +430,18 @@ public class DocController {
 				}else if(ods.equals("4") && ds.equals("5")){
 					//完成订单		管理员操作
 					log.info("区域管理员：" + user.getUserName() + "	完成订单：" + id + " 操作开始！");
+				}else if(ds.equals("9")){
+					//取消订单		管理员操作
+					String reason = jo.get("reason").toString();
+					updateMap.put("memo", reason);
+					
+					log.info("区域管理员：" + user.getUserName() + "	取消订单：" + id + " 操作开始！");
+				}else if(!ds.equals("6") && ods.equals("9")){
+					//拒绝取消订单		管理员操作
+					log.info("区域管理员：" + user.getUserName() + "	拒绝取消订单：" + id + " 操作开始！");
+				}else if(ds.equals("6") && ods.equals("9")){
+					//同意取消订单		管理员操作
+					log.info("区域管理员：" + user.getUserName() + "	同意取消订单：" + id + " 操作开始！");
 				}
 				
 				int iRet = docService.updateDocInfoByMap(updateMap);
@@ -448,6 +471,15 @@ public class DocController {
 					}else if(ods.equals("4") && ds.equals("5")){
 						//完成订单		管理员操作
 						log.info("区域管理员：" + user.getUserName() + "	完成订单：" + id + " 成功！");
+					}else if(ds.equals("9")){
+						//取消订单		管理员操作
+						log.info("区域管理员：" + user.getUserName() + "	取消订单：" + id + " 成功！");
+					}else if(!ds.equals("6") && ods.equals("9")){
+						//拒绝取消订单		管理员操作
+						log.info("区域管理员：" + user.getUserName() + "	拒绝取消订单：" + id + " 成功！");
+					}else if(ds.equals("6") && ods.equals("9")){
+						//同意取消订单		管理员操作
+						log.info("区域管理员：" + user.getUserName() + "	同意取消订单：" + id + " 操作开始！");
 					}
 				}else{
 					returnMap.put("code", 0);
@@ -588,13 +620,14 @@ public class DocController {
 	  											@RequestParam(value = "searchVal") String searchVal){
 		JSONObject returnMap = new JSONObject();
 		try{
-	//		//获取用户信息
-	//		WebScUser user = ControllerUtil.getUserInfo(request);
+			//获取用户信息
+			HttpSession session = request.getSession();
+			WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
 			
 			//测试用
-			WebScUser searchUser = new WebScUser();
-			searchUser.setUserId(5);
-			WebScUser user = userService.selectUserInfo(searchUser);
+//			WebScUser searchUser = new WebScUser();
+//			searchUser.setUserId(5);
+//			WebScUser user = userService.selectUserInfo(searchUser);
 			
 			//获取医生名单
 			List<WebScUser_Distribution> drList = docService.getDistributionDrGridList(sDocumentId, searchVal, user);
@@ -628,13 +661,14 @@ public class DocController {
 		JSONObject returnMap = new JSONObject();
 		
 		try{
-	//		//获取用户信息
-	//		WebScUser user = ControllerUtil.getUserInfo(request);
+			//获取用户信息
+			HttpSession session = request.getSession();
+			WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
 			
 			//测试用
-			WebScUser searchUser = new WebScUser();
-			searchUser.setUserId(4);
-			WebScUser user = userService.selectUserInfo(searchUser);
+//			WebScUser searchUser = new WebScUser();
+//			searchUser.setUserId(4);
+//			WebScUser user = userService.selectUserInfo(searchUser);
 			
 	    	//获取订单数据
 			WebScDoc searchDoc = new WebScDoc();
@@ -711,20 +745,23 @@ public class DocController {
 	//获取团队人员列表
 	@RequestMapping("/getQaUserInfo")
     @ResponseBody
-    public JSONObject getQaUserInfo(@RequestParam(value = "id") String documentId,
+    public JSONObject getQaUserInfo(HttpServletRequest request, 
+			   						HttpServletResponse response,
+			   						@RequestParam(value = "id") String documentId,
     								@RequestParam(value = "type") String roleId,
     								@RequestParam(value = "searchVal") String userName) {
 		JSONObject returnMap = new JSONObject();
 		List<WebScUser> userls = new ArrayList<WebScUser>();
 
 		try{
-	//		//获取用户信息
-	//		WebScUser user = ControllerUtil.getUserInfo(request);
+			//获取用户信息
+			HttpSession session = request.getSession();
+			WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
 			
 			//测试用
-			WebScUser searchUser = new WebScUser();
-			searchUser.setUserId(4);
-			WebScUser user = userService.selectUserInfo(searchUser);
+//			WebScUser searchUser = new WebScUser();
+//			searchUser.setUserId(4);
+//			WebScUser user = userService.selectUserInfo(searchUser);
 			
 	    	//获取订单数据
 			WebScDoc searchDoc = new WebScDoc();

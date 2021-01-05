@@ -88,7 +88,7 @@
 	<div class="heading">
 		<nav class="nav" style="width: 100%;padding-right: 10px;background-image: linear-gradient(-12deg,#8470FF 0,#6495ED 100%) !important; color:white;padding-top: 4px;">
 			<div class="cell">
-				<a href="/doc/toDocList">
+				<a onclick="onHtmlBack()">
 					<span style="padding: 0 10px;height: 40px;line-height: 40px;font-size: 16px;font-weight: 400;border-radius: 5px 5px 0 0;text-align: center;color: white;">
 						<i class="icon icon-chevron-left"></i>&nbsp;&nbsp;订单详情
 					</span>
@@ -174,6 +174,10 @@
     				<tr th:if="${doc.documentState == '3' && doc.oldDocumentState == '4'}">
       					<th class="title" style="color: red;">修改备注：</th>
       					<th class="patient_val"><span th:text="${doc.adminMemo}"></span></th>
+    				</tr>
+    				<tr th:if="${doc.documentState == '9'}">
+      					<th class="title" style="color: red;">取消原因：</th>
+      					<th class="patient_val"><span th:text="${doc.memo}"></span></th>
     				</tr>
     			</table>
 			</div>
@@ -370,23 +374,24 @@
 	</div>
 	
 	<nav id="nav_btn" class="nav nav-auto justified" style="padding:30 10 10 10;">
-		<button id="btnQx" type="button" class="btn danger outline" style="border-radius: .3rem;" th:if="${user.roleId=='4' && doc.documentState!='0' and doc.documentState!='3' and doc.documentState!='9' and doc.documentState!='4' and doc.documentState!='5'}">取消订单</button>
-		<button id="btnSh" type="button" class="btn primary" style="border-radius: .3rem;" th:if="${user.roleId=='4' && doc.documentState=='0'}">确认订单</button>
-		<button id="btnFp" type="button" class="btn primary" style="border-radius: .3rem;" th:if="${user.roleId=='4' && doc.documentState=='1'}" onclick="btnFpClick()">订单分配</button>
-		<button id="btnQxFp" type="button" class="btn danger" style="border-radius: .3rem;" th:if="${user.roleId=='4' && doc.documentState=='2'}" onclick="btnQxFpClick()">取消分配</button>
+		<button id="btnQx" type="button" class="btn danger outline" style="border-radius:.3rem 0 0 .3rem;" th:if="${user.roleId=='4' && doc.documentState!='0' and doc.documentState!='3' and doc.documentState!='9' and doc.documentState!='4' and doc.documentState!='5' and doc.documentState!='6'}"  onclick="btnQxClick()">取消订单</button>
 		
-		<button id="btnDoctorQx" type="button" class="btn danger" style="border-radius: .3rem;" th:if="${user.roleId=='5' && doc.documentState=='2'}" onclick="btnDrQxFpClick()">取消订单</button>
-		<button id="btnDoctorJd" type="button" class="btn primary" style="border-radius: .3rem;" th:if="${user.roleId=='5' && doc.documentState=='2'}" onclick="btnDrJdClick()">确认接单</button>
+		<button id="btnSh" type="button" class="btn primary" style="border-radius:0 .3rem .3rem 0;" th:if="${user.roleId=='4' && doc.documentState=='0'}">确认订单</button>
+		<button id="btnFp" type="button" class="btn primary" style="border-radius:0 .3rem .3rem 0;" th:if="${user.roleId=='4' && doc.documentState=='1'}" onclick="btnFpClick()">订单分配</button>
+		<button id="btnQxFp" type="button" class="btn danger" style="border-radius:0 .3rem .3rem 0;" th:if="${user.roleId=='4' && doc.documentState=='2'}" onclick="btnQxFpClick()">取消分配</button>
 		
-		<button id="btnDoctorQr" type="button" class="btn info" style="border-radius: .3rem;" th:if="${user.roleId=='5' && doc.documentState=='3'}" onclick="btnDrQrInfo()">完成订单</button>
-		<button id="btnDoctorZd" type="button" class="btn primary" style="border-radius: .3rem;" th:if="${user.roleId=='5' && doc.documentState=='3'}" onclick="btnDrZdClick()">转单</button>
-		<button id="btnDoctorCx" type="button" class="btn danger" style="border-radius: .3rem;" th:if="${user.roleId=='5' && doc.documentState=='3'}" onclick="recallDoc()">撤销订单</button>
+		<button id="btnDoctorQx" type="button" class="btn danger" style="border-radius:.3rem 0 0 .3rem;" th:if="${user.roleId=='5' && doc.documentState=='2'}" onclick="btnDrQxFpClick()">取消订单</button>
+		<button id="btnDoctorJd" type="button" class="btn primary" style="border-radius: 0 .3rem .3rem 0;;" th:if="${user.roleId=='5' && doc.documentState=='2'}" onclick="btnDrJdClick()">确认接单</button>
 		
-		<button id="btnQxwc" type="button" class="btn danger outline" style="border-radius: .3rem;" th:if="${user.roleId=='4' && doc.documentState=='4'}" onclick="btnQxwcClick()">退回修改</button>
+		<button id="btnDoctorCx" type="button" class="btn danger" style="border-radius: .3rem 0 0 .3rem;" th:if="${user.roleId=='5' && doc.documentState=='3'}" onclick="recallDoc()">撤销订单</button>
+		<button id="btnDoctorZd" type="button" class="btn primary" style="border-radius: 0;" th:if="${user.roleId=='5' && doc.documentState=='3'}" onclick="btnDrZdClick()">转单</button>
+		<button id="btnDoctorQr" type="button" class="btn info" style="border-radius: 0 .3rem .3rem 0;" th:if="${user.roleId=='5' && doc.documentState=='3'}" onclick="btnDrQrInfo()">完成订单</button>
+		
+		<button id="btnQxwc" type="button" class="btn danger outline" style="border-radius:.3rem 0 0 .3rem;" th:if="${user.roleId=='4' && doc.documentState=='4'}" onclick="btnQxwcClick()">退回修改</button>
 		<button id="btnQrWc" type="button" class="btn primary" style="border-radius: .3rem;" th:if="${user.roleId=='4' && doc.documentState=='4'}" onclick="btnQrWcClick()">确认完成</button>
 		
-		<button id="btnQxJj" type="button" class="btn danger" style="border-radius: .3rem;" th:if="${user.roleId=='4' && doc.documentState=='9'}">拒绝撤销</button>
-		<button id="btnQxTy" type="button" class="btn primary" style="border-radius: .3rem;" th:if="${user.roleId=='4' && doc.documentState=='9'}">同意撤销</button>
+		<button id="btnQxJj" type="button" class="btn danger" style="border-radius: .3rem 0 0 .3rem;" th:if="${user.roleId=='4' && doc.documentState=='9'}" onclick="btnQxJjClick()">拒绝撤销</button>
+		<button id="btnQxTy" type="button" class="btn primary" style="border-radius: 0 .3rem .3rem 0;" th:if="${user.roleId=='4' && doc.documentState=='9'}" onclick="btnQxTyClick()">同意撤销</button>
 		
 		<button id="btnDocDf" type="button" class="btn primary" style="border-radius: .3rem;" th:if="${user.roleId=='5' && doc.documentState=='5' && doc.doctorEvaluate==null}" onclick="btnDocDfClick()">评价打分</button>
 	</nav>
@@ -727,22 +732,19 @@
 	<div id="pnlCannel" class="panel" style="display: none;">
 		<div class="panel-body">
 			<div class="row" style="padding: 0 20px 0 20px;">
-				<table class="patient_table">
+				<table class="patient_table" style="width: 100%;">
 					<tr>
       					<th class="title">取消原因：</th>
     				</tr>
     				<tr>
-    					<textarea class="textarea" name="desc" id="desc" rows="3"></textarea>
+    					<td>
+    						<textarea class="textarea" name="reason" id="reason" rows="5"></textarea>
+    					</td>
     				</tr>
     			</table>
-    		</div>	
-<!-- 			<div class="control has-success"  style="padding-left: 20 10 20 10;"> -->
-<!-- 	      		<label for="desc" style="font-size: .8rem;font-weight: 800;">取消原因</label> -->
-<!-- 	      		<textarea class="textarea" name="desc" id="desc" rows="3"></textarea> -->
-<!-- 	   		</div> -->
+    		</div>
    		</div>
 		<nav class="nav nav-auto affix dock-bottom justified">
-			<button id="btnClose" type="button" class="btn info outline">返回</button>
 			<button id="btnQxSave" type="button" class="btn primary">保存</button>
 		</nav>
 	</div>
@@ -807,7 +809,7 @@
 <script  th:inline="javascript">
 	//console.log(location.href.split('#')[0])
 	var doc = [[${doc}]];
-	console.log(doc);
+	var state = [[${state}]];
 	
 	var appId = [[${appId}]];//公众号的唯一标识
 	var timestamp = [[${timestamp}]];//生成签名的时间戳
@@ -830,6 +832,10 @@
 	});	
 	
 	var docId = $("#docId").val();
+	
+	function onHtmlBack(){
+		location.href = "/toDocList?ds=" + state;
+	}
 	
 	$(document).ready(function(){ 
 		//评价
@@ -875,7 +881,7 @@
 		}else if(state == "2-3"){
 			$("#tag_state").html("<div class='pull-right label red-pale text-tint'>待手术</div>");
 /////////////////？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？
-			("#nav_btn").html("");
+			$("#nav_btn").html("");
 		}else if(state == "3-2"){
 			$("#tag_state").html("<div class='pull-right label red-pale text-tint'>待接单</div>");
 			$("#nav_btn").html("<button type='button' class='btn danger' style='border-radius: .3rem;' onclick='btnDrQxFpClick()'>取消订单</button>" +
@@ -892,7 +898,7 @@
 		
  			$.ajax({
 				type: "POST",
-		 		url: "/doc/updateDocInfo",
+		 		url: "/updateDocInfo",
 		  		data: "jsondata=" + dataJson,
 				dataType: "json",
 				success: function(data){
@@ -961,7 +967,7 @@
 	function searchFp(obj, searchVal){
 		$.ajax({
 			type: "POST",
-	 		url: "/doc/getDistributionDrGridList",
+	 		url: "/getDistributionDrGridList",
 	 		data: "id=" + doc.documentId + "&searchVal=" + searchVal,
 			dataType: "json",
 			success: function(data){
@@ -1004,7 +1010,7 @@
     	
 		$.ajax({
 			type: "POST",
-	 		url: "/doc/updateDocInfo",
+	 		url: "/updateDocInfo",
 	  		data: "jsondata=" + dataJson,
 			dataType: "json",
 			success: function(data){
@@ -1040,7 +1046,7 @@
 		
 		$.ajax({
 			type: "POST",
-	 		url: "/doc/updateDocInfo",
+	 		url: "/updateDocInfo",
 	  		data: "jsondata=" + dataJson,
 			dataType: "json",
 			success: function(data){
@@ -1086,7 +1092,7 @@
 		
 		$.ajax({
 			type: "POST",
-	 		url: "/doc/updateDocInfo",
+	 		url: "/updateDocInfo",
 	  		data: "jsondata=" + dataJson,
 			dataType: "json",
 			success: function(data){
@@ -1152,7 +1158,7 @@
 	function searchZdDr(obj, searchVal){
 		$.ajax({
 			type: "POST",
-	 		url: "/doc/transferuser",
+	 		url: "/transferuser",
 	 		data: "id=" + doc.documentId + "&searchVal=" + searchVal,
 			dataType: "json",
 			success: function(data){
@@ -1191,14 +1197,14 @@
     	
 		$.ajax({
 			type: "POST",
-	 		url: "/doc/updateDocInfo",
+	 		url: "/updateDocInfo",
 	  		data: "jsondata=" + dataJson,
 			dataType: "json",
 			success: function(data){
 				if(data.code == 1){
 					body.find("#pnlZd").toggleClass("loading loading-light");
 					
-					location.href="/doc/toDocList";
+					location.href="/toDocList";
 				}else{
 					alert("网络失败,请重试!");
 				}
@@ -1233,7 +1239,7 @@
 		
 		$.ajax({
 			type: "POST",
-	 		url: "/doc/updateDocInfo",
+	 		url: "/updateDocInfo",
 	  		data: "jsondata=" + dataJson,
 			dataType: "json",
 			success: function(data){
@@ -1241,7 +1247,7 @@
 					$("#nav_btn").toggleClass("loading loading-light");
 					
 					if(doc.transferUserId != null && doc.transferUserId != ""){
-						location.href="/doc/toDocList";
+						location.href="/toDocList";
 					}else{
 						ajaxChangeHtml("3-2");
 					}
@@ -1395,7 +1401,7 @@
 //          		var html = '<div id="photo_' + photoIdx + '" name="'+ photols[i] +'" class="file-iteme" style="width: 150px; height: 180px; float: left;margin-left:10px;"">';
 //          		if(doc.status == '0')
 //          			html += '<div style="float: right;" id="delPhotoBtn' + photoIdx + '" onclick="deletePhoto(' + photoIdx + ')"><i class="layui-icon layui-icon-delete"></i></div>';
-//         			html += '<img style="width: 150px;height: 180px;" src="/doc/getPhotoByFileName?documentId=' + doc.documentId + '&FileName='+ photols[i] +'">';
+//         			html += '<img style="width: 150px;height: 180px;" src="/getPhotoByFileName?documentId=' + doc.documentId + '&FileName='+ photols[i] +'">';
 //         			html += '</div>';
          			
 //         			obj.find('#photo_list').append(html);
@@ -1488,7 +1494,7 @@
 		
 		$.ajax({
 			type: "POST",
-	 		url: "/doc/updateDocInfo",
+	 		url: "/updateDocInfo",
 	  		data: "jsondata=" + dataJson,
 			dataType: "json",
 			success: function(data){
@@ -1496,7 +1502,7 @@
 					$("#nav_btn").toggleClass("loading loading-light");
 					
 					if(flag){
-						location.href="/doc/toDocList";
+						location.href="/toDocList";
 					}
 					else{
 						layer.close(index);
@@ -1581,14 +1587,14 @@
 		    	
 				$.ajax({
 					type: "POST",
-			 		url: "/doc/updateDocInfo",
+			 		url: "/updateDocInfo",
 			  		data: "jsondata=" + dataJson,
 					dataType: "json",
 					success: function(data){
 						if(data.code == 1){
 							$(this).toggleClass("loading loading-light");
 							
-							location.href="/doc/toDocList";
+							location.href="/toDocList";
 						}else{
 							alert("网络失败,请重试!");
 						}
@@ -1634,7 +1640,7 @@
 							    	
 									$.ajax({
 										type: "POST",
-								 		url: "/doc/updateDocInfo",
+								 		url: "/updateDocInfo",
 								  		data: "jsondata=" + dataJson,
 										dataType: "json",
 										success: function(data){
@@ -1694,7 +1700,7 @@
 
 					    	$.ajax({
 				    			type: "POST",
-				    	 		url: "/doc/updateDocInfo",
+				    	 		url: "/updateDocInfo",
 				    	 		data: "jsondata=" + dataJson,
 				    			dataType: "json",
 				    			success: function(data){
@@ -1829,7 +1835,7 @@
 	function searchTeamUser(obj, type, searchVal){
 		$.ajax({
 			type: "POST",
-	 		url: "/doc/getQaUserInfo",
+	 		url: "/getQaUserInfo",
 	 		data: "id=" + doc.documentId + "&type=" + type + "&searchVal=" + searchVal,
 			dataType: "json",
 			success: function(data){
@@ -1864,7 +1870,7 @@
 	function setTeamSelected(body, index, type, uid){
 		$.ajax({
 			type: "POST",
-	 		url: "/doc/addQaTeamUser",
+	 		url: "/addQaTeamUser",
 	 		data: "id=" + doc.documentId + "&type=" + type + "&uid=" + uid,
 			dataType: "json",
 			success: function(data){
@@ -1907,7 +1913,7 @@
 				
 				$.ajax({
 					type: "POST",
-			 		url: "/doc/showTeam",
+			 		url: "/showTeam",
 			 		data: "id=" + doc.documentId,
 					dataType: "json",
 					success: function(data){
@@ -1947,8 +1953,6 @@
 				
 			}
 		});
-		
-		
 	}
 	
 	function appendUserInfo(body, user, type){
@@ -1998,7 +2002,7 @@
 		    yes: function(index){
 		    	$.ajax({
 					type: "POST",
-			 		url: "/doc/delQaTeamUser",
+			 		url: "/delQaTeamUser",
 			 		data: "id=" + doc.documentId + "&uid=" + uid,
 					dataType: "json",
 					success: function(data){
@@ -2022,6 +2026,163 @@
 	
 	//------------------------------------------------    团队结束        --------------------------------------------------------------//
 	
+	//------------------------------------------------    取消订单开始        -----------------------------------------------------------//
+	function btnQxClick(){
+		layer.open({
+			type: 1,
+			title: ['<span style=\"float: left;\">取消订单</span><button id=\"btnLayClose\" type=\"button\" class=\"btn btn-sm\" style=\"float: right;padding: 7 0;\"><i class=\"icon icon-times\"></i></button>', 'background-image:linear-gradient(-12deg,#8470FF 0,#6495ED 100%) !important; color:white;'],
+		  	content: $("#pnlCannel").html(),
+		  	anim: 'scale',
+		  	style: 'position:fixed; left:0; top:0;-webkit-overflow-scrolling: touch;overflow-y: scroll; width:100%; height:100%; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;',
+	  		success: function(elem){
+				//全局参数
+				var body = $("#" + elem.id);
+				teambody = body;
+				
+// 				$.ajax({
+// 					type: "POST",
+// 			 		url: "/showTeam",
+// 			 		data: "id=" + doc.documentId,
+// 					dataType: "json",
+// 					success: function(data){
+// 						var userls = data.list;
+						
+// 						if(userls != null){
+// 			          		for(var i = 0; i < userls.length; i++){
+// 			          			var user = userls[i];
+// 			          			console.info(i + " " +user.roleId);
+// 			          			if(user.roleId == '5'){
+// 			                		//医生
+// 			               			var html = appendUserInfo(body, user, '5');
+// 			               			body.find("#fm_main").append(html);
+// 			               			body.find("#fm_main").css("display", "");
+// 			               			body.find("#fm_add").css("display", "none");
+// 			                	}else{
+// 			                		//护士
+// 			               			var html = appendUserInfo(body, user, '6');
+// 			               			body.find("#hs_main").append(html);
+// 			               			body.find("#hs_main").css("display", "");
+			               			
+// 			               			if(doc.documentState != 3){
+// 			               				body.find("#hs_add").css("display", "none");
+// 			               			}
+// 			                	}
+// 			          		}
+// 			          	}
+// 			       	},
+// 			     	error: function () {
+// 				   		alert("网络异常,请重试!");
+// 				 	}
+// 				});
+				body.on('click', '#btnQxSave', function() {
+					var reason = body.find("#reason").val();
+					
+					if(reason == ''){
+						layer.open({
+							content: '取消订单，取消原因不能为空！'
+						    ,btn: '关闭'
+						});
+					}
+					
+					layer.open({
+					    content: "确认取消订单？",
+					   	btn: ['确认','取消'],
+					    yes: function(index){
+							$(this).toggleClass("loading loading-light");
+							
+							var dataJson = "{'type':'s', 'id':'" + doc.documentId + "', 'ds':'9', 'ods':'" + doc.documentState + "','reason':'" + reason + "'}";
+					    	
+							$.ajax({
+								type: "POST",
+						 		url: "/updateDocInfo",
+						  		data: "jsondata=" + dataJson,
+								dataType: "json",
+								success: function(data){
+									if(data.code == 1){
+										$(this).toggleClass("loading loading-light");
+										
+										location.href="/toDocList?ds=" + state;
+									}else{
+										alert("网络失败,请重试!");
+									}
+						       	},
+						     	error: function () {
+						     		alert("网络异常,请重试!");
+							 	}
+							});
+					    }
+					});
+				});
+				
+				body.on('click', '#btnLayClose', function() {
+					layer.closeAll();
+				});
+			}
+		});
+	}
+	
+	function btnQxJjClick(){
+		layer.open({
+		    content: "拒绝取消订单？",
+		   	btn: ['确认','取消'],
+		    yes: function(index){
+				$(this).toggleClass("loading loading-light");
+				
+				var dataJson = "{'type':'s', 'id':'" + doc.documentId + "', 'ds':'" + doc.oldDocumentState + "', 'ods':'9'}";
+		    	
+				$.ajax({
+					type: "POST",
+			 		url: "/updateDocInfo",
+			  		data: "jsondata=" + dataJson,
+					dataType: "json",
+					success: function(data){
+						if(data.code == 1){
+							$(this).toggleClass("loading loading-light");
+							
+							location.href="/toDocList?ds=" + state;
+						}else{
+							alert("网络失败,请重试!");
+						}
+			       	},
+			     	error: function () {
+			     		alert("网络异常,请重试!");
+				 	}
+				});
+		    }
+		});
+	}
+	
+	function btnQxTyClick(){
+		layer.open({
+		    content: "同意取消订单？",
+		   	btn: ['确认','取消'],
+		    yes: function(index){
+				$(this).toggleClass("loading loading-light");
+				
+				var dataJson = "{'type':'s', 'id':'" + doc.documentId + "', 'ds':'6', 'ods':'9'}";
+		    	
+				$.ajax({
+					type: "POST",
+			 		url: "/updateDocInfo",
+			  		data: "jsondata=" + dataJson,
+					dataType: "json",
+					success: function(data){
+						if(data.code == 1){
+							$(this).toggleClass("loading loading-light");
+							
+							location.href="/toDocList?ds=" + state;
+						}else{
+							alert("网络失败,请重试!");
+						}
+			       	},
+			     	error: function () {
+			     		alert("网络异常,请重试!");
+				 	}
+				});
+		    }
+		});
+	}
+	//------------------------------------------------    取消订单结束        -----------------------------------------------------------//
 </script>
 </body>
 </html>

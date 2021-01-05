@@ -8,5 +8,7 @@ import com.sc.mp.model.WebScAccessToken;
 public interface AccessTokenMapper {
 	WebScAccessToken getWebScAccessToken();
 	
+	int deleteWebScAccessToken();
+	
 	void updateWebScAccessToken(String accesstoken);
 }

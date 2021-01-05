@@ -9,18 +9,19 @@
 	<!-- Google font file. If you want you can change. -->
 	<link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,900" rel="stylesheet">
 	<!-- Fontawesome font file css -->
-	<link rel="stylesheet" href="https://www.jq22.com/jquery/font-awesome.4.7.0.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}">
 	<!-- Template global css file. Requared all pages -->
 	<link rel="stylesheet" type="text/css" th:href="@{/css/global.style.css}">
 	<link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
 	<link rel="stylesheet" th:href="@{/css/mescroll.min.css}">
+	<link rel="stylesheet" th:href="@{/css/Mdate.css}">
 </head>
 
 <body>
 	<div class="wrapper">
 		<div class="nav-menu">
 			<nav class="menu">
-			<!-- Menu navigation start -->
+				<!-- Menu navigation start -->
 				<div class="nav-container menu-container">
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
@@ -29,7 +30,7 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">张三</h6>
+							<h6 class="text-muted menu-info">[[${user.userName}]]</h6>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -39,7 +40,14 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">男</h6>
+							<div th:switch="${user.sex}">
+								<div th:case="'0'">
+									<h6 class="text-muted menu-info">女</h6>
+								</div>
+								<div th:case="*">
+									<h6 class="text-muted menu-info">男</h6>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -49,7 +57,7 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">18888888888</h6>
+							<h6 class="text-muted menu-info">[[${user.phone}]]</h6>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -59,7 +67,7 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">区域管理员</h6>
+							<h6 class="text-muted menu-info">[[${user.roleName}]]</h6>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -69,7 +77,7 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">上海市-市辖区-徐汇区夙呈医生集团</h6>
+							<h6 class="text-muted menu-info">[[${user.deptName}]]</h6>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -79,13 +87,12 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">上海市-市辖区-徐汇区</h6>
+							<h6 class="text-muted menu-info">[[${user.districtName}]]</h6>
 						</div>
 					</div>
 					
 					<button class="button circle red block menu-logout">登出</button>
 				</div>
-				
 				<!-- Menu navigation end -->
 			</nav>
 		</div>
@@ -109,10 +116,9 @@
 					</div>
 				</div>
 				
-				<!-- Order area start -->
 				<section class="bal-section container">
 					<div id="content">
-					    <div id="content-body">
+					    <div id="content-body" style="border-radius: 3px;">
 					    	<div class="content-head">
 								<div class="d-flex align-items-center">
 								    <div class="d-flex flex-grow">
@@ -123,16 +129,16 @@
 								</div>
 							</div>
 					        <div class="content-row">
-					            <div class="content-col">
-					                <img src="/img/p1.png" alt="">
-					                <span>已完成</span>
+					            <div class="content-col" onclick="goDocList(0)">
+					                <img src="/img/pending.png" alt="">
+					                <span>待处理</span>
 					            </div>
-					            <div class="content-col">
-					                <img src="/img/p2.png" alt="">
+					            <div class="content-col" onclick="goDocList(1)">
+					                <img src="/img/history.png" alt="">
 					                <span>历史订单</span>
 					            </div>
-					            <div class="content-col">
-					                <img src="/img/p3.png" alt="">
+					            <div class="content-col" onclick="goDocList(3)">
+					                <img src="/img/cancel.png" alt="">
 					                <span>已取消</span>
 					            </div>
 					        </div>
@@ -154,7 +160,7 @@
 					<ul id="restList" class="transaction-list list-unstyled"></ul>
 				</section>
 				<!-- 备休区域 end -->
-				
+				<div class="form-label-divider" style="display: none;"><span>没有更多数据了</span></div>
 			</main>
 			<!-- Page content end -->
 		</div>
@@ -168,8 +174,7 @@
 		</div>
 	</div>
 	
-	<!-- JQuery library file. requared all pages -->
-	<script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+	<script th:src="@{/js/jquery.min.js}"></script>
 	<!-- Template global script file. requared all pages -->
 	<script th:src="@{/js/global.script.js}"></script>
 	<!-- 下拉刷新 下拉加载插件 -->
@@ -179,74 +184,87 @@
 	<script th:src="@{/js/Mdate.js}"></script>
 	
 	<script type="text/javascript">
-		$(function() {
-			var mescroll = new MeScroll("mescroll", {
-				//第一个参数"mescroll"对应上面布局结构div的id
-				//如果您的下拉刷新是重置列表数据,那么down完全可以不用配置,具体用法参考第一个基础案例
-				//解析: down.callback默认调用mescroll.resetUpScroll(),而resetUpScroll会将page.num=1,再触发up.callback
-				down: {
-					auto: false,
-					//下拉刷新的回调,别写成downCallback(),多了括号就自动执行方法了
-					callback: downCallback
+	var date = "";
+	$(function() {
+		var mescroll = new MeScroll("mescroll", {
+			//第一个参数"mescroll"对应上面布局结构div的id
+			//如果您的下拉刷新是重置列表数据,那么down完全可以不用配置,具体用法参考第一个基础案例
+			//解析: down.callback默认调用mescroll.resetUpScroll(),而resetUpScroll会将page.num=1,再触发up.callback
+			down: {
+				use: false,
+				auto: false,
+				//下拉刷新的回调,别写成downCallback(),多了括号就自动执行方法了
+				callback: downCallback
+			},
+			up: {
+				use: true,
+				auto: true,
+				//上拉加载的回调
+				callback: upCallback
+			}
+		});
+		
+		//下拉刷新的回调
+		function downCallback() {
+			$.ajax({
+				url: 'calendarScroll?page=' + pageNum + "&limit=" + pageSize + "&date=" + date,
+				success: function(data) {
+					//联网成功的回调,隐藏下拉刷新的状态;
+					mescroll.endSuccess(); //无参
+					//设置列表数据
+					setListData(data, false);
 				},
-				up: {
-					use: true,
-					auto: true,
-					//上拉加载的回调
-					callback: upCallback
+				error: function(data) {
+					//联网失败的回调,隐藏下拉刷新的状态
+					mescroll.endErr();
 				}
 			});
-			
-			//下拉刷新的回调
-			function downCallback() {
+		}
+		
+		//上拉加载的回调 page = {num:1, size:10}; num:当前页 默认从1开始, size:每页数据条数,默认10
+		function upCallback(page) {
+			console.log("page.num = " + page.num);
+			getDataList(page.num, page.size, function(data) {
+				//成功的回调,隐藏上拉加载的状态
+				mescroll.endSuccess(data.length);//传参:数据的总数; mescroll会自动判断列表如果无任何数据,则提示空;列表无下一页数据,则提示无更多数据;
+				//设置列表数据
+				setListData(data, true);
+			}, function() {
+				//失败的回调,隐藏上拉加载的状态
+				mescroll.endErr();
+			});
+		}
+		
+		var downIndex=0;
+		/*加载备休数据*/
+		function getDataList(pageNum, pageSize, successCallback, errorCallback) {
+			/* setTimeout(function () {
 				$.ajax({
-					url: 'xxxxxx',
-					success: function(data) {
-						//联网成功的回调,隐藏下拉刷新的状态;
-						mescroll.endSuccess(); //无参
-						//设置数据
-						//setXxxx(data);//自行实现 TODO
+					url: 'calendarScroll?page=' + pageNum + "&limit=" + pageSize + "&date=" + date,
+					success: function(result) {
+						setTimeout(successCallback&&successCallback(result.data), 2000);
 					},
-					error: function(data) {
-						//联网失败的回调,隐藏下拉刷新的状态
-						mescroll.endErr();
+					error: function() {
+						errorCallback&&errorCallback();
 					}
 				});
-			}
-			
-			//上拉加载的回调 page = {num:1, size:10}; num:当前页 默认从1开始, size:每页数据条数,默认10
-			function upCallback(page) {
-				console.log("page.num = " + page.num);
-				getDataList(page.num, page.size, function(data) {
-					//成功的回调,隐藏上拉加载的状态
-					mescroll.endSuccess(data.length);//传参:数据的总数; mescroll会自动判断列表如果无任何数据,则提示空;列表无下一页数据,则提示无更多数据;
-					//设置列表数据
-					setListData(data, true);
-				}, function() {
-					//失败的回调,隐藏上拉加载的状态
-					mescroll.endErr();
-				});
-			}
-			
-			var downIndex=0;
-			/*加载备休数据*/
-			function getDataList(pageNum, pageSize, successCallback, errorCallback) {
-				//延时一秒,模拟联网
-                setTimeout(function () {
-                	$.ajax({
-    					url: 'mescroll?num=' + pageNum + "&size=" + pageSize,
-    					success : function(data) {
-    						setTimeout(successCallback&&successCallback(data.detail), 2000);
-    					},
-    					error : function() {
-    						errorCallback&&errorCallback();
-    					}
-    				});
-                }, 2000);
-			}
+            }, 2000); */
+			$.ajax({
+				type: "GET",
+				url: 'calendarScroll?page=' + pageNum + "&limit=" + pageSize + "&date=" + date,
+				success: function(result) {
+					successCallback&&successCallback(result.data);
+				},
+				error: function() {
+					errorCallback&&errorCallback();
+				}
+			});
+		}
 
-			/*设置列表数据*/
-			function setListData(data, isAppend) {
+		/*设置列表数据*/
+		function setListData(data, isAppend) {
+			if (data.length > 0) {
+				$(".form-label-divider").attr("style", "display: none;");
 				var listDom = document.getElementById("restList");
 				for (var i = 0; i < data.length; i++) {
 					var newObj = data[i];
@@ -255,40 +273,61 @@
 					str += '<div class="fl-100 align-items-center">';
 					str += '<div class="ml-10">';
 					str += '<h5 class="coin-name">' + newObj.name + '</h5>';
-					str += '<small class="text-muted">' + newObj.phone + '</small>';
+					str += '<small class="text-muted">' + newObj.phone
+							+ '</small>';
 					str += '</div>';
 					str += '</div>';
 					str += '<div class="fm-auto align-items-center mr-10">';
 					str += '<div class="ml-10">';
-					str += '<small class="text-muted">' + newObj.org + '</small>';
+					str += '<small class="text-muted">' + newObj.dept
+							+ '</small>';
 					str += '</div>';
 					str += '</div>';
 					str += '<div class="fr-70">';
-					str += '<small class="d-block mb-0 txt-green">' + newObj.time + '</small>';
-					str += '<small class="text-muted d-block">' + newObj.date + '</small>';
+					str += '<small class="d-block mb-0 txt-green">'
+							+ (newObj.begin).substring(11, 16) + '-'
+							+ (newObj.end).substring(11, 16) + '</small>';
+					str += '<small class="text-muted d-block">'
+							+ (newObj.begin).substring(0, 10) + '</small>';
 					str += '</div>';
 					str += '</div>';
 					var liDom = document.createElement("li");
 					liDom.innerHTML = str;
-					
+
 					if (isAppend) {
 						listDom.appendChild(liDom);//加在列表的后面,上拉加载
 					} else {
 						listDom.insertBefore(liDom, liDom.firstChild);//加在列表的前面,下拉刷新
 					}
 				}
+			} else {
+				$(".form-label-divider").attr("style", "display: block;");
 			}
-			
-			$("#dateSelector").focus(function() {
-				document.activeElement.blur();
-			});
-			new Mdate("dateSelector", null, dateCallback);
-			
-			//日期选择的回调
-			function dateCallback(data) {
-				alert(data);
-			};
+		}
+		
+		$("#dateSelector").focus(function() {
+			document.activeElement.blur();
 		});
+		new Mdate("dateSelector", null, dateCallback);
+		
+		//日期选择的回调
+		function dateCallback(callbackDate) {
+			$("#restList").empty();
+			date = callbackDate;
+			var newPage = {};
+			newPage.num = 1;
+			newPage.size = 10;
+			upCallback(newPage);
+		}
+		
+		$(".menu-logout").on("click", function() {
+			location.href = "logout";
+		});
+	});
+	
+	function goDocList(ds){
+		location.href = "toDocList?ds=" + ds;
+	}
 	</script>
 </body>
 

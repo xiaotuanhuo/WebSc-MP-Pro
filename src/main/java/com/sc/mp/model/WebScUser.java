@@ -3,69 +3,42 @@ package com.sc.mp.model;
 import java.io.Serializable;
 
 public class WebScUser implements Serializable {
-
     private static final long serialVersionUID = -3200103254689137288L;
     
 	private Integer userId;
- 
 	private String userName;
-	
 	private String loginName;
-	
 	private String loginPwd;
-	
 	private String salt;
-	
 	private String sex;
-	
 	private int age;
-	
 	private String phone;
-	
 	private String email;
-	
 	private String idCard;
-	
 	private String certificateNo;
-	
 	private String occupationalNo;
-	
 	private String titles;
-	
 	private String titlesNo;
-	
 	private String roleId;
-	
 	private String roleName;
-	
 	private String roleTypeId;
-	
 	private String roleTypeName;
-	
 	private String province;
-	
 	private String city;
-	
 	private String area;
-	
 	private String patientType;
-	
 	private String operationType;
-	
 	private String status;
-	
 	private String lastLoginTime;
-	
 	private String createTime;
-	
 	private String modifyTime;
-	
 	private String photo;
-	
 	private String wxOpenid;
-	
 	private String wxUserid;
-
+	// 前端显示属性
+	private String districtName;	// 格式：省-市-区/县
+	private String deptName;		// 机构名称
+	
 	public Integer getUserId() {
 		return userId;
 	}
@@ -305,4 +278,21 @@ public class WebScUser implements Serializable {
 	public void setRoleTypeName(String roleTypeName) {
 		this.roleTypeName = roleTypeName;
 	}
+
+	public String getDistrictName() {
+		return districtName;
+	}
+
+	public void setDistrictName(String districtName) {
+		this.districtName = districtName;
+	}
+
+	public String getDeptName() {
+		return deptName;
+	}
+
+	public void setDeptName(String deptName) {
+		this.deptName = deptName;
+	}
+	
 }

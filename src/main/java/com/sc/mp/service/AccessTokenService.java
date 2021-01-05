@@ -18,6 +18,7 @@ public class AccessTokenService {
 	}
 	
 	public void updateWebScAccessToken(String accesstoken){
+		accessTokenMapper.deleteWebScAccessToken();
 		accessTokenMapper.updateWebScAccessToken(accesstoken);
 	}
 }

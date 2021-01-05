@@ -43,6 +43,12 @@
     from WSC_USER
     where user_id = #{userId,jdbcType=INTEGER}
   </select>
+  <select id="selectByLoginName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List"/>
+    from WSC_USER
+    where login_name = #{loginName,jdbcType=INTEGER}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from WSC_USER
     where user_id = #{userId,jdbcType=INTEGER}
@@ -362,6 +368,18 @@
       wx_userid = #{wxUserid,jdbcType=VARCHAR}
     where user_id = #{userId,jdbcType=INTEGER}
   </update>
+  <update id="unbindOpenid" parameterType="java.lang.Integer" >
+    update WSC_USER
+    set wx_openid = null,
+      wx_userid = null
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  <update id="bundOpenid" parameterType="com.sc.mp.model.WebScUser" >
+    update WSC_USER
+    set wx_openid = #{wxOpenid,jdbcType=VARCHAR},
+      wx_userid = #{wxUserid,jdbcType=VARCHAR}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
 
   <select id="selectUserInfo" resultMap="BaseResultMap" parameterType="com.sc.mp.model.WebScUser">
   	select 
@@ -372,4 +390,12 @@
         and user_id = #{userId,jdbcType=INTEGER} 
 	</if>
   </select>
+  
+  <select id="statsDoctorWork" resultType="com.sc.mp.bean.OperationCount">
+      SELECT COUNT(1) count, work,
+      CASE WHEN work = 0 THEN '全职' ELSE '兼职' end workDesc
+      FROM `WSC_USER`
+      WHERE role_id = 5 GROUP BY `work`;
+  </select>
+  
 </mapper>

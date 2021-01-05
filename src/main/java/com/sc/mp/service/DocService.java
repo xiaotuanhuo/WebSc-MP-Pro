@@ -18,7 +18,6 @@ import com.sc.mp.model.WebScDoc;
 import com.sc.mp.model.WebScOrganization;
 import com.sc.mp.model.WebScUser;
 import com.sc.mp.model.WebScUser_Distribution;
-import com.sc.mp.model.vo.District;
 import com.sc.mp.util.DistrictUtil;
 
 
@@ -106,8 +105,6 @@ public class DocService {
     public List<WebScUser_Distribution> getDistributionDrGridList(String documentId, String qaName, WebScUser user){
 		List<WebScUser_Distribution> drList = new ArrayList<WebScUser_Distribution>();
     	
-		District district = (new DistrictUtil()).district();
-		
     	//获取订单数据
     	WebScDoc doc = new WebScDoc();
     	doc.setDocumentId(documentId);
@@ -203,12 +200,12 @@ public class DocService {
 	    		}
 	    		
 	    		//省/市/区 转换成中文
-//	    		if(duser.getProvince() != null && !duser.getProvince().equals(""))
-//	    			duser.setProvince(district.getDistrictMap().get(duser.getProvince()).getName());
-//	    		if(duser.getCity() != null && !duser.getCity().equals(""))
-//	    			duser.setCity(district.getDistrictMap().get(duser.getCity()).getName());
-//	    		if(duser.getArea() != null && !duser.getArea().equals(""))
-//	    			duser.setArea(district.getDistrictMap().get(duser.getArea()).getName());
+	    		if(duser.getProvince() != null && !duser.getProvince().equals(""))
+	    			duser.setProvince(DistrictUtil.getDistrictByCode(duser.getProvince()).getName());
+	    		if(duser.getCity() != null && !duser.getCity().equals(""))
+	    			duser.setCity(DistrictUtil.getDistrictByCode(duser.getCity()).getName());
+	    		if(duser.getArea() != null && !duser.getArea().equals(""))
+	    			duser.setArea(DistrictUtil.getDistrictByCode(duser.getArea()).getName());
 	    		
 	    		duser.setDistributionScore(iDistributionScore);
 	    	}

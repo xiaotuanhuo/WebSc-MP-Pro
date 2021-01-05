@@ -3,24 +3,27 @@
 
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
 	<title>超级管理员</title>
 	
 	<!-- Google font file. If you want you can change. -->
 	<link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,900" rel="stylesheet">
 	<!-- Fontawesome font file css -->
-	<link rel="stylesheet" href="https://www.jq22.com/jquery/font-awesome.4.7.0.css">
+	<!-- <link rel="stylesheet" href="https://www.jq22.com/jquery/font-awesome.4.7.0.css"> -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}">
 	<!-- Template global css file. Requared all pages -->
 	<link rel="stylesheet" type="text/css" th:href="@{/css/global.style.css}">
 	<link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
+	<!-- <link rel="stylesheet" th:href="@{/css/animate.min.css}"> -->
 	<link rel="stylesheet" th:href="@{/css/mescroll.min.css}">
+	<link rel="stylesheet" th:href="@{/css/Mdate.css}">
 </head>
 
 <body>
 	<div class="wrapper">
 		<div class="nav-menu">
 			<nav class="menu">
-			<!-- Menu navigation start -->
+				<!-- Menu navigation start -->
 				<div class="nav-container menu-container">
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
@@ -29,7 +32,7 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">张三</h6>
+							<h6 class="text-muted menu-info">[[${user.userName}]]</h6>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -39,7 +42,14 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">男</h6>
+							<div th:switch="${user.sex}">
+								<div th:case="'0'">
+									<h6 class="text-muted menu-info">女</h6>
+								</div>
+								<div th:case="*">
+									<h6 class="text-muted menu-info">男</h6>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -49,7 +59,7 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">18888888888</h6>
+							<h6 class="text-muted menu-info">[[${user.phone}]]</h6>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -59,7 +69,7 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">区域管理员</h6>
+							<h6 class="text-muted menu-info">[[${user.roleName}]]</h6>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -69,7 +79,7 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">上海市-市辖区-徐汇区夙呈医生集团</h6>
+							<h6 class="text-muted menu-info">[[${user.deptName}]]</h6>
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-between container-list">
@@ -79,13 +89,12 @@
 							</div>
 						</div>
 						<div>
-							<h6 class="text-muted menu-info">上海市-市辖区-徐汇区</h6>
+							<h6 class="text-muted menu-info">[[${user.districtName}]]</h6>
 						</div>
 					</div>
 					
 					<button class="button circle red block menu-logout">登出</button>
 				</div>
-				
 				<!-- Menu navigation end -->
 			</nav>
 		</div>
@@ -102,45 +111,126 @@
 			<!-- Header area end -->
 			
 			<!-- Page content start -->
-			<main id="mescroll" class="margin mt-0 mescroll">
+			<main class="margin mt-0">
 				<div class="dash-balance">
 					<div class="dash-content relative">
 						<h3 class="w-text">SuCheng</h3>
 					</div>
 				</div>
 				
-				<!-- charts start -->
 				<section class="bal-section container">
-					<div class="coin-box">
-						<div class="trader-info">
-							<ul class="trader-info-list list-unstyled">
-								<li>
-									<div class="profile1"></div>
-									<h2>2</h2> <small class="txt-muted">今日</small>
-								</li>
-								<li>
-									<div class="profile2"></div>
-									<h2>31</h2> <small class="txt-muted">本月</small>
-								</li>
-								<li>
-									<div class="profile3"></div>
-									<h2>456</h2> <small class="txt-muted">当年</small>
-								</li>
-							</ul>
-						</div>
-						<div class="row align-items-center">
+					<div class="trader-info">
+						<ul class="trader-info-list list-unstyled">
+							<li>
+								<div class="profile1"></div>
+								<h2>[[${statsYMD.day}]]</h2>
+								<small class="txt-muted">日手术量</small>
+							</li>
+							<li>
+								<div class="profile2"></div>
+								<h2>[[${statsYMD.month}]]</h2>
+								<small class="txt-muted">月手术量</small>
+							</li>
+							<li>
+								<div class="profile3"></div>
+								<h2>[[${statsYMD.year}]]</h2>
+								<small class="txt-muted">年手术量</small>
+							</li>
+						</ul>
+					</div>
+				</section>
+				
+				<!-- charts start -->
+				<section class="section container">
+					<div class="chart-body">
+						<div class="align-items-center chart-content">
 							<div class="col-12">
 								<div class="advertising-wrapper">
-									<canvas id="stackedBarGraph" style="width: 100%; height: 260px;"></canvas>
+									<canvas id="yearCount" class="chart-container"></canvas>
 								</div>
 							</div>
-	
+						</div>
+					</div>
+				</section>
+				
+				<!-- charts start -->
+				<section class="section container">
+					<div class="chart-body">
+						<div class="align-items-center chart-content">
+							<div class="col-12">
+								<div class="advertising-wrapper">
+									<canvas id="cityCount" class="chart-container"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				
+				<section class="section container">
+					<div class="chart-body">
+						<div class="align-items-center chart-content">
+							<div class="col-12">
+								<div class="advertising-wrapper">
+									<canvas id="workCount" class="chart-container"></canvas>
+								</div>
+							</div>
 						</div>
 					</div>
 				</section>
 				
 				<!-- charts area end -->
 				
+				<section class="wallets-list container">
+					<!--expendable list item -->
+					<div class="expandable-item accordion" data-group="accordion">
+						<div class="expandable-header purp">
+							<i class="list-arrow fa fa-angle-down"></i>
+							<h3 class="list-title">统计报表</h3>
+						</div>
+						<div class="expandable-content">
+							<div class="padding-content">
+								<div class="recent-trans">
+									<div class="form-group">
+										<span>开始时间</span>
+										<input type="text" id="dateSelector_begin" class="form-field">
+									</div>
+									<div class="form-group">
+										<span>结束时间</span>
+										<input type="text" id="dateSelector_end" class="form-field">
+									</div>
+									<div id="distpicker11">
+										<div class="form-group">
+											<label class="sr-only" for="province">province</label>
+											<select class="form-control" id="province"></select>
+										</div>
+										<div class="form-group">
+											<label class="sr-only" for="city">city</label>
+											<select class="form-control" id="city"></select>
+										</div>
+										<div class="form-group">
+											<label class="sr-only" for="district">district</label>
+											<select class="form-control" id="district"></select>
+										</div>
+									</div>
+									<div class="form-group">
+										<span>医疗机构</span>
+										<select class="form-field" id="orgs">
+											<option style='display: none'></option>
+										</select>
+									</div>
+									<div>
+										<a id="reportingBtn" class="button circle block" style="background: #00b4ef; color: #fff;">查询</a>
+									</div>
+                                </div>
+							</div>
+						</div>
+					</div>
+				</section>
+				
+				<section class="container">
+					<ul id="reporting" class="transaction-list list-unstyled"></ul>
+				</section>
+				<div class="form-label-divider" style="display: none;"><span>没有更多数据了</span></div>
 			</main>
 			<!-- Page content end -->
 		</div>
@@ -155,158 +245,337 @@
 	</div>
 	
 	<!-- JQuery library file. requared all pages -->
-	<script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+	<script th:src="@{/js/jquery.min.js}"></script>
+    <!-- <script th:src="@{/js/swiper.animate.min.js}"></script> -->
+	<!-- F2 阿里可视化插件 -->
+	<script src="https://gw.alipayobjects.com/os/lib/antv/f2/3.7.3/dist/f2-all.min.js"></script>
+	
+	<!-- 下拉刷新 下拉加载插件 -->
+	<script th:src="@{/js/mescroll.min.js}"></script>		
 	<!-- Template global script file. requared all pages -->
 	<script th:src="@{/js/global.script.js}"></script>
-	<!-- 下拉刷新 下拉加载插件 -->
-	<script th:src="@{/js/mescroll.min.js}"></script>
 	<!-- 日期选择插件 -->
 	<script th:src="@{/js/iScroll.js}"></script>
 	<script th:src="@{/js/Mdate.js}"></script>
-	<!-- F2 阿里可视化插件 -->
-	<script src="https://gw.alipayobjects.com/os/lib/antv/f2/3.7.0/dist/f2.min.js"></script>
+	
+	<script th:src="@{/js/distpicker.data.js}"></script>
+	<script th:src="@{/js/distpicker.js}"></script>
+	<!-- <script th:src="@{/js/main.js}"></script> -->
 	
 	<script type="text/javascript">
-		const data = [{
-			name: 'week',
-			value: 3,
-			year: 11.17
-		}, {
-			name : 'week',
-			value : 4,
-			year : 11.18
-		}, {
-			name : 'week',
-			value : 6,
-			year : 11.19
-		}, {
-			name : 'week',
-			value : 7,
-			year : 11.20
-		}, {
-			name : 'week',
-			value : 2,
-			year : 11.21
-		}, {
-			name : 'week',
-			value : 2,
-			year : 11.22
-		}, {
-			name : 'week',
-			value : 4,
-			year : 11.23
-		}, {
-			name : 'month',
-			value : 36,
-			year : 1
-		}, {
-			name : 'month',
-			value : 33,
-			year : 2
-		}, {
-			name : 'month',
-			value : 41,
-			year : 3
-		}, {
-			name : 'month',
-			value : 76,
-			year : 4
-		}, {
-			name : 'month',
-			value : 56,
-			year : 5
-		}, {
-			name : 'month',
-			value : 42,
-			year : 6
-		}, {
-			name : 'month',
-			value : 81,
-			year : 7
-		}, {
-			name : 'month',
-			value : 105,
-			year : 8
-		}, {
-			name : 'month',
-			value : 90,
-			year : 9
-		}, {
-			name : 'month',
-			value : 77,
-			year : 10
-		}, {
-			name : 'month',
-			value : 41,
-			year : 11
-		}, {
-			name : 'month',
-			value : null,
-			year : 12
-		}];
+		$(document).ready(function() {
+			drawMonthCount();
+			drawTopCity();
+			drawDoctorWork();
+			getOrganizations("", "", "");
+			getReporting("", "", "", "", "");
+		});
+		
+		// 监听省市区的变化 更新机构列表
+		$("#province").on("change", function() {
+			var provinceCode = $("#province").find(':selected').data('code');
+			$("#orgs").empty();
+			var organizationDom = document.getElementById("orgs");
+			var orgName = "";
+			var optionDom = document.createElement("option");
+			optionDom.setAttribute('style', 'display: none;');
+			optionDom.innerHTML = orgName;
+			organizationDom.appendChild(optionDom);
+			getOrganizations(provinceCode, "", "");
+		});
+		$("#city").on("change", function() {
+			var cityCode = $("#city").find(':selected').data('code');
+			$("#orgs").empty();
+			var organizationDom = document.getElementById("orgs");
+			var orgName = "";
+			var optionDom = document.createElement("option");
+			optionDom.setAttribute('style', 'display: none;');
+			optionDom.innerHTML = orgName;
+			organizationDom.appendChild(optionDom);
+			getOrganizations("", cityCode, "");
+		});
+		$("#district").on("change", function() {
+			var areaCode = $("#district").find(':selected').data('code');
+			$("#orgs").empty();
+			var organizationDom = document.getElementById("orgs");
+			var orgName = "";
+			var optionDom = document.createElement("option");
+			optionDom.setAttribute('style', 'display: none;');
+			optionDom.innerHTML = orgName;
+			organizationDom.appendChild(optionDom);
+			getOrganizations("", "", areaCode);
+		});
+	
+		$('#reportingBtn').on("click", function() {
+			var begin = $("#dateSelector_begin").val();
+			var end = $("#dateSelector_end").val();
+			var pCode = $("#province").find(':selected').data('code');
+			var cCode = $("#city").find(':selected').data('code');
+			var dCode = $("#district").find(':selected').data('code');
+			var oCode = $("#orgs").find(':selected').data('code');
+			$("#reporting").empty();
+			getReporting(begin, end, pCode, cCode, dCode, oCode);
+			$(".expandable-item").removeClass("active");
+			$(".expandable-content").removeAttr("style");
+		});
+		
+		/* 近3年每月手术统计 */
+		function drawMonthCount() {
+			$.ajax({
+		    	type: "POST",
+		    	dataType: "json",
+		    	url: "statsMonths",
+		    	contentType: "application/json",
+		    	success: function (result) {
+        			if(result.code == 0) {
+        				var data = result.data;
+        				var chart = new F2.Chart({
+    		    			id : 'yearCount',
+    		    			pixelRatio : window.devicePixelRatio
+    		    		});
+    		    		chart.source(data);
+    		    		chart.tooltip({
+    		    			showTitle: true,
+    		    			showCrosshairs : true
+    		    		});
+    		    		chart.legend({
+    		    			align: 'center',
+    		    			marker: function marker(x, y, r, ctx) {
+    		    				ctx.lineWidth = 1;
+    		    				ctx.strokeStyle = ctx.fillStyle;
+    		    				ctx.moveTo(x - r - 3, y);
+    		    				ctx.lineTo(x + r + 3, y);
+    		    				ctx.stroke();
+    		    				ctx.arc(x, y, r, 0, Math.PI * 2, false);
+    		    				ctx.fill();
+    		    			}
+    		    		});
+    		    		chart.line().position('month*count').color('year');
+    		    		chart.point().position('month*count').color('year').style({
+    		    			lineWidth : 1,
+    		    			stroke : '#fff'
+    		    		});
+    		    		chart.render();
+        			} else {
+        				
+        			}
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
+		
+		function drawTopCity() {
+			$.ajax({
+		    	type: "POST",
+		    	dataType: "json",
+		    	url: "statsCity",
+		    	contentType: "application/json",
+		    	success: function (result) {
+        			if(result.code == 0) {
+        				var data2 = result.data;
+        				const chart2 = new F2.Chart({
+        					  id: 'cityCount',
+        					  pixelRatio: window.devicePixelRatio
+        					});
 
-		const chart = new F2.Chart({
-			id : 'stackedBarGraph',
-			pixelRatio : window.devicePixelRatio,
-			padding : 'auto'
+        					chart2.source(data2);
+        					chart2.coord('polar', {
+        					  transposed: true,
+        					  radius: 0.75
+        					});
+        					chart2.legend(false);
+        					chart2.axis(false);
+        					chart2.tooltip(false);
+
+        					// 添加饼图文本
+        					chart2.pieLabel({
+        					  sidePadding: 40,
+        					  label1: function label1(data2, color) {
+        					    return {
+        					      text: data2.cityName,
+        					      fill: color
+        					    };
+        					  },
+        					  label2: function label2(data2) {
+        					    return {
+        					      text: data2.count,
+        					      fill: '#808080',
+        					      fontWeight: 'bold'
+        					    };
+        					  }
+        					});
+
+        					chart2.interval()
+        					  .position('pieConst*count')
+        					  .color('cityCode', ['#1890FF', '#13C2C2', '#2FC25B', '#FACC14', '#F04864'])
+        					  .adjust('stack');
+        					chart2.render();
+        			} else {
+        				
+        			}
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
+		
+		function drawDoctorWork() {
+			$.ajax({
+		    	type: "POST",
+		    	dataType: "json",
+		    	url: "statsWork",
+		    	contentType: "application/json",
+		    	success: function (result) {
+        			if(result.code == 0) {
+        				var data3 = result.data;
+        				var sum = 0;
+        				data3.forEach(function(obj) {
+        					sum += obj.count;
+        				});
+        				const map = {};
+        				data3.forEach(function(obj) {
+							map[obj.workDesc] = Math.round((obj.count / sum) * 100) + '%';
+						});
+        				
+						const chart3 = new F2.Chart({
+							id: 'workCount',
+							pixelRatio: window.devicePixelRatio,
+							padding: [20, 'auto']
+						});
+						chart3.source(data3, {
+							percent: {
+								formatter: function formatter(val) {
+									return val + '%';
+								}
+							}
+						});
+						chart3.tooltip(false);
+						chart3.legend({
+							position: 'bottom',
+							align: 'center',
+							clickable: false,
+							itemFormatter: function itemFormatter(val) {
+								return val + ' ' + map[val];
+							}
+						});
+						chart3.coord('polar', {
+							transposed: true,
+							innerRadius: 0.6,
+							radius: 0.75
+						});
+						chart3.axis(false);
+						chart3.interval()
+							.position('pieConst*count')
+							.color('workDesc', ['#2FC25B', '#3BA4FF'])
+							.adjust('stack');
+						
+						chart3.guide().html({
+							position: ['50%', '45%'],
+							html: `<div style="width: 250px; height: 40px; text-align: center;">
+								<div style="font-size: 16px">医生</div>
+								<div style="font-size: 24px">` + sum + `</div>
+								</div>`
+						});
+						chart3.render();
+        			} else {
+        				
+        			}
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
+		
+		function getOrganizations(province, city, area) {
+			$.ajax({
+		    	type: "POST",
+		    	dataType: "json",
+		    	url: 'organizations?province=' + province + "&city=" + city + "&area=" + area,
+		    	contentType: "application/json",
+		    	success: function (result) {
+		    		var organizations = result.data;
+		    		if (organizations.length > 0) {
+		    			var organizationDom = document.getElementById("orgs");
+		    			for (var i = 0; i < organizations.length; i++) {
+		    				var orgName = organizations[i].name;
+		    				var optionDom = document.createElement("option");
+		    				optionDom.setAttribute("data-code", organizations[i].id);
+		    				optionDom.innerHTML = orgName;
+		    				organizationDom.appendChild(optionDom);
+		    			}
+		    		}
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
+		
+		function getReporting(begin, end, province, city, area, orgId) {
+			var jsonData = JSON.stringify({'beginTime': begin, 'endTime': end, 'province': province, 'city': city, 'area': area, 'orgId': orgId});
+			$.ajax({
+		    	type: "POST",
+		    	data: jsonData,
+		    	dataType: "json",
+		    	url: 'reporting',
+		    	contentType: "application/json",
+		    	success: function (result) {
+		    		if (result.code == 0) {
+		    			var data = result.data;
+		    			if (data.length > 0) {
+		    				$(".form-label-divider").attr("style", "display: none;");
+		    				var ulDom = document.getElementById("reporting");
+				    		for (var i = 0; i < data.length; i++) {
+				    			var newObj = data[i];
+								var str = '<div class="d-flex align-items-center justify-content-between">';
+								str += '<div class="d-flex align-items-center">';
+								str += '<div class="ml-10">';
+								str += '<h6 class="coin-name">' + newObj.orgName + '</h6>';
+								str += '<small class="text-muted">' + newObj.wholeDistrict
+										+ '</small>';
+								str += '</div>';
+								str += '</div>';
+								str += '<div>';
+								str += '<small class="d-block mb-0 txt-muted">'
+										+ newObj.count + '</small>';
+								str += '</div>';
+								str += '</div>';
+								var liDom = document.createElement("li");
+								liDom.innerHTML = str;
+								ulDom.appendChild(liDom);//加在列表的后面,上拉加载
+				    		}
+		    			} else {
+		    				$(".form-label-divider").attr("style", "display: block;");
+		    			}
+		    		} else {
+		    			alert(result.msg);
+		    		}
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
+		
+		$("#dateSelector_begin").focus(function() {
+			document.activeElement.blur();
+		});
+		new Mdate("dateSelector_begin");
+		$("#dateSelector_end").focus(function() {
+			document.activeElement.blur();
+		});
+		new Mdate("dateSelector_end");
+		$("#distpicker11").distpicker({
+			autoSelect : false
 		});
 
-		chart.source(data, {
-			value : {
-				tickCount : 5
-			}
+		$(".menu-logout").on("click", function() {
+			location.href = "logout";
 		});
-
-		// 默认只勾选一个图例
-		chart.filter('name', function(val) {
-			return val === 'month';
-		});
-
-		chart.legend({
-			position : 'bootom',
-			align : "center",
-			selectedMode : 'single', // 设置图例单选模式
-		});
-		chart.tooltip({
-			custom : true, // 自定义 tooltip 内容框
-			onChange : function onChange(obj) {
-				const legend = chart.get('legendController').legends.right[0];
-				const tooltipItems = obj.items;
-				const legendItems = legend.items;
-				const map = {};
-				legendItems.forEach(function(item) {
-					map[item.name] = _.clone(item);
-				});
-				tooltipItems.forEach(function(item) {
-					const name = item.name;
-					const value = item.value;
-					if (map[name]) {
-						map[name].value = value;
-					}
-				});
-				legend.setItems(_.values(map));
-			},
-			onHide : function onHide() {
-				const legend = chart.get('legendController').legends.right[0];
-				legend.setItems(chart.getLegendItems().country);
-			}
-		});
-		chart.axis('value', {
-			labelOffset : 0,
-			label : {
-				top : true,
-				textAlign : 'start',
-				textBaseline : 'bottom'
-			}
-		});
-		chart.axis('year', {
-			label : {
-				textAlign : 'end',
-				textBaseline : 'middle'
-			}
-		});
-		chart.interval().position('year*value').color('name');
-		chart.render();
 	</script>
 </body>
 

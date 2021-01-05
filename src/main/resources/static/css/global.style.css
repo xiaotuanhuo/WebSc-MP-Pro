@@ -56,7 +56,7 @@
   --group-background-focus: #678EFE;
 }
 
-::-webkit-scrollbar-thumb
+/* ::-webkit-scrollbar-thumb
 {
 	border-radius: 10px;
 	background-color: #ccc;
@@ -65,6 +65,21 @@
 {
 	width: 12px;
 	background-color: #F5F5F5;
+} */
+::-webkit-scrollbar {
+  width: 0px;
+  height: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  background: rgba(97, 33, 210, 0.3);
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background: rgba(97, 33, 210, 0.05);
 }
 body *{
 	box-sizing: border-box;
@@ -678,7 +693,7 @@ select.form-element{
 }
 .expandable-header{
 	background-color: #FFF;
-	padding: 15px;
+	padding: 10px;
 	position: relative;
 	-webkit-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.1);
 	-moz-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.1);
@@ -705,7 +720,6 @@ select.form-element{
 	font-size: 12px;
 }
 .expandable-header .list-arrow{
-	position: absolute;
 	right: 15px;
 	top: 15px;
 	font-size: 20px;
@@ -868,7 +882,7 @@ select.form-element{
 	bottom: 0;
 	background-color: rgba(0,0,0,0.4);
 	overflow: auto;
-	padding: 20px;
+	padding: 180px 20px 20px;
 	display: none;
 	cursor: pointer;
 }
@@ -2406,12 +2420,10 @@ h1 .button{
 *------------------------------------------------------------------*/
 
 #content-body {  
-  flex:1;
-  min-height:170px;
+  flex: 1;
+  min-height: 170px;
   flex-direction: column;
   background: #fff;
-  border: 1px solid #e6e6e6;
-  border-radius: 15px;
 }
 .round{
 	border-radius: 19px;
@@ -2503,7 +2515,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1ddc3e', end
 [31. Content Styles]
 *------------------------------------------------------------------*/
 .dash-balance{
-	background: url(../img/dash-bg.jpg) no-repeat center center;
+	background-image: linear-gradient(-12deg,#8470FF 0,#6495ED 100%) !important;
 	background-size: cover;
 	position: relative;
 	overflow: hidden;
@@ -2686,8 +2698,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1ddc3e', end
 }
 .refer .content-head{
 	position: relative;
-	padding: 20px 15px;
-	margin-bottom: 30px
+	padding: 10px 15px;
 }
 .ref-bouns{
 	background: orange;
@@ -2697,6 +2708,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1ddc3e', end
     color: #fff;
     top: 0;
     padding: 10px;
+    min-width: 70px;
 }
 .ref-content{
 	padding: 0 15px
@@ -2807,16 +2819,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1ddc3e', end
     text-align: center;
 }
 .wallets-list .form-row-group.with-icons .form-row i{
-	    top: -2px;
+	top: -2px;
     border: none;
 }
 .wallets-list .expandable-item.active .expandable-content{
-	min-height: 800px
+	max-height: 460px;
 }
 .recent-trans{
     position: relative;
-    padding: 30px 15px;
-    background: url(../img/content/trans-bg1.png) no-repeat bottom center;
+    padding: 5px 5px;
     border-radius: 15px;
     background-size: cover;
 }
@@ -2875,9 +2886,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1ddc3e', end
 .wallet-address{
 	position: relative;
     padding: 30px 15px;
-    background: url(../img/content/trans-bg2.png) no-repeat center;
+    background-image: linear-gradient(#87CEEB, #00BFFF);
     border-radius: 0 0 15px 15px;
-    text-align: center;
     overflow: hidden;
     background-size: cover;
 }
@@ -3113,9 +3123,12 @@ ul.income-list li {
     width: 33.3333%;
 }
 
-.trader-info{
+.trader-info-copy{
 	text-align: center;
 	padding: 20px 10px 0;
+}
+.trader-info{
+	text-align: center;
 }
 .trader-info h3{
 	font-size: 18px;
@@ -3128,7 +3141,8 @@ ul.income-list li {
 .trader-info-list{
     background: #fff;
     border-bottom: 1px solid #eee;
-    padding-bottom: 15px;
+    padding: 15px 0;
+    border-radius: 3px;
 }
 .trader-info-list li{
 	width: 32%;
@@ -3262,3 +3276,197 @@ footer ul li a i {
   background: var(--group-background-focus);
   border-color: var(--group-border-focus);
 }
+
+
+/*-------------------------------------------------------------------
+[9. Accordion]
+*------------------------------------------------------------------*/
+.expandable-item2{
+	background-color: #fff;
+	border-radius: 3px;
+	margin-bottom: 15px;
+}
+.expandable-header2{
+	background-color: #FFF;
+	padding: 10px;
+	position: relative;
+	-webkit-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.1);
+	-moz-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.1);
+	box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.1);
+	border-radius: 3px;
+	cursor: pointer;
+}
+.expandable-header2 .list-icon{
+	font-size: 18px;
+	display: inline-block;
+	width: 24px;
+}
+.chart-body {  
+	border-radius: 3px;
+	margin-bottom: 10px;
+}
+.chart-head{
+	position: relative;
+	padding: 13px 15px;
+	border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+.chart-title{
+	font-size: 16px;
+	line-height: 18px;
+	margin: 0;
+	padding: 0;
+	display: inline-block;
+}
+.chart-star{
+	font-size: 28px;
+	line-height: 18px;
+}
+.chart-content{
+	background: #fff;
+}
+.chart-container{
+	 width: 100%;
+	 height: 260px;
+}
+.expandable-header2 .list-item-extra{
+	position: absolute;
+	right: 40px;
+	top: 17px;
+	font-size: 12px;
+}
+.expandable-header2 .list-arrow{
+	right: 15px;
+	top: 15px;
+	font-size: 20px;
+}
+.expandable-content2{
+	border:solid 1px transparent;
+	border-top: none;
+	border-bottom-right-radius: 3px;
+	border-bottom-left-radius: 3px;
+	overflow: hidden;
+	max-height: 0;
+	-webkit-transition: max-height .2s linear;
+	  -moz-transition: max-height .2s linear;
+	    -o-transition: max-height .2s linear;
+	      transition: max-height .2s linear;
+}
+.expandable-content2 .padding-content{
+	padding: 0 15px 30px;
+}
+.expandable-item2.active .expandable-content2{
+	border-color:#EEE;
+	min-height: 200px
+}
+.expandable-item2.active .list-arrow:before{
+	content: "\f106";
+}
+/*end of part 9----------------------------------------------------*/
+
+
+.sp {
+  width: 32px;
+  height: 32px;
+  clear: both;
+  margin: 20px auto;
+}
+
+/* Spinner Wave */
+.sp-wave {
+  border-radius: 50%;
+  position: relative;
+  opacity: 1;
+}
+
+.sp-wave:before, .sp-wave:after {
+  content: '';
+  border: 1px #000 solid;
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0px;
+}
+
+.sp-wave:before {
+  transform: scale(1, 1);
+  opacity: 1;
+  -webkit-animation: spWaveBe 0.6s infinite linear;
+  animation: spWaveBe 0.6s infinite linear;
+}
+
+.sp-wave:after {
+  transform: scale(0, 0);
+  opacity: 0;
+  -webkit-animation: spWaveAf 0.6s infinite linear;
+  animation: spWaveAf 0.6s infinite linear;
+}
+
+@-webkit-keyframes spWaveAf {
+  from {
+    -webkit-transform: scale(0.5, 0.5);
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: scale(1, 1);
+    opacity: 1;
+  }
+}
+@keyframes spWaveAf {
+  from {
+    transform: scale(0.5, 0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+}
+@-webkit-keyframes spWaveBe {
+  from {
+    -webkit-transform: scale(1, 1);
+    opacity: 1;
+  }
+  to {
+    -webkit-transform: scale(1.5, 1.5);
+    opacity: 0;
+  }
+}
+@keyframes spWaveBe {
+  from {
+    -webkit-transform: scale(1, 1);
+    opacity: 1;
+  }
+  to {
+    -webkit-transform: scale(1.5, 1.5);
+    opacity: 0;
+  }
+}
+
+/* 单选按钮 */
+.RadioStyle input {
+	display: none
+}
+.RadioStyle label {
+	border: 1px solid #CCC;
+	color: #666;
+	padding: 2px 10px 2px 5px;
+	line-height: 28px;
+	min-width: 80px;
+	text-align: center;
+	float: left;
+	margin: 2px;
+	border-radius: 4px
+}
+.RadioStyle input:checked + label {
+	background: url("../img/content/ico_checkon.svg") no-repeat right bottom;
+	border: 1px solid #00a4ff;
+	background-size: 21px 21px;
+	color: #00a4ff
+}
+.RadioStyle input:disabled + label {
+	opacity: 0.7;
+}
+
+/* LGOIN CSS */

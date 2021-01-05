@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sc.mp.mapper.ScCalendarMapper" >
+  <resultMap id="BaseResultMap" type="com.sc.mp.model.WebScCalendar" >
+    <id column="calendar_id" property="calendarId" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    calendar_id, user_id, title, start_time, end_time, memo
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from WSC_CALENDAR
+    where calendar_id = #{calendarId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from WSC_CALENDAR
+  </select>
+  <select id="selectCalendarsByDate" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    wc.calendar_id,
+    wc.title,
+    DATE_FORMAT(wc.start_time, "%Y-%m-%d %T") as begin,
+    DATE_FORMAT(wc.end_time, "%Y-%m-%d %T") as end,
+    wu.user_name as name,
+    wu.phone,
+    wd.dept_name as dept
+    from WSC_CALENDAR wc, WSC_USER wu, WSC_DEPT wd
+    <where>
+    	<choose>
+    		<when test="user.area != null">
+    			AND wc.user_id = wu.user_id AND wu.area = #{user.area,jdbcType=VARCHAR} AND wu.role_type_id = wd.dept_id
+    		</when>
+    		<otherwise>
+    			<choose>
+    				<when test="user.city != null">
+    					AND wc.user_id = wu.user_id AND wu.city = #{user.city,jdbcType=VARCHAR} AND wu.role_type_id = wd.dept_id
+    				</when>
+    				<otherwise>
+    					AND wc.user_id = wu.user_id AND wu.province = #{user.province,jdbcType=VARCHAR} AND wu.role_type_id = wd.dept_id
+    				</otherwise>
+    			</choose>
+    		</otherwise>
+    	</choose>
+    	AND start_time like CONCAT(#{date, jdbcType=VARCHAR}, '%')
+    </where>
+  </select>
+  <select id="selectByDoctor" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select 
+    calendar_id,
+    title,
+    DATE_FORMAT(start_time, '%Y-%c-%e') as day
+    from WSC_CALENDAR where user_id = #{userId, jdbcType=INTEGER} and start_time <![CDATA[ >= ]]> DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S')
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from WSC_CALENDAR
+    where calendar_id = #{calendarId,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sc.mp.model.WebScCalendar" >
+    insert into WSC_CALENDAR (calendar_id, user_id, title, 
+      start_time, end_time, memo
+      )
+    values (#{calendarId,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, 
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{memo,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sc.mp.model.WebScCalendar" >
+    insert into WSC_CALENDAR
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="calendarId != null" >
+        calendar_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="calendarId != null" >
+        #{calendarId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sc.mp.model.WebScCalendar" >
+    update WSC_CALENDAR
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where calendar_id = #{calendarId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sc.mp.model.WebScCalendar" >
+    update WSC_CALENDAR
+    set user_id = #{userId,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      memo = #{memo,jdbcType=VARCHAR}
+    where calendar_id = #{calendarId,jdbcType=VARCHAR}
+  </update>
+</mapper>
