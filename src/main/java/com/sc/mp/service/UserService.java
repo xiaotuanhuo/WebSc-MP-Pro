@@ -2,6 +2,7 @@ package com.sc.mp.service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -65,6 +66,10 @@ public class UserService {
 	private int top;			// 超级管理员角色id
 	@Value("${userName-lucene-path}")
 	private String indexPath;	// 用户索引路径
+	@Value("${sc.role.doctor}")
+	private String doctorRole;	// 用户索引路径
+	@Value("${sc.role.nurse}")
+	private String nurseRole;	// 用户索引路径
 	
 	public WebScUser selectUserInfo(WebScUser user) {
 		return userMapper.selectUserInfo(user);
@@ -263,7 +268,7 @@ public class UserService {
 	 * @return
 	 */
 	public List<OperationCount> statsWork() {
-		return userMapper.statsDoctorWork();
+		return userMapper.statsDoctorWork(Integer.parseInt(doctorRole));
 	}
 	
 	public List<WebScOrganization> getOrganizations(String province, String city, String area) {
@@ -291,7 +296,10 @@ public class UserService {
 	}
 	
 	public void createDoctorAndNurseIndex() {
-		List<WebScUser> users = userMapper.selectDoctorAndNurse();
+		List<String> roles = new ArrayList<String>();
+		roles.add(doctorRole);
+		roles.add(nurseRole);
+		List<WebScUser> users = userMapper.selectDoctorAndNurse(roles);
 		try {
 			LuceneUtil.createUserNameIndex(indexPath, users);
 		} catch (Exception e) {

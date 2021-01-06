@@ -75,11 +75,12 @@ public interface UserMapper {
 	 * 统计医生全职兼职情况
 	 * @return
 	 */
-	List<OperationCount> statsDoctorWork();
+	List<OperationCount> statsDoctorWork(@Param("roleId") int name);
 	
 	/**
 	 * 查询所有的医生和护士
+	 * @param roles 角色id
 	 * @return
 	 */
-	List<WebScUser> selectDoctorAndNurse();
+	List<WebScUser> selectDoctorAndNurse(List<String> roles);
 }

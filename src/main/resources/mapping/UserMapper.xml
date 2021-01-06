@@ -380,14 +380,17 @@
       wx_userid = #{wxUserid,jdbcType=VARCHAR}
     where user_id = #{userId,jdbcType=INTEGER}
   </update>
-  <select id="selectDoctorAndNurse" resultMap="BaseResultMap" parameterType="com.sc.mp.model.WebScUser">
+  <select id="selectDoctorAndNurse" resultMap="BaseResultMap">
   	select 
   	  wu.user_id,
   	  wu.user_name,
   	  wr.role_name
     from WSC_USER wu left join WSC_ROLE wr
     ON wu.role_id = wr.role_id
-    WHERE wu.role_id IN ('5', '6')
+    WHERE wu.role_id IN
+    <foreach collection="list" item="role" index="index" open="(" close=")" separator=",">
+	  #{role}
+	</foreach>
   </select>
   <select id="selectUserInfo" resultMap="BaseResultMap" parameterType="com.sc.mp.model.WebScUser">
   	select 
@@ -395,42 +398,13 @@
     from WSC_USER 
     where 1=1 
     <if test="userId != null" >
-        and user_id = #{userId,jdbcType=INTEGER} 
+        and user_id = #{userId,jdbcType=INTEGER}
 	</if>
   </select>
-  
   <select id="statsDoctorWork" resultType="com.sc.mp.bean.OperationCount">
       SELECT COUNT(1) count, work,
       CASE WHEN work = 0 THEN '全职' ELSE '兼职' end workDesc
       FROM `WSC_USER`
-      WHERE role_id = 5 GROUP BY `work`;
-  </select>
-  <select id="selectMedical" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select 
-      user_id,
-      CASE WHEN role_id = 5 THEN CONCAT(user_name, ' 医生') ELSE CONCAT(user_name, ' 护士') end user_name
-    from WSC_USER
-    <where>
-    	<choose>
-    		<when test="area != null">
-    			area = #{area,jdbcType=VARCHAR}
-    		</when>
-    		<otherwise>
-    			<choose>
-    				<when test="city != null">
-    					city = #{city,jdbcType=VARCHAR}
-    				</when>
-    				<otherwise>
-    					<choose>
-    						<when test="province != null">
-    							province = #{province,jdbcType=VARCHAR}
-    						</when>
-    					</choose>
-    				</otherwise>
-    			</choose>
-    		</otherwise>
-    	</choose>
-    	AND leaf = 1
-    </where>
+      WHERE role_id = #{roleId,jdbcType=INTEGER} GROUP BY `work`;
   </select>
 </mapper>

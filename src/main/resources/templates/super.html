@@ -18,6 +18,7 @@
 	<link rel="stylesheet" th:href="@{/css/mescroll.min.css}">
 	<link rel="stylesheet" th:href="@{/css/Mdate.css}">
 	<link rel="stylesheet" th:href="@{css/jquery.autocompleter.css}">
+	<link rel="stylesheet" th:href="@{css/resweet.css}">
 </head>
 
 <body>
@@ -153,33 +154,41 @@
 						</div>
 					</div>
 				</section>
+				<!-- charts end -->
 				
-				<!-- charts start -->
-				<section class="section container">
-					<div class="chart-body">
-						<div class="align-items-center chart-content">
-							<div class="col-12">
-								<div class="advertising-wrapper">
-									<canvas id="cityCount" class="chart-container"></canvas>
+				<!-- pie charts start -->
+				<div class="box">
+					<div class="box-content front">
+						<section class="section container">
+							<div class="chart-body">
+								<div class="align-items-center chart-content">
+									<div class="col-12">
+										<div class="advertising-wrapper">
+											<div class="fa fa-retweet" style="color: #1E90FF; position: absolute; right:-5px; top: 5px;"></div>
+											<canvas id="cityCount" class="chart-container"></canvas>
+										</div>
+									</div>
 								</div>
 							</div>
-						</div>
+						</section>
 					</div>
-				</section>
-				
-				<section class="section container">
-					<div class="chart-body">
-						<div class="align-items-center chart-content">
-							<div class="col-12">
-								<div class="advertising-wrapper">
-									<canvas id="workCount" class="chart-container"></canvas>
+					<div class="box-content back">
+						<section class="section container">
+							<div class="chart-body">
+								<div class="align-items-center chart-content">
+									<div class="col-12">
+										<div class="advertising-wrapper">
+											<div class="fa fa-retweet" style="color: #1E90FF; position: absolute; right:-5px; top: 5px;"></div>
+											<canvas id="workCount" class="chart-container"></canvas>
+										</div>
+									</div>
 								</div>
 							</div>
-						</div>
+						</section>
 					</div>
-				</section>
+				</div>
+				<!-- pie charts area end -->
 				
-				<!-- charts area end -->
 				<section class="wallets-list container">
 					<!--expendable list item -->
 					<div class="expandable-item accordion" data-group="accordion">
@@ -283,23 +292,6 @@
 			//getOccupation();
 			getReporting("", "", "", "", "", "", "");
 		});
-		
-		// 自动检索
-		/* var emails = [
-            { name: "Peter Pan", to: "peter@pan.de" },
-            { name: "Molly", to: "molly@yahoo.com" },
-            { name: "Forneria Marconi", to: "live@japan.jp" },
-            { name: "Master <em>Sync</em>", to: "205bw@samsung.com" },
-            { name: "Dr. <strong>Tech</strong> de Log", to: "g15@logitech.com" },
-            { name: "Don Corleone", to: "don@vegas.com" },
-            { name: "Mc Chick", to: "info@donalds.org" },
-            { name: "Donnie Darko", to: "dd@timeshift.info" },
-            { name: "Quake The Net", to: "webmaster@quakenet.org" },
-            { name: "Dr. Write", to: "write@writable.com" },
-            { name: "GG Bond", to: "Bond@qq.com" },
-            { name: "Zhuzhu Xia", to: "zhuzhu@qq.com" }
-        ]; */
-		
 		
 		// 监听省市区的变化 更新机构列表
 		$("#province").on("change", function() {
@@ -652,6 +644,15 @@
 					$("#username").attr("data-id", selected.id);
 				}
 			}
+		});
+		
+		$(".box-content").on("click", function() {
+			$(".front").addClass("box-temp");
+			$(".box-temp").removeClass("front");
+			$(".back").addClass("front");
+			$(".front").removeClass("back");
+			$(".box-temp").addClass("back");
+			$(".back").removeClass("box-temp");
 		});
 	</script>
 </body>

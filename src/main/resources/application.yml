@@ -1,5 +1,5 @@
 server:
-    port: 9090
+    port: 9080
 spring:
     profiles:
         active: dev
@@ -12,21 +12,22 @@ spring:
 projectDomainName: localhost
 
 mybatis:
-  mapper-locations: classpath:mapping/*.xml
-  type-aliases-package: com.sc.mp.model
-  configuration:
-    mapUnderscoreToCamelCase: true
+    mapper-locations: classpath:mapping/*.xml
+    type-aliases-package: com.sc.mp.model
+    configuration:
+        mapUnderscoreToCamelCase: true
 
 logging:
-  config: classpath:log4j2.xml
-  level:
-    com.sc.mp.mapper: debug
+    config: classpath:log4j2.xml
+    level:
+        com.sc.mp.mapper: debug
 
 sc:
     role:
         super: 7
         regional: 4
         doctor: 5
+        nurse: 6
     page:
         login: login
         super: super
