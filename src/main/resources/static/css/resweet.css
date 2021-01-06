@@ -1,0 +1,27 @@
+.box{
+    position: relative;
+    perspective: 1000px;
+}
+.box .front{
+    transform: rotateY(0);
+    transition: all 0.50s ease-in-out 0s;
+    text-decoration：none;
+}
+.box:active .front{
+    transform: rotateY(-90deg);
+    text-decoration：none;
+}
+.box .back{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: rotateY(-90deg);
+    transition: all 0.5s ease-in-out 0s;
+    text-decoration：none;
+}
+.box:active .back{
+    transform: rotateY(0deg);
+    text-decoration：none;
+}
