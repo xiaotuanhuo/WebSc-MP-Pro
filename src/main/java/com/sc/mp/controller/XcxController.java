@@ -97,9 +97,6 @@ public class XcxController {
 			doc.setDocumentId(docId);
 			doc.setDocumentState("0");
 			
-			if(0 == userMapper.isExistByDoctorName(doc.getOperateUser())) {
-				throw new Exception("姓名为："+doc.getOperateUser()+"的医生不存在");
-			}
 			if(StringUtil.isEmpty(doc.getOperativeId())) {
 				throw new Exception("请先选择需要进行的手术");
 			}
