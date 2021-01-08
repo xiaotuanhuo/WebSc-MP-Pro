@@ -610,8 +610,8 @@
 			    			} else {
 			    				$(".form-label-divider").attr("style", "display: block;");
 			    			}
-			    		} else if (result.code = 9) {
-			    			Dialog.info(result.msg).okNotClose().ok(function ( okBtn ) {
+			    		} else if (result.code == 9) {
+			    			Dialog.info(result.msg).okNotClose().ok(function (okBtn) {
 			    				okBtn.querySelector( "span" ).textContent = "即将跳转至登录页面...";
 			    				okBtn.classList.add( "mini-dialog-ok-disabled" );
 			    				window.setTimeout(function () {
