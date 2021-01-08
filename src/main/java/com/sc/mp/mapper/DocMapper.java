@@ -17,6 +17,8 @@ import com.sc.mp.model.WebScUser_Distribution;
 @Mapper
 public interface DocMapper {
 	
+	List<WebScDoc> selectWebScDocTmps(Map<String, Object> paraMap);
+	
 	@Select("SELECT * FROM WSC_DOCUMENT WHERE org_id=#{orgId} AND document_state=#{state} ORDER BY operate_start_time DESC LIMIT ${limit}")
 	List<WebScDoc> selectWebScDocs(
 			@Param("orgId") String orgId, 

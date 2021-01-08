@@ -397,22 +397,21 @@ public class XcxController {
 			sourceMap.put("curWeekCount", curWeekCount);
 			//4、当月总手术量
 			Date date = new Date();
+			int month = CalendarUtil.getMonth(date);
 			int curMonthCount = docMapper.selectOperativeCount(
 					orgId,
-					CalendarUtil.getYear(date)+"-"+CalendarUtil.getMonth(date)+"-01", 
-					CalendarUtil.getYear(date)+"-"+CalendarUtil.getMonth(date)+"-32");
+					CalendarUtil.getYear(date)+"-"+(month<10?("0"+month):month)+"-01", 
+					CalendarUtil.getYear(date)+"-"+(month<10?("0"+month):month)+"-32");
 			sourceMap.put("curMonthCount", curMonthCount);
 			//5、当月平均手术时间
-			List<WebScDoc> webScDocs = docMapper.selectWebScDocs(orgId, "5", 30);
+			Map<String, Object> paraMap = new HashMap<String, Object>();
+			paraMap.put("orgId", orgId);
+			paraMap.put("state", "5");
+			paraMap.put("limit", 30);
+			List<WebScDoc> webScDocs = docMapper.selectWebScDocTmps(paraMap);
 			long sumTime = 0l;
 			for (WebScDoc webScDoc : webScDocs) {
-				if(StringUtil.isNotEmpty(webScDoc.getOperateStartTime())&&StringUtil.isNotEmpty(webScDoc.getOperateEndTime())) {
-					long operativeStartTime = UnixtimeUtil.getUnixMinute(
-							DateUtils.parseDate(webScDoc.getOperateStartTime()).getTime());
-					long operativeEndTime = UnixtimeUtil.getUnixMinute(
-							DateUtils.parseDate(webScDoc.getOperateEndTime()).getTime());
-					sumTime = operativeEndTime-operativeStartTime;
-				}
+				sumTime = sumTime + webScDoc.getSssc();
 			}
 			long aveTime = webScDocs.size()==0?0l:sumTime/webScDocs.size();
 			sourceMap.put("averageDuration", aveTime);

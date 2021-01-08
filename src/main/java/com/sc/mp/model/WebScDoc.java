@@ -837,4 +837,38 @@ public class WebScDoc implements Serializable {
 	public void setYwsjXhxtVal(String ywsjXhxtVal) {
 		this.ywsjXhxtVal = ywsjXhxtVal;
 	}
+
+	@Override
+	public String toString() {
+		return "WebScDoc [documentId=" + documentId + ", operativeId=" + operativeId + ", operativeName="
+				+ operativeName + ", anestheticId=" + anestheticId + ", anestheticName=" + anestheticName
+				+ ", patientName=" + patientName + ", patientAge=" + patientAge + ", patientSex=" + patientSex
+				+ ", patientNum=" + patientNum + ", patientBednum=" + patientBednum + ", patienttypeId=" + patienttypeId
+				+ ", operationtypeId=" + operationtypeId + ", documentTitle=" + documentTitle + ", documentType="
+				+ documentType + ", operateUser=" + operateUser + ", operateQide=" + operateQide + ", applyUserId="
+				+ applyUserId + ", applyUserName=" + applyUserName + ", adminUserId=" + adminUserId + ", adminUserName="
+				+ adminUserName + ", qaUserId=" + qaUserId + ", qaTeamId=" + qaTeamId + ", hospitalMemo=" + hospitalMemo
+				+ ", qaMemo=" + qaMemo + ", adminMemo=" + adminMemo + ", memo=" + memo + ", documentState="
+				+ documentState + ", operateStartTime=" + operateStartTime + ", operateEndTime=" + operateEndTime
+				+ ", createDate=" + createDate + ", hospitalEvaluate=" + hospitalEvaluate + ", hospitalEvaluateMemo="
+				+ hospitalEvaluateMemo + ", doctorEvaluate=" + doctorEvaluate + ", doctorEvaluateMemo="
+				+ doctorEvaluateMemo + ", transferUserId=" + transferUserId + ", oldDocumentState=" + oldDocumentState
+				+ ", deleteReason=" + deleteReason + ", qaUserName=" + qaUserName + ", orgId=" + orgId + ", orgName="
+				+ orgName + ", orgAddress=" + orgAddress + ", orgTel=" + orgTel + ", leaderName=" + leaderName
+				+ ", leaderTel=" + leaderTel + ", orgProvince=" + orgProvince + ", orgCity=" + orgCity + ", orgArea="
+				+ orgArea + ", province=" + province + ", city=" + city + ", area=" + area + ", roleId=" + roleId
+				+ ", tmpOperativeId=" + tmpOperativeId + ", tmpOperativeName=" + tmpOperativeName + ", tmpAnestheticId="
+				+ tmpAnestheticId + ", tmpAnestheticName=" + tmpAnestheticName + ", tmpPatientName=" + tmpPatientName
+				+ ", tmpPatientAge=" + tmpPatientAge + ", tmpPatientSex=" + tmpPatientSex + ", height=" + height
+				+ ", weight=" + weight + ", asa=" + asa + ", xtbs=" + xtbs + ", shs=" + shs + ", shcs=" + shcs
+				+ ", sskssj=" + sskssj + ", ssjssj=" + ssjssj + ", sssc=" + sssc + ", jmjs=" + jmjs + ", ywsjHxxt="
+				+ ywsjHxxt + ", ywsjHxxtVal=" + ywsjHxxtVal + ", ywsjHxxtQt=" + ywsjHxxtQt + ", ywsjXhxt=" + ywsjXhxt
+				+ ", ywsjXhxtVal=" + ywsjXhxtVal + ", ywsjXhxtQt=" + ywsjXhxtQt + ", ywsjGm=" + ywsjGm
+				+ ", ywsjGmAocre=" + ywsjGmAocre + ", ywsjQt=" + ywsjQt + ", shblZw=" + shblZw + ", shblHbtt="
+				+ shblHbtt + ", shblEx=" + shblEx + ", shblXy=" + shblXy + ", shblOt=" + shblOt + ", shblOtScore="
+				+ shblOtScore + ", shttzl=" + shttzl + ", photo_1=" + photo_1 + ", photo_2=" + photo_2 + ", photo_3="
+				+ photo_3 + ", photo_4=" + photo_4 + ", photo_5=" + photo_5 + ", status=" + status + ", photo=" + photo
+				+ "]";
+	}
+	
 }

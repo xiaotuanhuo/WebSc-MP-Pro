@@ -159,6 +159,36 @@
 		doctor_evaluate_memo
     </sql>
     
+    <sql id="Tmp_Base_Column_List">
+    	document_id, patient_name as tmp_patient_name, patient_age as tmp_patient_age, 
+    	patient_sex as tmp_patient_sex, operative_id as tmp_operative_id, 
+    	anesthetic_id as tmp_anesthetic_id, 
+    	height, weight, asa, xtbs, shs, shcs, sskssj, ssjssj, sssc, jmjs, ywsj_hxxt, ywsj_hxxt_qt, 
+    	ywsj_xhxt, ywsj_xhxt_qt, ywsj_gm, ywsj_gm_socre, ywsj_qt, shbl_zw, shbl_hbtt, shbl_ex, 
+    	shbl_xy, shbl_ot, shbl_ot_score, shttzl, photo_1, photo_2, photo_3, photo_4, photo_5, 
+    	status
+    </sql>
+    
+    <select id="selectWebScDocTmps" resultMap="BaseResultMap" parameterType="hashmap">
+    	SELECT
+			<include refid="Tmp_Base_Column_List" />
+		FROM
+			WSC_DOCUMENT_TMP tmp
+		WHERE
+			tmp.document_id IN (
+				SELECT
+					document_id
+				FROM
+					WSC_DOCUMENT doc
+				WHERE
+					doc.org_id = #{orgId,jdbcType=VARCHAR}
+				AND doc.document_state = #{state,jdbcType=VARCHAR}
+			)
+		ORDER BY
+			tmp.sskssj DESC
+		LIMIT ${limit};
+    </select>
+    
     <select id="selectXcxDocsByConditions" resultMap="BaseResultMap" parameterType="hashmap">
 	  	select 
 	    <include refid="Base_Column_List" />
