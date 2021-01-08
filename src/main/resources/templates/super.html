@@ -248,6 +248,7 @@
 				</section>
 				
 				<section class="container">
+					<div class="sp sp-wave"></div>
 					<ul id="reporting" class="transaction-list list-unstyled"></ul>
 				</section>
 				<div class="form-label-divider" style="display: none;"><span>没有更多数据了</span></div>
@@ -329,15 +330,21 @@
 		});
 	
 		$('#reportingBtn').on("click", function() {
+			$("#reporting").empty();
+			$(".sp-wave").show();
+			if ($("#username").val() == "") {
+				$("#username").removeAttr("data-id");
+			}
 			var begin = $("#dateSelector_begin").val();
 			var end = $("#dateSelector_end").val();
 			var pCode = $("#province").find(':selected').data('code');
 			var cCode = $("#city").find(':selected').data('code');
 			var dCode = $("#district").find(':selected').data('code');
 			var oCode = $("#orgs").find(':selected').data('code');
-			var userId = $("#username").data('id');
-			$("#reporting").empty();
-			$("#username").attr("data-id", "");
+			var userId = $("#username").attr('data-id');
+			if (typeof(userId) == "undefined") {
+				userId = "";
+			}
 			getReporting(begin, end, pCode, cCode, dCode, oCode, userId);
 			//$(".expandable-item").removeClass("active");
 			//$(".expandable-content").removeAttr("style");
@@ -566,48 +573,51 @@
 		
 		function getReporting(begin, end, province, city, area, orgId, userId) {
 			var jsonData = JSON.stringify({'beginTime': begin, 'endTime': end, 'province': province, 'city': city, 'area': area, 'orgId': orgId, 'userId': userId});
-			$.ajax({
-		    	type: "POST",
-		    	data: jsonData,
-		    	dataType: "json",
-		    	url: 'reporting',
-		    	contentType: "application/json",
-		    	success: function (result) {
-		    		if (result.code == 0) {
-		    			var data = result.data;
-		    			if (data.length > 0) {
-		    				$(".form-label-divider").attr("style", "display: none;");
-		    				var ulDom = document.getElementById("reporting");
-				    		for (var i = 0; i < data.length; i++) {
-				    			var newObj = data[i];
-								var str = '<div class="d-flex align-items-center justify-content-between">';
-								str += '<div class="d-flex align-items-center">';
-								str += '<div class="ml-10">';
-								str += '<h6 class="coin-name">' + newObj.orgName + '</h6>';
-								str += '<small class="text-muted">' + newObj.wholeDistrict
-										+ '</small>';
-								str += '</div>';
-								str += '</div>';
-								str += '<div>';
-								str += '<small class="d-block mb-0 txt-muted">'
-										+ newObj.count + '</small>';
-								str += '</div>';
-								str += '</div>';
-								var liDom = document.createElement("li");
-								liDom.innerHTML = str;
-								ulDom.appendChild(liDom);//加在列表的后面,上拉加载
-				    		}
-		    			} else {
-		    				$(".form-label-divider").attr("style", "display: block;");
-		    			}
-		    		} else {
-		    			alert(result.msg);
-		    		}
-		    	},
-		    	error: function() {
-		    		
-		    	}
-			});
+			setTimeout(function() {
+				$.ajax({
+			    	type: "POST",
+			    	data: jsonData,
+			    	dataType: "json",
+			    	url: 'reporting',
+			    	contentType: "application/json",
+			    	success: function (result) {
+			    		$('.sp-wave').hide();
+			    		if (result.code == 0) {
+			    			var data = result.data;
+			    			if (data.length > 0) {
+			    				$(".form-label-divider").attr("style", "display: none;");
+			    				var ulDom = document.getElementById("reporting");
+					    		for (var i = 0; i < data.length; i++) {
+					    			var newObj = data[i];
+									var str = '<div class="d-flex align-items-center justify-content-between">';
+									str += '<div class="d-flex align-items-center">';
+									str += '<div class="ml-10">';
+									str += '<h6 class="coin-name">' + newObj.orgName + '</h6>';
+									str += '<small class="text-muted">' + newObj.wholeDistrict
+											+ '</small>';
+									str += '</div>';
+									str += '</div>';
+									str += '<div>';
+									str += '<small class="d-block mb-0 txt-muted">'
+											+ newObj.count + '</small>';
+									str += '</div>';
+									str += '</div>';
+									var liDom = document.createElement("li");
+									liDom.innerHTML = str;
+									ulDom.appendChild(liDom);//加在列表的后面,上拉加载
+					    		}
+			    			} else {
+			    				$(".form-label-divider").attr("style", "display: block;");
+			    			}
+			    		} else {
+			    			alert(result.msg);
+			    		}
+			    	},
+			    	error: function() {
+			    		$('.sp-wave').hide();
+			    	}
+				});
+			}, 300);
 		}
 		
 		$("#dateSelector_begin").focus(function() {

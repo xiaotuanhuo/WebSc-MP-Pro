@@ -307,17 +307,19 @@
 			
 			/*加载备休数据*/
 			function getDataList() {
-				$.ajax({
-					url: 'calendars',
-					success : function(result) {
-						setListData(result.data);
-						renderCalendar();
-						$('.sp-wave').hide();
-					},
-					error : function() {
-						
-					}
-				});
+				setTimeout(function() {
+					$.ajax({
+						url: 'calendars',
+						success : function(result) {
+							$('.sp-wave').hide();
+							setListData(result.data);
+							renderCalendar();
+						},
+						error : function() {
+							$('.sp-wave').hide();
+						}
+					});
+				}, 500);
 			}
 			
 			/*设置列表数据*/
