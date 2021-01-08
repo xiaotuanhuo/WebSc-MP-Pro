@@ -34,4 +34,7 @@ public class ScConstant {
 	public final static String ADD_FAIL = "添加失败";
 	public final static String DEL_SUC = "删除成功";
 	public final static String DEL_FAIL = "删除失败";
+	
+	public final static int MANY_LOGIN_CODE = 9;	// 多用户登录
+	public final static String MANY_LOGIN_MSG = "当前用户已在其他地方登录 请重新登录";	// 多用户登录
 }

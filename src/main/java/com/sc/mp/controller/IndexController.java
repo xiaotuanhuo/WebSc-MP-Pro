@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +29,8 @@ import com.sc.mp.annotation.OperationLog;
 import com.sc.mp.bean.OperationCount;
 import com.sc.mp.bean.PageResultBean;
 import com.sc.mp.bean.ResultBean;
+import com.sc.mp.config.DequeManager;
+import com.sc.mp.config.SessionContext;
 import com.sc.mp.model.WebScCalendar;
 import com.sc.mp.model.WebScOrganization;
 import com.sc.mp.model.WebScUser;
@@ -40,6 +43,11 @@ public class IndexController {
 	
 	@Resource
 	private UserService userService;
+	
+	@Autowired
+	private SessionContext context;
+	@Autowired
+	private DequeManager manager;
 	
 	@Value("${sc.role.super}")
 	private String superRoleId;			// 超级管理员角色id
@@ -55,9 +63,8 @@ public class IndexController {
 	private String regionalPage;		// 区域管理员角色登录后首页
 	@Value("${sc.page.doctor}")
 	private String doctorPage;			// 医生角色登录后首页
-	
-	@Value("${operativeName-lucene-path}")
-	private String operativeNameLucenePath;
+	@Value("${sc.wx.login}")
+	private String wxLogin;			// 医生角色登录后首页
 	
 	/**
 	 * 登录页面
@@ -77,12 +84,24 @@ public class IndexController {
 	public String logout(HttpServletRequest request, RedirectAttributes ra) {
 		HttpSession session = request.getSession();
 		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
+		
+		if (context.getSession(session.getId()) != null) {
+			context.delSession(session);
+		}
+		if (manager.getDeque(user.getLoginName()) != null
+				&& manager.getDeque(user.getLoginName()).contains(session.getId())) {
+			manager.delDeque(user.getLoginName());
+		}
+		
 		session.invalidate();
 //		return "redirect:/index";
 		
-		ra.addFlashAttribute("wxUserid", user.getWxUserid());
-		ra.addFlashAttribute("openid", user.getWxOpenid());
-		return "redirect:/toLogin";
+//		ra.addFlashAttribute("wxUserid", user.getWxUserid());
+//		ra.addFlashAttribute("openid", user.getWxOpenid());
+		
+		log.info("登出后重定向地址===");
+//		return "redirect:/toLogin";
+		return "redirect:" + wxLogin;
 	}
 	
 	/**
@@ -98,13 +117,25 @@ public class IndexController {
 	/**
 	 * 企业微信绑定登录
 	 */
-	@RequestMapping("/login")
-	public String wxworkLogin(HttpServletRequest request, @RequestParam(value="code") String code, Model model) {
+	@GetMapping("/login")
+	public String wxworkLogin(HttpServletRequest request, @RequestParam(value = "code") String code,
+			@RequestParam(value = "state") String state, Model model) {
+		HttpSession session = request.getSession();
 		WebScUser wxUser = userService.getOpenid(code);	// 仅保存企业微信端的userid openid
+		log.info("indexcontroller state=" + state);
+		if (state.equals("gologin")) {
+			request.getSession().invalidate();
+			model.addAttribute("wxUserid", wxUser.getWxUserid());
+			model.addAttribute("openid", wxUser.getWxOpenid());
+			return "login";
+		}
+		
+		
 		WebScUser user = userService.getUserByOpenid(wxUser.getWxOpenid());
 		if (user != null) {
 			// 当前企业微信已绑定系统用户
-			request.getSession().setAttribute(ScConstant.USER_SESSION_KEY, user);
+			session.setAttribute(ScConstant.USER_SESSION_KEY, user);
+			session.setAttribute("kickout", false);
 			return "redirect:/index";
 		} else {
 			request.getSession().invalidate();
@@ -112,6 +143,7 @@ public class IndexController {
 			model.addAttribute("openid", wxUser.getWxOpenid());
 			return "login";
 		}
+//		return "login";
 	}
 	
 	/**
@@ -148,6 +180,7 @@ public class IndexController {
 					userService.bind(user);
 				}
 				session.setAttribute(ScConstant.USER_SESSION_KEY, user);
+				session.setAttribute("kickout", false);
 				return "redirect:/index";
 			} else {
 				session.invalidate();

@@ -282,6 +282,7 @@
 	<script th:src="@{/js/distpicker.data.js}"></script>
 	<script th:src="@{/js/distpicker.js}"></script>
 	<script th:src="@{/js/jquery.autocompleter.min.js}"></script>
+	<script th:src="@{/js/MiniDialog-es5.min.js}"></script>
 	<!-- <script th:src="@{/js/main.js}"></script> -->
 	
 	<script type="text/javascript">
@@ -609,6 +610,15 @@
 			    			} else {
 			    				$(".form-label-divider").attr("style", "display: block;");
 			    			}
+			    		} else if (result.code = 9) {
+			    			Dialog.info(result.msg).okNotClose().ok(function ( okBtn ) {
+			    				okBtn.querySelector( "span" ).textContent = "即将跳转至登录页面...";
+			    				okBtn.classList.add( "mini-dialog-ok-disabled" );
+			    				window.setTimeout(function () {
+			    					Dialog.close();
+			    					window.location.href = result.data;
+			    				}, 1000);
+			    			});
 			    		} else {
 			    			alert(result.msg);
 			    		}
