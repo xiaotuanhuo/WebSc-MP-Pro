@@ -158,9 +158,18 @@ public class LoginInterceptor implements HandlerInterceptor {
 			// 获取被踢出的sessionId的session对象
 			HttpSession kickoutSession = context.getSession(kickoutSessionId);
 			if (kickoutSession != null) {
-				// 设置会话的kickout属性表示踢出了
-				kickoutSession.setAttribute("kickout", true);
+				try {
+					log.info("setting kickout true for sessionId=" + kickoutSessionId);
+					// 设置会话的kickout属性表示踢出了
+					kickoutSession.setAttribute("kickout", true);
+				} catch (IllegalStateException e) {
+					// 已过期session异常捕获 不可设置kickout 仅从session管理器移除
+					log.info("Session [" + kickoutSessionId + "] has already been invalidated");
+				} catch (Exception e) {
+					log.error(e.getMessage() + " sessionId=" + kickoutSessionId);
+				}
 				// 从session管理器中移除
+				log.info("remove Session from context for sessionId=" + kickoutSessionId);
 				context.delSession(kickoutSession);
 			}
 		}

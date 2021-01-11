@@ -4,6 +4,11 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 用户会话队列管理器
+ * @author aisino
+ *
+ */
 public class DequeManager {
 	private static DequeManager manager;
 	private Map<String, Deque<String>> map;

@@ -5,6 +5,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+/**
+ * session管理器
+ * @author aisino
+ *
+ */
 public class SessionContext {
 	private static SessionContext context;
 	private Map<String, HttpSession> map;
