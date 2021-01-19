@@ -34,7 +34,7 @@ public interface DocMapper {
 	@Update("UPDATE WSC_DOCUMENT SET hospital_evaluate=${evaluateStar},hospital_evaluate_memo=#{evaluateText} WHERE document_id=#{documentId}")
 	int updDocById(@Param("documentId") String documentId, 
 			@Param("evaluateText") String evaluateText, 
-			@Param("evaluateStar") int evaluateStar);
+			@Param("evaluateStar") float evaluateStar);
 	
 	List<WebScDoc> selectXcxDocsByConditions(Map<String, Object> paraMap);
 	

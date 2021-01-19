@@ -97,6 +97,9 @@ public class XcxController {
 			doc.setDocumentId(docId);
 			doc.setDocumentState("0");
 			
+			if (StringUtil.isEmpty(doc.getOperateUser())) {
+				throw new Exception("手术医生不能为空");
+			}
 			if(StringUtil.isEmpty(doc.getOperativeId())) {
 				throw new Exception("请先选择需要进行的手术");
 			}
@@ -156,6 +159,12 @@ public class XcxController {
 		PageResultBean<WebScDoc> prb = null;
 		try {
 			logger.info(paraMap.toString());
+			if (StringUtil.isNotNull(paraMap.get("qaUser"))) {
+				paraMap.put("qaUserId", userMapper.getDoctorId(paraMap.get("qaUser").toString()));
+			}else {
+				paraMap.put("qaUserId", "");
+			}
+			
 			prb = new PageResultBean<WebScDoc>();
 			PageHelper.startPage(paraMap.get("page")==null?1:(int)paraMap.get("page"), 
 					paraMap.get("limit")==null?10:(int)paraMap.get("limit"));
@@ -201,7 +210,7 @@ public class XcxController {
 			docMapper.updDocById(
 					paraMap.get("documentId").toString(), 
 					paraMap.get("evaluateText").toString(), 
-					(int) (Float.parseFloat(paraMap.get("evaluateStar").toString())*2));
+					Float.parseFloat(paraMap.get("evaluateStar").toString()));
 			resultBean = ResultBean.success("评价成功，谢谢！");
 			
 		} catch (Exception e) {

@@ -34,9 +34,9 @@
     	<result column="operate_start_time" jdbcType="VARCHAR" property="operateStartTime"/>
     	<result column="operate_end_time" jdbcType="VARCHAR" property="operateEndTime"/>
     	<result column="create_date" jdbcType="VARCHAR" property="createDate"/>
-    	<result column="hospital_evaluate" jdbcType="INTEGER" property="hospitalEvaluate"/>
+    	<result column="hospital_evaluate" jdbcType="FLOAT" property="hospitalEvaluate"/>
     	<result column="hospital_evaluate_memo" jdbcType="VARCHAR" property="hospitalEvaluateMemo"/>
-    	<result column="doctor_evaluate" jdbcType="INTEGER" property="doctorEvaluate"/>
+    	<result column="doctor_evaluate" jdbcType="FLOAT" property="doctorEvaluate"/>
     	<result column="doctor_evaluate_memo" jdbcType="VARCHAR" property="doctorEvaluateMemo"/>
     	<result column="old_document_state" jdbcType="VARCHAR" property="oldDocumentState"/>
     	<result column="delete_reason" jdbcType="VARCHAR" property="deleteReason"/>
@@ -184,6 +184,8 @@
 					doc.org_id = #{orgId,jdbcType=VARCHAR}
 				AND doc.document_state = #{state,jdbcType=VARCHAR}
 			)
+			AND
+			tmp.status = '1' 
 		ORDER BY
 			tmp.sskssj DESC
 		LIMIT ${limit};
@@ -201,6 +203,12 @@
 	    </if>
 	    <if test="patientName != null and patientName != ''" >
 	    	and patient_name = #{patientName,jdbcType=VARCHAR}
+	    </if>
+	    <if test="operateUser != null and operateUser != ''" >
+	    	and operate_user = #{operateUser,jdbcType=VARCHAR}
+	    </if>
+	    <if test="qaUserId != null and qaUserId != ''" >
+	    	and qa_user_id = #{qaUserId,jdbcType=VARCHAR}
 	    </if>
 	    <if test="startDate != null and startDate != ''" >
 	    	<![CDATA[
@@ -357,13 +365,13 @@
                 operate_end_time = #{operateEndTime,jdbcType=VARCHAR},
             </if>
             <if test="hospitalEvaluate != null">
-                hospital_evaluate = #{hospitalEvaluate,jdbcType=INTEGER},
+                hospital_evaluate = #{hospitalEvaluate,jdbcType=FLOAT},
             </if>
             <if test="hospitalEvaluateMemo != null">
                 hospital_evaluate_memo = #{hospitalEvaluateMemo,jdbcType=VARCHAR},
             </if>
             <if test="doctorEvaluate != null">
-                doctor_evaluate = #{doctorEvaluate,jdbcType=INTEGER},
+                doctor_evaluate = #{doctorEvaluate,jdbcType=FLOAT},
             </if>
             <if test="doctorEvaluateMemo != null">
                 doctor_evaluate_memo = #{doctorEvaluateMemo,jdbcType=VARCHAR},
@@ -457,13 +465,13 @@
                 operate_end_time = #{operateEndTime,jdbcType=VARCHAR},
             </if>
             <if test="hospitalEvaluate != null">
-                hospital_evaluate = #{hospitalEvaluate,jdbcType=INTEGER},
+                hospital_evaluate = #{hospitalEvaluate,jdbcType=FLOAT},
             </if>
             <if test="hospitalEvaluateMemo != null">
                 hospital_evaluate_memo = #{hospitalEvaluateMemo,jdbcType=VARCHAR},
             </if>
             <if test="doctorEvaluate != null">
-                doctor_evaluate = #{doctorEvaluate,jdbcType=INTEGER},
+                doctor_evaluate = #{doctorEvaluate,jdbcType=FLOAT},
             </if>
             <if test="doctorEvaluateMemo != null">
                 doctor_evaluate_memo = #{doctorEvaluateMemo,jdbcType=VARCHAR},

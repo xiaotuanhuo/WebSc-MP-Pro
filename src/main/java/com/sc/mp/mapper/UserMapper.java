@@ -12,6 +12,9 @@ import com.sc.mp.model.WebScUser;
 
 @Mapper
 public interface UserMapper {
+	@Select("SELECT user_id FROM WSC_USER WHERE role_id='5' AND user_name=#{doctorName} LIMIT 1")
+	String getDoctorId(@Param("doctorName") String doctorName);
+	
 	/**
 	 * 根据微信openid获取用户信息
 	 * @param openid

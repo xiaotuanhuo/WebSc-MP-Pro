@@ -39,9 +39,9 @@ public class WebScDoc implements Serializable {
 	private String operateStartTime;
 	private String operateEndTime;
 	private String createDate;
-	private Integer hospitalEvaluate;
+	private float hospitalEvaluate;
 	private String hospitalEvaluateMemo;
-	private Integer doctorEvaluate;
+	private float doctorEvaluate;
 	private String doctorEvaluateMemo;
 	private String transferUserId;
 	private String oldDocumentState;
@@ -334,11 +334,11 @@ public class WebScDoc implements Serializable {
 		this.createDate = createDate;
 	}
 
-	public Integer getHospitalEvaluate() {
+	public float getHospitalEvaluate() {
 		return hospitalEvaluate;
 	}
 
-	public void setHospitalEvaluate(Integer hospitalEvaluate) {
+	public void setHospitalEvaluate(float hospitalEvaluate) {
 		this.hospitalEvaluate = hospitalEvaluate;
 	}
 
@@ -350,11 +350,11 @@ public class WebScDoc implements Serializable {
 		this.hospitalEvaluateMemo = hospitalEvaluateMemo;
 	}
 
-	public Integer getDoctorEvaluate() {
+	public float getDoctorEvaluate() {
 		return doctorEvaluate;
 	}
 
-	public void setDoctorEvaluate(Integer doctorEvaluate) {
+	public void setDoctorEvaluate(float doctorEvaluate) {
 		this.doctorEvaluate = doctorEvaluate;
 	}
 
