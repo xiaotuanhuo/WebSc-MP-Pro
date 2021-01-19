@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sc.mp.mapper.SendRecordMapper" >
+
+  <resultMap id="BaseResultMap" type="com.sc.mp.model.WebScSendRecord" >
+    <id column="record_id" property="recordId" jdbcType="VARCHAR" />
+    <result column="document_id" property="documentId" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="send_user_id" property="sendUserId" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="VARCHAR" />
+    <result column="errmsg" property="state" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+	record_id, document_id, user_id, memo, send_user_id, state, errmsg
+  </sql>
+  
+  <insert id="insert" parameterType="com.sc.mp.model.WebScSendRecord">
+  	insert into WSC_SEND_RECORD (record_id, document_id, user_id, create_date, memo, send_user_id, state)
+    values (#{recordId,jdbcType=VARCHAR}, #{documentId,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, sysdate(), 
+    		#{memo,jdbcType=VARCHAR}, #{sendUserId,jdbcType=INTEGER}, '0')
+  </insert>
+  <update id="update" parameterType="com.sc.mp.model.WebScSendRecord">
+  	update WSC_SEND_RECORD set send_date = sysdate(), state = #{state,jdbcType=VARCHAR}, icount = icount + 1, errmsg = #{errmsg,jdbcType=VARCHAR} where record_id = #{recordId,jdbcType=VARCHAR}
+  </update>
+  
+  <select id="getWebScSendRecord" resultMap="BaseResultMap">
+  	select 
+  	<include refid="Base_Column_List" />
+  	from WSC_SEND_RECORD 
+  <![CDATA[
+  	where state in ('0', '9') and icount < 3 
+  ]]>
+  </select>
+  
+</mapper>
