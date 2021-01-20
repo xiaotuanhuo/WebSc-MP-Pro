@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,7 @@ import com.sc.mp.mapper.UserMapper;
 import com.sc.mp.model.WebScDoc;
 import com.sc.mp.model.WebScOperative;
 import com.sc.mp.model.WebScUser;
+import com.sc.mp.service.SendRecordService;
 import com.sc.mp.util.CalendarUtil;
 import com.sc.mp.util.DateUtils;
 import com.sc.mp.util.HttpsUtil;
@@ -47,6 +50,9 @@ import com.sc.mp.util.UnixtimeUtil;
 @RequestMapping(value = "xcx")
 public class XcxController {
 	private static final Logger logger = LoggerFactory.getLogger(XcxController.class);
+	
+	@Resource
+	SendRecordService sendRecordService;
 	
 	@Autowired
 	AnestheticMapper anestheticMapper;
@@ -105,6 +111,10 @@ public class XcxController {
 			}
 			
 			docMapper.insert(doc);
+			
+			//插入通知消息
+			WebScUser user = userMapper.selectByPrimaryKey(Integer.parseInt(doc.getApplyUserId()));
+			sendRecordService.insertSendRecord(docId, user, 1001, 0);
 			
 			resultBean = ResultBean.success("订单发布成功（订单号："+docId+"）");
 			
