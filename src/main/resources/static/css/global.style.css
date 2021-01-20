@@ -2515,7 +2515,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1ddc3e', end
 [31. Content Styles]
 *------------------background: url(../img/logo.png) no-repeat center center;------------------------------------------------*/
 .dash-balance{
-	background: linear-gradient(-12deg,#c6eae2 0,#b9dcd0 100%) !important;
+	background: transparent;
 	background-size: cover;
 	position: relative;
 	overflow: hidden;
