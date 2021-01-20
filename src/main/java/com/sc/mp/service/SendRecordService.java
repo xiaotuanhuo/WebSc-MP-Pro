@@ -35,7 +35,6 @@ public class SendRecordService {
 		WebScDoc doc = docService.selectWebScDoc(searchDoc);
 		
 		WebScSendRecord record = new WebScSendRecord();
-		record.setRecordId(UUID19.uuid());
 		record.setDocumentId(documentId);
 		record.setUserId(user.getUserId());
 		
@@ -45,6 +44,7 @@ public class SendRecordService {
 				//分配订单
 				record.setMemo("有新的订单,请及时处理！来源： 管理员分配");
 				//通知订单医生
+				record.setRecordId(UUID19.uuid());
 				record.setSendUserId(sendUserId);
 				sendRecordMapper.insert(record);
 			}else if(sendtype == 3002){
@@ -53,6 +53,7 @@ public class SendRecordService {
 				//通知订单医生
 				List<WebScUser> userls = userMapper.getDocumentQaUser(documentId);
 				for(WebScUser tmpUser : userls){
+					record.setRecordId(UUID19.uuid());
 					record.setSendUserId(tmpUser.getUserId());
 					sendRecordMapper.insert(record);
 				}
@@ -62,6 +63,7 @@ public class SendRecordService {
 				//通知订单医生
 				List<WebScUser> userls = userMapper.getDocumentQaUser(documentId);
 				for(WebScUser tmpUser : userls){
+					record.setRecordId(UUID19.uuid());
 					record.setSendUserId(tmpUser.getUserId());
 					sendRecordMapper.insert(record);
 				}
@@ -73,6 +75,7 @@ public class SendRecordService {
 				record.setMemo("医生-" + user.getUserName() + " 已接单！订单机构：" + doc.getOrgName() + ",患者：" + doc.getPatientName() + ",手术时间：" + doc.getOperateStartTime());
 				//获取订单对应区域管理员
 				//原管理员
+				record.setRecordId(UUID19.uuid());
 				record.setSendUserId(Integer.parseInt(doc.getAdminUserId()));
 				sendRecordMapper.insert(record);
 			}else if(sendtype == 4002){
@@ -81,6 +84,7 @@ public class SendRecordService {
 				//获取订单对应区域管理员
 				List<WebScUser> userls = userMapper.getDocumentLocalAdminUser(documentId);
 				for(WebScUser tmpUser : userls){
+					record.setRecordId(UUID19.uuid());
 					record.setSendUserId(tmpUser.getUserId());
 					sendRecordMapper.insert(record);
 				}
@@ -89,6 +93,7 @@ public class SendRecordService {
 				record.setMemo("医生-" + user.getUserName() + " 拒绝接收转单！订单机构：" + doc.getOrgName() + ",患者：" + doc.getPatientName() + ",手术时间：" + doc.getOperateStartTime());
 				//通知订单原医生
 				if(doc.getTransferUserId() != null){
+					record.setRecordId(UUID19.uuid());
 					record.setSendUserId(Integer.parseInt(doc.getTransferUserId()));
 					sendRecordMapper.insert(record);
 				}
@@ -96,6 +101,7 @@ public class SendRecordService {
 				//发送转单
 				record.setMemo("有新的订单,请及时处理！来源： 医生-" + user.getUserName() + "的转单");
 				//通知转单医生
+				record.setRecordId(UUID19.uuid());
 				record.setSendUserId(sendUserId);
 				sendRecordMapper.insert(record);
 			}else if(sendtype == 4005){
@@ -104,6 +110,7 @@ public class SendRecordService {
 				//获取订单对应区域管理员
 				List<WebScUser> userls = userMapper.getDocumentLocalAdminUser(documentId);
 				for(WebScUser tmpUser : userls){
+					record.setRecordId(UUID19.uuid());
 					record.setSendUserId(tmpUser.getUserId());
 					sendRecordMapper.insert(record);
 				}
@@ -117,6 +124,7 @@ public class SendRecordService {
 				//获取订单对应区域管理员
 				List<WebScUser> userls = userMapper.getDocumentLocalAdminUser(documentId);
 				for(WebScUser tmpUser : userls){
+					record.setRecordId(UUID19.uuid());
 					record.setSendUserId(tmpUser.getUserId());
 					sendRecordMapper.insert(record);
 				}

@@ -31,7 +31,7 @@ public class QuartzConfigration {
         // 设置任务启动延迟
         trigger.setStartDelay(0);
         // 每5秒执行一次
-        trigger.setRepeatInterval(10000);
+        trigger.setRepeatInterval(1000000);
         return trigger;
 	}
 

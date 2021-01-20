@@ -9,7 +9,8 @@ spring:
     jmx:
         default-domain: "websc-mp"
 
-projectDomainName: localhost
+projectDomainName: fw1.sucheng-group.com:9080
+dirPath: /home/photo
 
 mybatis:
     mapper-locations: classpath:mapping/*.xml

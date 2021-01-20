@@ -82,7 +82,10 @@
 			animation: fade 600ms infinite;
 		    -webkit-animation: fade 600ms infinite;
 		}
-    </style>
+		.myradio {
+ 			box-sizing:inherit
+		}
+</style>
 </head>
 <body class="bodgray" >
 	<div class="heading">
@@ -102,6 +105,8 @@
 		<input id="documentState" type="hidden" th:value="${doc.documentState}"></input>
 		<input id="oldDocumentState" type="hidden" th:value="${doc.oldDocumentState}"></input>
 		
+		<input id="photoCount" type="hidden" name="photo" />
+		<input id="photoIdx" type="hidden" name="photo" />
 		<!-- 患者信息   -->
 		<div class='heading'>
 			<div class='title'><strong>患者信息</strong></div>
@@ -165,7 +170,7 @@
     				</tr>
     				<tr>
       					<th class="title">备注：</th>
-      					<th class="patient_val"><span th:text="${doc.hospitalMemo}"></span></th>
+      					<th class="patient_val"><span th:text="${doc.memo}"></span></th>
     				</tr>
     				<tr th:if="${doc.documentState > '2'}">
       					<th class="title">医生备注：</th>
@@ -183,6 +188,20 @@
 			</div>
 		</div>
 		
+		<div class="heading"  th:if="${doc.documentState > '2'}">
+			<div class="title"><strong>手术医生</strong></div>
+	  	</div>
+	  	<div class="list section rounded-lg" th:if="${doc.documentState > '2'}" style="margin-bottom: 0px;">
+			<div class="row" style="padding: 10px 20px 10px 20px;">
+				<table class="patient_table">
+					<tr>
+      					<th class="title">医生姓名：</th>
+      					<th class="patient_mainval"><span th:text="${doc.qaUserName}"></span></th>
+    				</tr>
+    			</table>
+			</div>
+    	</div>
+    	
 		<!-- 团队   -->
 		<div class="heading"  th:if="${doc.documentState > '2'}">
 			<div class="title"><strong>团队</strong></div>
@@ -190,11 +209,12 @@
 	  	<div class="list section rounded-lg" th:if="${doc.documentState > '2'}" style="margin-bottom: 0px;">
 			<div class="row" style="padding: 10px 20px 10px 20px;">
  				<span style="width:80px;padding:5;vertical-align: top;font-size: .7rem;font-weight: bold;">手术团队：</span>
- 				<input id="TeamFpId" type="hidden" th:value="${doc.qaTeamId}"></input>
- 				<span th:if="${doc.qaTeamId!=null && doc.qaTeamId!=''}" style="padding:5; vertical-align:top; font-size: .7rem;"><a style="cursor: pointer;color: blue;" onclick="openTeamView()">团队信息</a></span>
-				<span th:if="${doc.qaTeamId==null || doc.qaTeamId==''}" style="padding:5; vertical-align:top; font-size: .7rem;">无团队</span>
-				<span th:if="${user.roleId=='5' && doc.documentState == '3' && (doc.qaTeamId==null || doc.qaTeamId=='')}" style="padding:5; vertical-align:top; font-size: .7rem;">
-					<a style="cursor: pointer;color: blue;padding-left: 10px;" onclick="createTeam()">创建</a>
+ 				<span id="divTeam" style="padding:5; vertical-align:top;">
+	 				<span th:if="${doc.qaTeamId!=null && doc.qaTeamId!=''}" style="font-size: .7rem;"><a style="cursor: pointer;color: blue;" onclick="openTeamView()">团队信息</a></span>
+					<span th:if="${doc.qaTeamId==null || doc.qaTeamId==''}" style="font-size: .7rem;">无团队</span>
+					<span th:if="${user.roleId=='5' && doc.documentState == '3' && (doc.qaTeamId==null || doc.qaTeamId=='')}" style="font-size: .7rem;">
+						<a style="cursor: pointer;color: blue;padding-left: 10px;" onclick="createTeam()">创建</a>
+					</span>
 				</span>
    			</div>
     	</div>	
@@ -245,7 +265,7 @@
 	   					<th class="patient_mainval"><span th:text="${doc.ssjssj}"></span></th>
 	  				</tr>
 	  				<tr>
-	   					<th class="title">时长(分)：</th>
+	   					<th class="title">时长：</th>
 	   					<th class="patient_mainval"><span th:text="${doc.sssc}"></span></th>
 	  				</tr>
 	  				<tr>
@@ -321,16 +341,24 @@
 							<span th:if="${doc.shttzl}=='5'">无镇痛</span>
 						</th>
 	  				</tr>
-	  				<tr>
-	   					<th class="title">上传图片：</th>
-	   					<th class="patient_val"><a id="docPhotoTip" onclick="opDocPhoto()">(展开)</a></th>
-	  				</tr>
-	  				<tr>
-	  					<th class="patient_val"><img id="docPhoto" class="hidden" src=""></th>
-	  				</tr>
     			</table>
 			</div>
 		</div>
+		
+		<div class="heading"  th:if="${doc.documentState>='4'}">
+			<div class="title"><strong>图片</strong></div>
+	  	</div>
+		<div class="list section rounded-lg" th:if="${doc.documentState>='4'}" style="margin-bottom: 0px;">
+			<table class="patient_table">
+  				<tr>
+  					<th class="patient_val" >
+	  					<div class="layui-upload-list" id="main_photo_list" style="height: 200px;width:-webkit-fill-available;">
+	  					</div>
+  					</th>
+  				</tr>
+  			</table>
+		</div>	
+	  				
 		<!-- 评分    -->
 		<div class='heading' th:if="${doc.documentState=='5'}">
 			<div class='title'><strong>评分</strong></div>
@@ -385,22 +413,22 @@
 		
 		<button id="btnDoctorCx" type="button" class="btn danger" style="border-radius: .3rem 0 0 .3rem;" th:if="${user.roleId=='5' && doc.documentState=='3'}" onclick="recallDoc()">撤销订单</button>
 		<button id="btnDoctorZd" type="button" class="btn primary" style="border-radius: 0;" th:if="${user.roleId=='5' && doc.documentState=='3'}" onclick="btnDrZdClick()">转单</button>
-		<button id="btnDoctorQr" type="button" class="btn info" style="border-radius: 0 .3rem .3rem 0;" th:if="${user.roleId=='5' && doc.documentState=='3'}" onclick="btnDrQrInfo()">完成订单</button>
+		<button id="btnDoctorQr" type="button" class="btn info" style="border-radius: 0 .3rem .3rem 0;" th:if="${user.roleId=='5' && doc.documentState=='3'}" onclick="btnDrQrInfo()">手术完成</button>
 		
 		<button id="btnQxwc" type="button" class="btn danger outline" style="border-radius:.3rem 0 0 .3rem;" th:if="${user.roleId=='4' && doc.documentState=='4'}" onclick="btnQxwcClick()">退回修改</button>
 		<button id="btnQrWc" type="button" class="btn primary" style="border-radius: .3rem;" th:if="${user.roleId=='4' && doc.documentState=='4'}" onclick="btnQrWcClick()">确认完成</button>
 		
-		<button id="btnQxJj" type="button" class="btn danger" style="border-radius: .3rem 0 0 .3rem;" th:if="${user.roleId=='4' && doc.documentState=='9'}" onclick="btnQxJjClick()">拒绝撤销</button>
+		<button id="btnQxJj" type="button" class="btn danger" style="border-radius: .3rem 0 0 .3rem;" th:if="${user.roleId=='4' && doc.documentState=='9'}" onclick="btnQxJjClick()">拒绝撤销</button>	
 		<button id="btnQxTy" type="button" class="btn primary" style="border-radius: 0 .3rem .3rem 0;" th:if="${user.roleId=='4' && doc.documentState=='9'}" onclick="btnQxTyClick()">同意撤销</button>
 		
-		<button id="btnDocDf" type="button" class="btn primary" style="border-radius: .3rem;" th:if="${user.roleId=='5' && doc.documentState=='5' && doc.doctorEvaluate==null}" onclick="btnDocDfClick()">评价打分</button>
+		<button id="btnDocDf" type="button" class="btn primary" style="border-radius: .3rem;" th:if="${user.roleId=='5' && doc.documentState=='5' && (doc.doctorEvaluate==null || doc.doctorEvaluate==-1)}" onclick="btnDocDfClick()">评价打分</button>
 	</nav>
 	
 	<!-- 分配 -->
 	<div id="pnlFp" class="panel" style="display: none;">
 		<div class="panel-body">
 			<div class="control flex">
-	      		<label for="fp_searchVal" style="width:80px;padding:5 5 5 10;vertical-align: top;font-weight: 700;">医生姓名：</label>
+	      		<label for="fp_searchVal" style="width:100px;padding:5 5 5 10;vertical-align: top;font-weight: 700;text-align: right;">医生姓名：</label>
 	      		<input class="text" name="fp_searchVal" id="fp_searchVal" value=""/>
 	      		<button id="btnSearch" type="button" class="btn btn-small primary hover-solid" style="padding:0;height: 26px;margin-left: 5px;"><i class="icon icon-search"></i></button>
 	   		</div>
@@ -424,7 +452,7 @@
 	<div id="pnlZd" class="panel" style="display: none;">
 		<div class="panel-body">
 			<div class="control flex">
-	      		<label for="zd_searchVal" style="width:80px;padding:5 5 5 10;vertical-align: top;font-weight: 700;">医生姓名：</label>
+	      		<label for="zd_searchVal" style="width:100px;padding:5 5 5 10;vertical-align: top;font-weight: 700;text-align: right;">医生姓名：</label>
 	      		<input class="text" name="zd_searchVal" id="zd_searchVal" value=""/>
 	      		<button name="btnSearch" type="button" class="btn btn-small primary hover-solid" style="padding:0;height: 26px;margin-left: 5px;"><i class="icon icon-search"></i></button>
 	   		</div>
@@ -465,11 +493,11 @@
 						</select>
 					</div>
 					<div class="control flex drwd_row">
-						<label class="addon">身高</label>
+						<label class="addon" style="color: red;">身高(cm)</label>
 						<input id="height" name="height" type="text" class="input drwd_input" placeholder="身高" th:value="${doc.height}">
 					</div>	
 					<div class="control flex drwd_row">
-						<label class="addon">体重</label>
+						<label class="addon" style="color: red;">体重(kg)</label>
 						<input id="weight" name="weight" type="text" class="input drwd_input" placeholder="体重" th:value="${doc.weight}">
 					</div>
 					<div class="control flex drwd_row">
@@ -499,12 +527,16 @@
 						<input id="shcs" name="shcs" type="text" class="input drwd_input" placeholder="手术史次数" disabled="disabled" th:value="${doc.shcs}">
 					</div>
 					<div class="control flex drwd_row">
-						<label class="addon">开始时间</label>
+						<label class="addon" style="color: red;">开始时间</label>
 						<input id="sskssj" name="sskssj" type="text" class="input form-datetime drwd_input" placeholder="手术开始时间" th:value="${doc.sskssj}">
 					</div>
 					<div class="control flex drwd_row">
-						<label class="addon">结束时间</label>
+						<label class="addon" style="color: red;">结束时间</label>
 						<input id="ssjssj" name="ssjssj" type="text" class="input form-datetime drwd_input" placeholder="手术结束时间" th:value="${doc.ssjssj}">
+					</div>
+					<div class="control flex drwd_row">
+						<label class="addon">时长</label>
+						<input id="sssc" name="sssc" type="text" class="input drwd_input" placeholder="时长（分）" th:value="${doc.sssc}" disabled="disabled">
 					</div>
 					<div class="control flex drwd_row" style="padding-bottom: 15px;">
 						<label class="addon">局麻技术</label>
@@ -659,14 +691,15 @@
 					<div class='title'><strong>照片</strong></div>
 			  	</div>
 				<div class="list section rounded-lg" style="margin-bottom: 0px;">
-					<input id="doc_photo" type="hidden" name="photo" class="layui-input" th:value="${doc?.photo}">
-					<input type="hidden" id="mediaId" name="mediaId" value=''/>
-					
-					<button type="button" class="btn btn-info" th:onclick="'imgUpload();'" style="width:-webkit-fill-available;height:30px;background-color:#FFFFFF;border:1px solid #CECECE">
+					<input id="doc_photo" type="hidden" name="photo" class="input" th:value="${doc?.photo}">
+					<button id="btnUpload" type="button" class="btn btn-info"  style="width:-webkit-fill-available;height:30px;background-color:#FFFFFF;border:1px solid #CECECE">
 						<i class="icon icon-plus"></i> 选择文件
 					</button>
 									
-					<div class="layui-upload-list" id="photo_list" style="height: 200px;width:-webkit-fill-available;"></div>				
+					<div class="layui-upload-list" id="photo_list" style="height: 200px;width:-webkit-fill-available;">
+<!-- 						<img src="" id="pic1" class="imglist" style="height:200px;width: 149px;float: left;"> -->
+<!-- 						<img src="" id="pic2" class="imglist" style="height:200px;width: 149px;float: left;"> -->
+					</div>				
 				</div>	
 			</form>
 			<div>
@@ -679,6 +712,7 @@
 	<!-- 团队分配 -->
 	<div id="pnlTeamFp" class="panel" style="display: none;">
 		<div class="panel-body" style="margin-top: -10px;">
+			<input id="TeamCount" type="hidden" value="0"></input>
 			<div class="heading" >
 				<div class="title" style="text-align: center;"><strong>副麻</strong></div>
 	  		</div>
@@ -707,7 +741,7 @@
 	<div id="pnlTeamUserList" class="panel" style="display: none;">
 		<div class="panel-body">
 			<div class="control flex">
-	      		<label for="fp_searchVal" style="width:80px;padding:5 5 5 10;vertical-align: top;font-weight: 700;">姓名：</label>
+	      		<label for="fp_searchVal" style="width:100px;padding:5 5 5 10;vertical-align: top;font-weight: 700;text-align: right;">姓名：</label>
 	      		<input class="text" name="team_searchVal" id="team_searchVal" value=""/>
 	      		<button id="btnSearch" type="button" class="btn btn-small primary hover-solid" style="padding:0;height: 26px;margin-left: 5px;"><i class="icon icon-search"></i></button>
 	   		</div>
@@ -735,6 +769,30 @@
 				<table class="patient_table" style="width: 100%;">
 					<tr>
       					<th class="title">取消原因：</th>
+    				</tr>
+    				<tr>
+    					<td>
+    						<div class="radio">
+        						<input type="radio" name="qxRadio" value="1" style="box-sizing:inherit;">
+        						<label for="qxRadio">患者原因</label>
+      						</div>
+      						<div class="radio myradio">
+        						<input type="radio" name="qxRadio" value="2">
+        						<label for="qxRadio">机构原因</label>
+      						</div>
+      						<div class="radio myradio">
+        						<input type="radio" name="qxRadio" value="3">
+        						<label for="qxRadio">医生原因</label>
+      						</div>
+      						<div class="radio myradio">
+        						<input type="radio" name="qxRadio" value="4">
+        						<label for="qxRadio">订单错误</label>
+      						</div>
+      						<div class="radio myradio">
+        						<input type="radio" name="qxRadio" value="5">
+        						<label for="qxRadio">其他（原因）</label>
+      						</div>
+    					</td>
     				</tr>
     				<tr>
     					<td>
@@ -791,7 +849,7 @@
 	</div>
 <!-- <script th:src="@{/js/datePlugin/jquery-1.10.0.min.js}"></script> -->
 <script th:src="@{/js/jquery.min.js}"></script>
-<script th:src="@{/js/jweixin-1.2.0.js}"></script>
+<script th:src="@{/js/jweixin-1.6.0.js}"></script>
 <script th:src="@{/js/wxImage.js}"></script>
 <script th:src="@{/js/layer.js}"></script>
 <script th:src="@{/js/mzui.min.js}"></script>
@@ -811,10 +869,10 @@
 	var doc = [[${doc}]];
 	var state = [[${state}]];
 	
-	var appId = [[${appId}]];//公众号的唯一标识
-	var timestamp = [[${timestamp}]];//生成签名的时间戳
-	var nonceStr = [[${nonceStr}]];//生成签名的随机串
-	var signature = [[${signature}]];//签名 
+	var appId = [[${aid}]];//公众号的唯一标识
+	var timestamp = [[${ts}]];//生成签名的时间戳
+	var nonceStr = [[${ns}]];//生成签名的随机串
+	var signature = [[${sg}]];//签名 
 	
 	console.info(signature);
 	
@@ -889,6 +947,21 @@
 		}
 	}
 	
+	if(doc.photo != null && doc.photo != ''){
+     	var photols = doc.photo.split(",");
+     	for(var i = 0; i < photols.length; i++){
+     		if(photols[i] != ''){
+         		var html = '<div id="photo_' + photoIdx + '" name="'+ photols[i] +'" class="file-iteme" style="width: 149px; height: 180px; float: left;"">';
+         		if(doc.status == '0')
+         			html += '<div style="float: left;position: absolute;" id="delPhotoBtn' + photoIdx + '" onclick="deletePhoto(' + photoIdx + ')"><i class="icon-2x icon-times"></i></div>';
+    			html += '<img style="width: 150px;height: 180px;" src="/getPhotoByFileName?id=' + doc.documentId + '&FileName='+ photols[i] +'">';
+    			html += '</div>';
+         			
+    			$('#main_photo_list').append(html);
+     		}
+     	}
+	}
+	
 	//【按钮】确认订单
 	$("#btnSh").on("click", function(){
 		if(docId != ''){
@@ -905,7 +978,9 @@
 					if(data.code == 1){
 						$("#nav_btn").toggleClass("loading loading-light");
 						
-						ajaxChangeHtml("0-1");
+// 						ajaxChangeHtml("0-1");
+						location.reload();
+
 					}else{
 						alert("网络失败,请重试!");
 					}
@@ -1018,7 +1093,8 @@
 					body.find("#pnlFp").toggleClass("loading loading-light");
 					layer.closeAll();
 					
-					ajaxChangeHtml("1-2");
+// 					ajaxChangeHtml("1-2");
+					location.reload();
 				}else{
 					alert("网络失败,请重试!");
 				}
@@ -1052,7 +1128,8 @@
 			success: function(data){
 				if(data.code == 1){
 					$("#nav_btn").toggleClass("loading loading-light");
-					ajaxChangeHtml("2-1");
+// 					ajaxChangeHtml("2-1");
+					location.reload();
 				}else{
 					alert("网络失败,请重试!");
 				}
@@ -1098,7 +1175,8 @@
 			success: function(data){
 				if(data.code == 1){
 					$("#nav_btn").toggleClass("loading loading-light");
-					ajaxChangeHtml("2-3");
+// 					ajaxChangeHtml("2-3");
+					location.reload();
 				}else{
 					alert("网络失败,请重试!");
 				}
@@ -1204,7 +1282,7 @@
 				if(data.code == 1){
 					body.find("#pnlZd").toggleClass("loading loading-light");
 					
-					location.href="/toDocList";
+					location.href="/toDocList?ds=" + state;
 				}else{
 					alert("网络失败,请重试!");
 				}
@@ -1247,9 +1325,10 @@
 					$("#nav_btn").toggleClass("loading loading-light");
 					
 					if(doc.transferUserId != null && doc.transferUserId != ""){
-						location.href="/toDocList";
+						location.href="/toDocList?ds=" + state;
 					}else{
-						ajaxChangeHtml("3-2");
+// 						ajaxChangeHtml("3-2");
+						location.reload();
 					}
 				}else{
 					alert("网络失败,请重试!");
@@ -1264,6 +1343,7 @@
 	//------------------------------------------------    接单结束           --------------------------------------------------------------//
 	
 	//------------------------------------------------    手术开始         --------------------------------------------------------------//
+	var tmpBody;
 	function btnDrQrInfo(){
 		layer.open({
 			type: 1,
@@ -1275,7 +1355,7 @@
 					//全局参数
 					var body = $("#" + elem.id);
 					var objForm = body.find("#realOderForm");
-					
+					tmpBody = body;
 					//按钮事件
 					body.on('click', '#btnClose', function() {
 						layer.closeAll();
@@ -1297,6 +1377,11 @@
 
 					body.on('click', '#btnLayClose', function() {
 						layer.closeAll();
+					});
+					
+					//上传
+					body.on('click', '#btnUpload', function() {
+						imgUpload(body);
 					});
 					
 					//init
@@ -1321,8 +1406,12 @@
 			lang: 'zh',
 			showNow: true,
 			nowText: "今天",
-	        startYear: currYear - 10, //开始年份
-	        endYear: currYear + 80 //结束年份
+	        startYear: currYear - 5, //开始年份
+	        endYear: currYear + 5, //结束年份
+	        onSelect: function (valueText, inst) {//选择时事件（点击确定后），valueText 为选择的时间，
+                var selectedDate = valueText;
+	        	changeDate(obj);
+            }
 		};
 		var optDateTime = $.extend(opt['datetime'], opt['default']);
 		//手术开始时间
@@ -1394,33 +1483,80 @@
 		obj.find("#doctorMemo").val(doc.qaMemo);
 		
         //照片
-//      if(doc.photo != null && doc.photo != ''){
-//      	var photols = doc.photo.split(",");
-//      	for(var i = 0; i < photols.length; i++){
-//      		if(photols[i] != ''){
-//          		var html = '<div id="photo_' + photoIdx + '" name="'+ photols[i] +'" class="file-iteme" style="width: 150px; height: 180px; float: left;margin-left:10px;"">';
-//          		if(doc.status == '0')
-//          			html += '<div style="float: right;" id="delPhotoBtn' + photoIdx + '" onclick="deletePhoto(' + photoIdx + ')"><i class="layui-icon layui-icon-delete"></i></div>';
-//         			html += '<img style="width: 150px;height: 180px;" src="/getPhotoByFileName?documentId=' + doc.documentId + '&FileName='+ photols[i] +'">';
-//         			html += '</div>';
-         			
-//         			obj.find('#photo_list').append(html);
-//          		photoCount++;
-//  				photoIdx++;
-//  				if(photoCount > 1){
-//  					obj.find("#uppic").css("display", "none");
-//  				}
-//      		}
-//      	}
-//      }
+        var photoIdx = 0;
+        var photoCount = 0;
+		if(doc.photo != null && doc.photo != ''){
+	     	var photols = doc.photo.split(",");
+	     	for(var i = 0; i < photols.length; i++){
+	     		if(photols[i] != ''){
+	         		var html = '<div id="photo_' + photoIdx + '" name="'+ photols[i] +'" class="file-iteme" style="width: 149px; height: 180px; float: left;"">';
+	         		if(doc.status == '0')
+	         			html += '<div style="float: left;position: absolute;" id="delPhotoBtn' + photoIdx + '" onclick="deletePhoto(' + photoIdx + ')"><i class="icon-2x icon-times"></i></div>';
+        			html += '<img style="width: 150px;height: 180px;" src="/getPhotoByFileName?id=' + doc.documentId + '&FileName='+ photols[i] +'">';
+        			html += '</div>';
+	         			
+        			obj.find('#photo_list').append(html);
+	         		photoCount++;
+	 				photoIdx++;
+	 				if(photoCount > 1){
+	 					obj.find("#btnUpload").css("display", "none");
+	 				}
+	     		}
+	     	}
+	     	
+	     	$("#photoCount").val(photoCount);
+		}
+	}
+	
+	function changeDate(obj){
+		var doc_sskssj_val = obj.find("#sskssj").val();
+     	var doc_ssjssj_val = obj.find("#ssjssj").val();
+     
+//      	alert(doc_sskssj_val + "   " + doc_ssjssj_val);
+     
+		if(doc_sskssj_val != '' && doc_ssjssj_val != ''){
+			if(doc_ssjssj_val <= doc_sskssj_val){
+				alert("手术【结束时间】应在【开始时间】之后");
+// 				obj.find("#ssjssj").value("");
+				return;
+			}else{
+				var sskssj = new Date(doc_sskssj_val);
+ 			var ssjssj = new Date(doc_ssjssj_val);
+ 			
+ 			var minu = Math.round(Math.abs(ssjssj.getTime() - sskssj.getTime())/1000/60);
+ 			obj.find("#sssc").val(minu);
+			}
+		}
 	}
 	
 	//flag: true 完成订单	false 保存草稿
 	function commitDoc(objForm, flag, index){
 		var data = objForm.serializeJSON();
 // 		console.info(data);
+
+		//数据监测
+		if(data.height == ""){
+			alert("身高不能为空！");
+			return;
+		}
+		if(data.weight == ""){
+			alert("体重不能为空！");
+			return;
+		}
+		if(data.sskssj == ""){
+			alert("手术开始时间不能为空！");
+			return;
+		}
+		if(data.ssjssj == ""){
+			alert("手术结束时间不能为空！");
+			return;
+		}
+		
 		//麻醉方法
 		data["anestheticId"] = objForm.find("#anestheticId").val();
+		
+		//时长
+		data["sssc"] = objForm.find("#sssc").val();
 		
 		//呼吸系统
 		var ywsjHxxt = "";
@@ -1472,7 +1608,6 @@
 		}else{
 			data["shblOt"] = '0';
 		}
-		var dataJson = "{'type':'s', 'id':'" + doc.documentId + "', 'ds':'1', 'ods':'0'}";
 		
 		data["id"] = doc.documentId;
 		
@@ -1486,9 +1621,11 @@
 			data["ods"] = "3";
 		}
 		
+// 		data["photo"] = "1,2,3";
 // 		console.info(data);
 		
 		var dataJson = JSON.stringify(data);
+// 		console.info(dataJson);
 		
 		$("#nav_btn").toggleClass("loading loading-light");
 		
@@ -1502,7 +1639,7 @@
 					$("#nav_btn").toggleClass("loading loading-light");
 					
 					if(flag){
-						location.href="/toDocList";
+						location.href="/toDocList?ds=" + state;
 					}
 					else{
 						layer.close(index);
@@ -1510,6 +1647,7 @@
 						    content: '草稿保存成功！'
 						    ,btn: '我知道了'
 						});
+						location.reload();
 					}
 						
 				}else{
@@ -1570,9 +1708,72 @@
 		
 	});
 	
-	
-	
-	
+	//删除照片
+    function deletePhoto(id){
+		console.info(tmpBody);
+    	var fileName = tmpBody.find("#photo_" + id).attr("name");
+    	layer.open({
+		    content: "确认删除图片：" + fileName,
+		   	btn: ['确认','取消'],
+		    yes: function(index){
+		    	console.info("开始删除");
+		    	layer.close(index);
+		    	photoCount = $("#photoCount").val();
+		//     	console.info(fileName);
+		    	$.ajax({
+				    type: 'post',
+				    url: '/deletePhotoByFileName',
+				    data: 'id=' + doc.documentId + '&FileName='+ fileName,
+				    success: function(data) {
+				    	tmpBody.find("#photo_" + id).remove();
+			        	
+			        	var photo_tmp = "";
+			        	var photo = tmpBody.find("#doc_photo").val();
+			        	var photols = photo.split(",");
+			        	var count = 0;
+			        	for(var i = 0; i< photols.length; i++){
+			        		console.info(photols.length + "         " + photols[i] + " : " + fileName)
+			        		if(photols[i] != fileName){
+			        			if(photo_tmp != ''){
+			        				photo_tmp = photo_tmp + "," + photols[i];
+			        				count++;
+			        			}else
+			    					photo_tmp = photols[i];
+			        		}
+			        	}
+			        	$("#photoCount").val(count);
+			        	console.info("photoCount:" + count);
+			        	console.info("doc_photo:" + photo_tmp);
+			        	tmpBody.find("#doc_photo").val(photo_tmp);
+			        	doc.photo = photo_tmp;
+						
+						var dataJson = "{'type':'t', 'id':'" + doc.documentId + "', 'ds':'3', 'ods':'3', 'photo' : '" + photo_tmp + "'}";
+						
+						$.ajax({
+							type: "POST",
+					 		url: "/updateDocInfo",
+					  		data: "jsondata=" + dataJson,
+							dataType: "json",
+							success: function(data2){
+								if(data2.code == 1){
+									
+								}else{
+									alert("网络失败,请重试!");
+								}
+					       	},
+					     	error: function () {
+					     		alert("网络异常,请重试!");
+						 	}
+						});
+		           
+						if(count < 2){
+							tmpBody.find("#btnUpload").css("display", "");
+						}
+				    }
+				});
+		    }
+		});
+    }
 	//------------------------------------------------    手术结束         ---------------------------------------------------------------//
 	
 	//------------------------------------------------    订单完成开始         ------------------------------------------------------------//
@@ -1594,7 +1795,7 @@
 						if(data.code == 1){
 							$(this).toggleClass("loading loading-light");
 							
-							location.href="/toDocList";
+							location.href="/toDocList?ds=" + state;
 						}else{
 							alert("网络失败,请重试!");
 						}
@@ -1752,6 +1953,10 @@
 				//全局参数
 				var body = $("#" + elem.id);
 				teambody = body;
+				
+				body.on('click', '#btnLayClose', function() {
+					layer.closeAll();
+				});
 			}
 		});
 	}
@@ -1879,7 +2084,7 @@
 					
 					if(data.user != null){
 						var html = appendUserInfo(body, data.user, type);
-						console.info(type);
+// 						console.info(type);
 						if(type == '5'){
 		            		body.find("#fm_main").append(html);
 		            		body.find("#fm_main").css("display", "");
@@ -1888,6 +2093,14 @@
 							body.find("#hs_main").append(html);
 	               			body.find("#hs_main").css("display", "");
 						}
+						
+						var icount = body.find("#TeamCount").val();
+						if(icount > 0){
+							$("#divTeam").html("<span style='font-size: .7rem;'><a style='cursor: pointer;color: blue;' onclick='openTeamView()'>团队信息</a></span>");
+						}else{
+							$("#divTeam").html("<span style='font-size: .7rem;'><a style='cursor: pointer;color: blue;padding-left: 10px;' onclick='createTeam()'>创建</a></span>");
+						}
+						
 					}else{
 						alert("新增出错");
 					}
@@ -1956,6 +2169,9 @@
 	}
 	
 	function appendUserInfo(body, user, type){
+		var icount = body.find("#TeamCount").val();
+		icount++
+		body.find("#TeamCount").val(icount);
     	var html = "<div class='list section rounded-lg'  style='margin: 10 auto;'>" +
     			   "<div class='row' id='UserInfo_" + user.userId + "' style='padding: 10px 10px 0 10px;'>" +
     			   "<table style='width:300px'>" + 
@@ -2013,6 +2229,16 @@
 		            	}else{
 		            		teambody.find("#UserInfo_" + uid).remove();
 		            	}
+						
+						var icount = teambody.find("#TeamCount").val();
+						icount--;
+						teambody.find("#TeamCount").val(icount);
+						if(icount > 0){
+							$("#divTeam").html("<span style='font-size: .7rem;'><a style='cursor: pointer;color: blue;' onclick='openTeamView()'>团队信息</a></span>");
+						}else{
+							$("#divTeam").html("<span style='font-size: .7rem;'><a style='cursor: pointer;color: blue;padding-left: 10px;' onclick='createTeam()'>创建</a></span>");
+						}
+						
 						layer.close(index);
 			       	},
 			     	error: function () {
@@ -2076,12 +2302,21 @@
 // 				});
 				body.on('click', '#btnQxSave', function() {
 					var reason = body.find("#reason").val();
-					
-					if(reason == ''){
+					var qxRadio = body.find("input[name='qxRadio']:checked").val();
+// 					if(reason == null || typeof(reason)=="undefined" || reason == ''){
+// 						layer.open({
+// 							content: '取消订单，取消原因不能为空！'
+// 						    ,btn: '关闭'
+// 						});
+// 						return false;
+// 					}
+// 					alert(qxRadio);
+					if(qxRadio == null || typeof(qxRadio)=="undefined" || qxRadio == ''){
 						layer.open({
 							content: '取消订单，取消原因不能为空！'
 						    ,btn: '关闭'
 						});
+						return false;
 					}
 					
 					layer.open({
@@ -2090,7 +2325,7 @@
 					    yes: function(index){
 							$(this).toggleClass("loading loading-light");
 							
-							var dataJson = "{'type':'s', 'id':'" + doc.documentId + "', 'ds':'9', 'ods':'" + doc.documentState + "','reason':'" + reason + "'}";
+							var dataJson = "{'type':'s', 'id':'" + doc.documentId + "', 'ds':'9', 'ods':'" + doc.documentState + "','reason':'" + reason + "','qxRadio':'" + qxRadio + "'}";
 					    	
 							$.ajax({
 								type: "POST",

@@ -407,4 +407,29 @@
       FROM `WSC_USER`
       WHERE role_id = #{roleId,jdbcType=INTEGER} GROUP BY `work`;
   </select>
+  
+  <select id="getDocumentLocalAdminUser" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  	select 
+	<include refid="Base_Column_List" />
+	from WSC_USER wu 
+	where wu.role_id = '4' and (wu.province, wu.city) in 
+	(
+		select wo.province, wo.city
+		from WSC_DOCUMENT wd 
+		left join WSC_ORGANIZATION wo on wd.org_id = wo.org_id
+		where wd.document_id = #{documentId, jdbcType=VARCHAR}
+	)
+  </select>
+  
+  <select id="getDocumentQaUser" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  	select 
+  	<include refid="Base_Column_List" />
+	from WSC_USER wu 
+	where wu.user_id in 
+	(
+		select wd.qa_user_id
+		from WSC_DOCUMENT wd
+		where wd.document_id = #{documentId, jdbcType=VARCHAR}
+	)
+  </select>
 </mapper>

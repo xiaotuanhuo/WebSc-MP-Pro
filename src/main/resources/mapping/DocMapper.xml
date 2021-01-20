@@ -91,6 +91,8 @@
     	<result column="photo_4" jdbcType="VARCHAR" property="photo_4"/>
     	<result column="photo_5" jdbcType="VARCHAR" property="photo_5"/>
     	<result column="status" jdbcType="VARCHAR" property="status"/>
+    	
+    	<result column="qxRadio" jdbcType="VARCHAR" property="qxRadio"/>
     </resultMap>
     
     <resultMap id="BaseResultMap_Fp" type="com.sc.mp.model.WebScUser_Distribution">
@@ -385,6 +387,9 @@
             <if test="deleteReason != null">
                 delete_reason = #{deleteReason,jdbcType=VARCHAR},
             </if>
+            <if test="qxRadio != null">
+                qx_radio = #{qxRadio,jdbcType=VARCHAR},
+            </if>
 		</set>
         where document_id = #{documentId,jdbcType=VARCHAR}
     </update>
@@ -564,38 +569,102 @@
 							   #{status,jdbcType=VARCHAR}
 							   ) 
 		on duplicate key UPDATE 
-            	anesthetic_id = #{anestheticId,jdbcType=VARCHAR},
-            	height = #{height,jdbcType=NUMERIC},
-            	weight = #{weight,jdbcType=NUMERIC},
-            	asa = #{asa,jdbcType=VARCHAR},
-            	xtbs = #{xtbs,jdbcType=VARCHAR},
-            	shs = #{shs,jdbcType=VARCHAR},
-            	shcs = #{shcs,jdbcType=NUMERIC},
-            	sskssj = #{sskssj,jdbcType=VARCHAR},
-            	ssjssj = #{ssjssj,jdbcType=VARCHAR},
-            	sssc = #{sssc,jdbcType=NUMERIC},
-            	jmjs = #{jmjs,jdbcType=VARCHAR},
-            	ywsj_hxxt = #{ywsjHxxt,jdbcType=VARCHAR},
-            	ywsj_hxxt_qt = #{ywsjHxxtQt,jdbcType=VARCHAR},
-            	ywsj_xhxt = #{ywsjXhxt,jdbcType=VARCHAR},
-            	ywsj_xhxt_qt = #{ywsjHxxtQt,jdbcType=VARCHAR},
-            	ywsj_xhxt = #{ywsjXhxt,jdbcType=VARCHAR},
-            	ywsj_xhxt_qt = #{ywsjXhxtQt,jdbcType=VARCHAR},
-            	ywsj_gm = #{ywsjGm,jdbcType=VARCHAR},
-            	ywsj_gm_socre = #{ywsjGmAocre,jdbcType=VARCHAR},
-            	ywsj_qt = #{ywsjQt,jdbcType=VARCHAR},
-            	shbl_zw = #{shblZw,jdbcType=VARCHAR},
-            	shbl_hbtt = #{shblHbtt,jdbcType=VARCHAR},
-            	shbl_ex = #{shblEx,jdbcType=VARCHAR},
-            	shbl_xy = #{shblXy,jdbcType=VARCHAR},
-            	shbl_ot = #{shblOt,jdbcType=VARCHAR},
-            	shbl_ot_score = #{shblOtScore,jdbcType=NUMERIC},
-            	shttzl = #{shttzl,jdbcType=VARCHAR},
-            	photo_1 = #{photo_1,jdbcType=VARCHAR},
-            	photo_2 = #{photo_2,jdbcType=VARCHAR},
-            	photo_3 = #{photo_3,jdbcType=VARCHAR},
-            	photo_4 = #{photo_4,jdbcType=VARCHAR},
-            	photo_5 = #{photo_5,jdbcType=VARCHAR},
+				<if test="anestheticId != null and anestheticId != ''" >
+            		anesthetic_id = #{anestheticId,jdbcType=VARCHAR},
+            	</if>
+            	<if test="height != null" >
+            		height = #{height,jdbcType=NUMERIC},
+            	</if>
+            	<if test="weight != null" >
+            		weight = #{weight,jdbcType=NUMERIC},
+            	</if>
+            	<if test="asa != null and asa != ''" >
+            		asa = #{asa,jdbcType=VARCHAR},
+            	</if>
+            	<if test="xtbs != null and xtbs != ''" >
+            		xtbs = #{xtbs,jdbcType=VARCHAR},
+            	</if>
+            	<if test="shs != null and shs != ''" >
+            		shs = #{shs,jdbcType=VARCHAR},
+            	</if>
+            	<if test="shcs != null ">
+            		shcs = #{shcs,jdbcType=NUMERIC},
+            	</if>
+            	<if test="sskssj != null and sskssj != ''" >
+            		sskssj = #{sskssj,jdbcType=VARCHAR},
+            	</if>
+            	<if test="ssjssj != null and ssjssj != ''" >
+            		ssjssj = #{ssjssj,jdbcType=VARCHAR},
+            	</if>
+            	<if test="sssc != null" >
+            		sssc = #{sssc,jdbcType=NUMERIC},
+            	</if>
+            	<if test="jmjs != null and jmjs != ''" >
+            		jmjs = #{jmjs,jdbcType=VARCHAR},
+            	</if>
+            	<if test="ywsjHxxt != null and ywsjHxxt != ''" >
+            		ywsj_hxxt = #{ywsjHxxt,jdbcType=VARCHAR},
+            	</if>
+            	<if test="ywsjHxxtQt != null and ywsjHxxtQt != ''" >
+            		ywsj_hxxt_qt = #{ywsjHxxtQt,jdbcType=VARCHAR},
+            	</if>
+            	<if test="ywsjXhxt != null and ywsjXhxt != ''" >
+            		ywsj_xhxt = #{ywsjXhxt,jdbcType=VARCHAR},
+            	</if>
+            	<if test="ywsjHxxtQt != null and ywsjHxxtQt != ''" >
+            		ywsj_xhxt_qt = #{ywsjHxxtQt,jdbcType=VARCHAR},
+            	</if>
+            	<if test="ywsjXhxt != null and ywsjXhxt != ''" >
+            		ywsj_xhxt = #{ywsjXhxt,jdbcType=VARCHAR},
+            	</if>
+            	<if test="ywsjXhxtQt != null and ywsjXhxtQt != ''" >
+            		ywsj_xhxt_qt = #{ywsjXhxtQt,jdbcType=VARCHAR},
+            	</if>
+            	<if test="ywsjGm != null and ywsjGm != ''" >
+            		ywsj_gm = #{ywsjGm,jdbcType=VARCHAR},
+            	</if>
+            	<if test="ywsjGmAocre != null and ywsjGmAocre != ''" >
+            		ywsj_gm_socre = #{ywsjGmAocre,jdbcType=VARCHAR},
+            	</if>
+            	<if test="ywsjQt != null and ywsjQt != ''" >
+            		ywsj_qt = #{ywsjQt,jdbcType=VARCHAR},
+            	</if>
+            	<if test="shblZw != null and shblZw != ''" >
+            		shbl_zw = #{shblZw,jdbcType=VARCHAR},
+            	</if>
+            	<if test="shblHbtt != null and shblHbtt != ''" >
+            		shbl_hbtt = #{shblHbtt,jdbcType=VARCHAR},
+            	</if>
+            	<if test="shblEx != null and shblEx != ''" >
+            		shbl_ex = #{shblEx,jdbcType=VARCHAR},
+            	</if>
+            	<if test="shblXy != null and shblXy != ''" >
+            		shbl_xy = #{shblXy,jdbcType=VARCHAR},
+            	</if>
+            	<if test="shblOt != null and shblOt != ''" >
+            		shbl_ot = #{shblOt,jdbcType=VARCHAR},
+            	</if>
+            	<if test="shblOtScore != null " >
+            		shbl_ot_score = #{shblOtScore,jdbcType=NUMERIC},
+            	</if>
+            	<if test="shttzl != null and shttzl != ''" >
+            		shttzl = #{shttzl,jdbcType=VARCHAR},
+            	</if>
+            	<if test="photo_1 != null" >
+            		photo_1 = #{photo_1,jdbcType=VARCHAR},
+            	</if>
+            	<if test="photo_2 != null" >
+            		photo_2 = #{photo_2,jdbcType=VARCHAR},
+            	</if>
+            	<if test="photo_3 != null" >
+            		photo_3 = #{photo_3,jdbcType=VARCHAR},
+            	</if>
+            	<if test="photo_4 != null" >
+            		photo_4 = #{photo_4,jdbcType=VARCHAR},
+            	</if>
+            	<if test="photo_5 != null" >
+            		photo_5 = #{photo_5,jdbcType=VARCHAR},
+            	</if>
             	status = #{status,jdbcType=VARCHAR}
     </update>
     

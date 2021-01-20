@@ -109,6 +109,8 @@ public class WebScDoc implements Serializable {
 	private String status;
 	
 	private String photo;
+	
+	private String qxRadio;
 
 	public String getDocumentId() {
 		return documentId;
@@ -871,4 +873,11 @@ public class WebScDoc implements Serializable {
 				+ "]";
 	}
 	
+	public String getQxRadio() {
+		return qxRadio;
+	}
+
+	public void setQxRadio(String qxRadio) {
+		this.qxRadio = qxRadio;
+	}
 }

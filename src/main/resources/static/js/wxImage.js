@@ -4,6 +4,7 @@
 //图片上传成功标志
 var uploadSuccesFlag = "FAIL";
 var thisimg;
+
 function previewImg(){
 	
     wx.ready(function(){
@@ -14,11 +15,19 @@ function previewImg(){
     });
 }
 
-function imgUpload(){
+function imgUpload(body){
 	var ua = navigator.userAgent.toLowerCase();  
 	var ios = false;
 	if (ua.match(/iphone/i) == "micromessenger") {  
 	   var ios = true;  
+	}
+	
+	var photoCount = $("#photoCount").val();
+	var photoIdx = 0;
+	
+	if(photoCount > 1){
+		alert('只能上传2张照片！')
+		return;
 	}
 	
 	wx.chooseImage({
@@ -32,53 +41,207 @@ function imgUpload(){
                 res.localIds = res.localIds.replace("wxlocalresource", "wxLocalResource");
             }
             
-            var localIdImg = localIds[0];
+//            var localIdImg = localIds[0];
+//            if(ios || window.wxjs_is_wkwebview){
+//            	wx.getLocalImgData({
+//            		localId: localIdImg, // 图片的localID
+//            		success: function (res) {
+//            			localIdImg = res.localData; // localData是图片的base64数据，可以用img标签显示
+//            		}
+//            	});
+//            }
+//            alert(ios);
+//            alert(window.wxjs_is_wkwebview);
             if(ios || window.wxjs_is_wkwebview){
-            	wx.getLocalImgData({
-            		localId: localIdImg, // 图片的localID
-            		success: function (res) {
-            		localIdImg = res.localData; // localData是图片的base64数据，可以用img标签显示
-            		}
+	            wx.getLocalImgData({
+	                localId: localIds[0],
+	                success: function (res) {
+	                    const localData = res.localData;
+	                    let imageBase64 = '';
+	                    if (localData.indexOf('data:image') == 0) {
+	                        //苹果的直接赋值，默认生成'data:image/jpeg;base64,'的头部拼接
+	                        imageBase64 = localData;
+	                    } else {
+	                        //此处是安卓中的唯一得坑！在拼接前需要对localData进行换行符的全局替换
+	                        //此时一个正常的base64图片路径就完美生成赋值到img的src中了
+	                        imageBase64 = 'data:image/jpeg;base64,' + localData.replace(/\n/g, '');
+	                    }
+	                    
+	                    $.ajax({
+	                        url: "/uploadImg",
+	                        type:"post",
+	                        data:{'myPhoto':imageBase64, 'id': doc.documentId},
+	                        dataType:"json",
+	                        success:function(data){
+	                            if(data.code > 0){
+	                                console.log("上传成功");
+	                                
+	                                var html = '<div id="photo_' + photoIdx + '" name="'+ data.fileName +'" class="file-iteme" style="width: 149px; height: 180px; float: left;"">';
+	            	         		if(doc.status == '0')
+	            	         			html += '<div style="float: left;position: absolute;" id="delPhotoBtn' + photoIdx + '" onclick="deletePhoto(' + photoIdx + ')"><i class="icon-2x icon-times"></i></div>';
+	            	        		html += '<img style="width: 150px;height: 180px;" src="/getPhotoByFileName?id=' + doc.documentId + '&FileName='+ data.fileName +'">';
+	            	        		html += '</div>';
+	
+	                                body.find('#photo_list').append(html);
+	                                
+	                                photoCount++;
+	                				photoIdx++;
+	                				$("#photoCount").val(photoCount);
+	                				
+	                				if(photoCount > 1){
+	                					body.find("#btnUpload").css("display", "none");
+	                				}
+	                				
+	                				var photo = body.find("#doc_photo").val();
+	                				if(photo != '')
+	                					photo = photo + "," + data.fileName;
+	                				else
+	                					photo = data.fileName;
+	                				doc.photo = photo;
+	                				body.find("#doc_photo").val(photo); 
+	                				
+	                				//更新状态
+	                                var dataJson = "{'type':'t', 'id':'" + doc.documentId + "', 'ds':'3', 'ods':'3', 'photo' : '" + photo + "'}";
+	//                                console.info("photo:" + photo);
+	                				$.ajax({
+	                					type: "POST",
+	                			 		url: "/updateDocInfo",
+	                			  		data: "jsondata=" + dataJson,
+	                					dataType: "json",
+	                					success: function(data2){
+	                						if(data2.code == 1){
+	                							
+	                						}else{
+	                							alert("网络失败,请重试!");
+	                						}
+	                			       	},
+	                			     	error: function () {
+	                			     		alert("网络异常,请重试!");
+	                				 	}
+	                				});
+	                            }else{
+	                                console.log("上传失败");
+	                            }
+	                        },
+	                        error:function(){
+	                            console.log("上传失败");
+	                        }
+	                    });
+	                },
+	                fail: function (res) {
+	                	alert('获取本地图片失败，请重试！')
+	                }
+	            });
+            }else{
+//            	alert("安卓2");
+            	
+            	wx.uploadImage({
+            	    localId: localIds[0],
+            	    isShowProgressTips: 1,
+            	    success: function (res) {
+            	        var serverId = res.serverId; // 返回图片的服务器端ID
+            	        
+            	        //获取微信服务器图片并保存到自己的文件服务器
+            	        $.ajax({
+        					type: "POST",
+        			 		url: "/updateDocImage",
+        			  		data: "id=" + doc.documentId + "&serverId=" + serverId,
+        					dataType: "json",
+        					success: function(data){
+        						if(data.code == 1){
+//        							alert(data.fileName);
+        							
+        							var html = '<div id="photo_' + photoIdx + '" name="'+ data.fileName +'" class="file-iteme" style="width: 149px; height: 180px; float: left;"">';
+	            	         		if(doc.status == '0')
+	            	         			html += '<div style="float: left;position: absolute;" id="delPhotoBtn' + photoIdx + '" onclick="deletePhoto(' + photoIdx + ')"><i class="icon-2x icon-times"></i></div>';
+	            	        		html += '<img style="width: 150px;height: 180px;" src="/getPhotoByFileName?id=' + doc.documentId + '&FileName='+ data.fileName +'">';
+	            	        		html += '</div>';
+	
+	                                body.find('#photo_list').append(html);
+	                                
+	                                photoCount++;
+	                				photoIdx++;
+	                				$("#photoCount").val(photoCount);
+	                				
+	                				if(photoCount > 1){
+	                					body.find("#btnUpload").css("display", "none");
+	                				}
+	                				
+	                				var photo = body.find("#doc_photo").val();
+	                				if(photo != '')
+	                					photo = photo + "," + data.fileName;
+	                				else
+	                					photo = data.fileName;
+	                				doc.photo = photo;
+	                				body.find("#doc_photo").val(photo); 
+	                				
+	                				//更新状态
+	                                var dataJson = "{'type':'t', 'id':'" + doc.documentId + "', 'ds':'3', 'ods':'3', 'photo' : '" + photo + "'}";
+	                				$.ajax({
+	                					type: "POST",
+	                			 		url: "/updateDocInfo",
+	                			  		data: "jsondata=" + dataJson,
+	                					dataType: "json",
+	                					success: function(data2){
+	                						if(data2.code == 1){
+	                							
+	                						}else{
+	                							alert("网络失败,请重试!");
+	                						}
+	                			       	},
+	                			     	error: function () {
+	                			     		alert("网络异常,请重试!");
+	                				 	}
+	                				});
+        						}else{
+        							alert("网络失败,请重试!");
+        						}
+        			       	},
+        			     	error: function () {
+        			     		alert("网络异常,请重试!");
+        				 	}
+        				});
+            	        
+////            	        alert("serverId:" + serverId);
+//            	        
+//            	        wx.downloadImage({
+//            	            serverId: serverId, // 需要下载的图片的服务器端ID，由uploadImage接口获得
+//            	            isShowProgressTips: 1,
+//            	            success: function (res) {
+//            	                var localId = res.localId; // 返回图片下载后的本地ID
+//            	                alert(localId);
+//            	                if(localId.indexOf("wxlocalresource") != -1){
+//            	                	localId = localId.replace("wxlocalresource", "wxLocalResource");
+//            	                }
+//            	                alert(localId);
+//            	                wx.getLocalImgData({
+//            		                localId: localId,
+//            		                success: function (res) {
+//            		                    const localData = res.data;
+//            		                    alert(localData);
+//            		                    let imageBase64 = '';
+//            		                    if (localData.indexOf('data:image') == 0) {
+//            		                        //苹果的直接赋值，默认生成'data:image/jpeg;base64,'的头部拼接
+//            		                        imageBase64 = localData;
+//            		                    } else {
+//            		                        //此处是安卓中的唯一得坑！在拼接前需要对localData进行换行符的全局替换
+//            		                        //此时一个正常的base64图片路径就完美生成赋值到img的src中了
+//            		                        imageBase64 = 'data:image/jpeg;base64,' + localData.replace(/\n/g, '');
+//            		                    }
+//            		                    
+//            		                    alert(imageBase64);
+//            		                    
+//            		                    
+//            		                }
+//            		        	});  
+//            	            }
+//            	        });
+            	    },
+            	    fail: function (res) {
+	                	alert(res);
+	                }
             	});
             }
-            
-            wx.uploadImage({
-                localId: localIds.toString(), // 需要上传的图片的本地ID，由chooseImage接口获得
-                isShowProgressTips: 1, // 默认为1，显示进度提示
-                success: function (res) {
-                    var mediaId = res.serverId; // 返回图片的服务器端ID，即mediaId
-                    $(".layui-m-layercont #pic").attr("src",localIdImg);
-                    $(".layui-m-layercont #mediaId").val(mediaId);
-                    //var documentId = docment.documentId;
-					//var formData = JSON.stringify({'mediaId':mediaId,'documentId':documentId});
-                    //将获取到的 mediaId 传入后台 方法savePicture
-                    /*$.ajax({
-				        type: "POST",
-					    data: formData,
-					    dataType: "json",
-					    contentType: "application/json"  ,//必须加
-					    async:false,
-				        url: 'savePictureWoapp',
-				        success: function (data) {
-				        	console.log(data.file);
-				        	uploadSuccesFlag = "SUCCESS";
-				        },
-				        error: function (XMLHttpRequest, textStatus, errorThrown) {
-		                    // 状态码
-		                    console.log(XMLHttpRequest.status);
-		                    // 状态
-		                    console.log(XMLHttpRequest.readyState);
-		                    // 错误信息   
-		                    console.log(textStatus);
-		                    
-		                   // window.location.href="toXPDocExceptionError";
-		                }
-                    });*/ 
-                },
-                fail: function (res) {
-                    alertModal('上传图片失败，请重试')
-                }
-            }); 
         }
     });
 }

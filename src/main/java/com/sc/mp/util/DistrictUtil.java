@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sc.mp.bean.District;
-import com.sc.mp.model.vo.CDO;
 
 /**
  * 全国行政区划读取工具类

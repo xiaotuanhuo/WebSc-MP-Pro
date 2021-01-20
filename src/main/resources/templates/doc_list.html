@@ -112,7 +112,7 @@
 			<main id="mescroll" class="margin mt-0 mescroll">
 				<div class="dash-balance">
 					<div class="dash-content relative">
-						<h3 class="w-text">SuCheng</h3>
+						<img alt="" src="/img/logo.png" style="margin:0;">
 					</div>
 				</div>
 				
@@ -123,7 +123,10 @@
 								<div class="d-flex align-items-center">
 								    <div class="d-flex flex-grow">
 								        <div class="mr-auto">
-								            <p class="mb-0">我的订单</p>
+								            <p class="mb-0" style="font-size: 15px;">我的订单</p>
+								        </div>
+								        <div>
+								        	<button type="button" class="btn text-primary" style="height:auto;line-height:1rem;font-size: 15px;" onclick="btnMain()">首页</button>
 								        </div>
 								    </div>
 								</div>
@@ -323,6 +326,10 @@
 		$(".menu-logout").on("click", function() {
 			location.href = "logout";
 		});
+		
+		function btnMain(){
+			location.href = "/index";
+		}
 	</script>
 </body>
 

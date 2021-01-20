@@ -1,9 +1,17 @@
 package com.sc.mp.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -17,8 +25,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.sc.mp.model.WebScAnesthetic;
@@ -27,7 +37,9 @@ import com.sc.mp.model.WebScUser;
 import com.sc.mp.model.WebScUser_Distribution;
 import com.sc.mp.service.DocService;
 import com.sc.mp.service.QaTeamService;
+import com.sc.mp.service.SendRecordService;
 import com.sc.mp.service.UserService;
+import com.sc.mp.util.Base64DecodeMultipartFile;
 import com.sc.mp.util.ScConstant;
 import com.sc.mp.util.WxUtil;
 
@@ -48,10 +60,16 @@ public class DocController {
 	QaTeamService qaTeamService;
 	
 	@Resource
+	SendRecordService sendRecordService;
+	
+	@Resource
 	private WxUtil wxUtil;
 	
 	@Value("${projectDomainName}")
 	private String projectDomainName;
+	
+	@Value("${dirPath}")
+	private String dirPath;
 	
 	/**
 	* 	@Title: toDocList
@@ -140,7 +158,7 @@ public class DocController {
 					
 					if(sState.equals("0")){
 						//待处理
-						docQuery.setDocumentState("'2','3','4'");
+						docQuery.setDocumentState("'2','3'");
 					}else if(sState.equals("1")){
 						//已完成
 						docQuery.setDocumentState("'5'");
@@ -344,12 +362,14 @@ public class DocController {
 			String nonceStr = wxUtil.getNonceStr();
 			String timestamp = wxUtil.getTimestamp();
 			String appId = WxUtil.sCorpid;
-			String signature = wxUtil.getSignature("http://" + projectDomainName + "/toDocDetail?id=" + doc.getDocumentId(), nonceStr, timestamp, request.getSession());
-						
-			model.addAttribute("nonceStr", nonceStr);
-			model.addAttribute("timestamp",timestamp);
-			model.addAttribute("appId", appId);
-			model.addAttribute("signature",signature);
+			String signature = wxUtil.getSignature("http://" + projectDomainName + "/toDocDetail?id=" + doc.getDocumentId() + "&state=" + sState, nonceStr, timestamp, request.getSession());
+			
+			System.out.println("签名：" + signature);
+			
+			model.addAttribute("ns", nonceStr);
+			model.addAttribute("ts",timestamp);
+			model.addAttribute("aid", appId);
+			model.addAttribute("sg",signature);
 			
 			model.addAttribute("state",sState);
 			
@@ -411,31 +431,38 @@ public class DocController {
 					String qid = jo.get("qid").toString();
 					updateMap.put("qaUserId", qid);
 					log.info("区域管理员：" + user.getUserName() + "	分配订单：" + id + "	医生:" + qid + " 操作开始！");
+					sendRecordService.insertSendRecord(id, user, 3001, Integer.parseInt(qid));
 				}else if(ods.equals("2") && ds.equals("1")){
 					//取消分配		区域管理员操作
 					updateMap.put("qaUserId", "");
 					log.info("区域管理员：" + user.getUserName() + "	取消分配订单：" + id + " 操作开始！");
+					sendRecordService.insertSendRecord(id, user, 3002, 0);
 				}else if(ods.equals("2") && ds.equals("3")){
 					//确认接单		医生操作
 					log.info("医生：" + user.getUserName() + "	确认接取订单：" + id + " 操作开始！");
+					sendRecordService.insertSendRecord(id, user, 4001, 0);
 				}else if(ods.equals("3") && ds.equals("2")){
 					//撤销分配单	医生操作
 					log.info("医生：" + user.getUserName() + "	撤销分配订单：" + id + " 操作开始！");
+					sendRecordService.insertSendRecord(id, user, 4002, 0);
 				}else if(ods.equals("3") && ds.equals("3")){
 					//撤销转单		医生操作
 					String qid = jo.get("qid").toString();
 					updateMap.put("qaUserId", qid);
 					updateMap.put("transferUserId", "");
 					log.info("医生：" + user.getUserName() + "	撤销转单：" + id + " 操作开始！");
+					sendRecordService.insertSendRecord(id, user, 4003, 0);
 				}else if(ods.equals("4") && ds.equals("5")){
 					//完成订单		管理员操作
 					log.info("区域管理员：" + user.getUserName() + "	完成订单：" + id + " 操作开始！");
 				}else if(ds.equals("9")){
 					//取消订单		管理员操作
 					String reason = jo.get("reason").toString();
+					String qxRadio = jo.get("qxRadio").toString();
 					updateMap.put("memo", reason);
-					
+					updateMap.put("qxRadio", qxRadio);
 					log.info("区域管理员：" + user.getUserName() + "	取消订单：" + id + " 操作开始！");
+					sendRecordService.insertSendRecord(id, user, 9001, 0);
 				}else if(!ds.equals("6") && ods.equals("9")){
 					//拒绝取消订单		管理员操作
 					log.info("区域管理员：" + user.getUserName() + "	拒绝取消订单：" + id + " 操作开始！");
@@ -498,6 +525,8 @@ public class DocController {
 				
 				int iRet = docService.updateDocInfoByMap(updateMap);
 				
+				sendRecordService.insertSendRecord(id, user, 4004, Integer.parseInt(qid));
+				
 				if(iRet > 0){
 					returnMap.put("code", 1);
 					log.info("医生：" + user.getUserName() + "	转单：" + id + " 成功！");
@@ -515,17 +544,41 @@ public class DocController {
 				tmpUpdateMap.put("documentId", id);
 				
 				//医生备注
-				String doctorMemo = jo.get("doctorMemo").toString();
-				updateMap.put("qaMemo", doctorMemo);
+				if(jo.get("doctorMemo") != null){
+					String doctorMemo = jo.get("doctorMemo").toString();
+					updateMap.put("qaMemo", doctorMemo);
+				}
+				
+				tmpUpdateMap.put("photo_1", "");
+				tmpUpdateMap.put("photo_2", "");
+				tmpUpdateMap.put("photo_3", "");
+				if(jo.get("photo") != null){
+					String photo = jo.get("photo").toString();
+					System.out.println(photo);
+					if(photo != null && !photo.equals("")){
+						String[] photols = photo.split(",");
+						for(int i = 0; i< photols.length; i++){
+							System.out.println(photols[i]);
+							if(i == 0){
+								tmpUpdateMap.put("photo_1", photols[0]);
+							}else if(i == 1){
+								tmpUpdateMap.put("photo_2", photols[1]);
+							}else if(i == 2){
+								tmpUpdateMap.put("photo_3", photols[2]);
+							}
+						}
+					}
+				}
 				
 				if(ods.equals("3") && ds.equals("4")){
 					//完成订单
 					tmpUpdateMap.put("status", "1");
 					log.info("医生：" + user.getUserName() + "	完成订单：" + id + " 开始！");
+					sendRecordService.insertSendRecord(id, user, 4005, 0);
 				}else if(ods.equals("3") && ds.equals("3")){
 					//保存草稿
 					tmpUpdateMap.put("status", "0");
-					updateMap.put("oldDocumentState", "");
+					updateMap.put("oldDocumentState", "3");
 					
 					log.info("医生：" + user.getUserName() + "	保存草稿：" + id + " 开始！");
 				}else if(ods.equals("5") && ds.equals("4")){
@@ -859,4 +912,116 @@ public class DocController {
 		
 		return JSONObject.parseObject(returnMap.toJSONString());
     }
+	
+	@RequestMapping(value = "/uploadImg",method = RequestMethod.POST)
+	@ResponseBody
+    public JSONObject uploadImg(HttpServletRequest request, 
+								HttpServletResponse response,
+								@RequestParam("id") String documentId,
+								@RequestParam("myPhoto") String base64Data) {
+		JSONObject returnMap = new JSONObject();
+		
+		try{
+			log.info("======开始上传图片======");
+			
+			MultipartFile file = Base64DecodeMultipartFile.base64Convert(base64Data);
+			
+			if (Objects.nonNull(file)) {
+				String originalFilename = file.getOriginalFilename();
+	        	String filePath = "/" + documentId + "_" + originalFilename;
+				
+	        	File dir = new File(dirPath + filePath);
+	        	System.out.println("路径:" + dirPath + filePath);
+	        	if (dir.exists()) {
+	        		returnMap.put("code", 0);;
+	        		returnMap.put("msg", "同名文件已存在！");
+	        	}else{
+	    			file.transferTo(new File(new File(dirPath).getAbsoluteFile() + filePath));
+	    			
+	    			returnMap.put("fileName", originalFilename);
+	    			returnMap.put("code", 1);
+	        	}
+	        	log.info("======图片上传成功,路径======" + filePath);
+			}else {
+				returnMap.put("code", 0);
+	            log.error("图片上传失败");
+	        }
+		}catch(Exception e){
+			returnMap.put("code", 0);
+		}
+		
+		return JSONObject.parseObject(returnMap.toJSONString());
+    }
+	
+	@RequestMapping("/getPhotoByFileName")
+	public void getPhotoByFileName (@RequestParam(value = "id") String documentId, 
+									@RequestParam(value = "FileName") String FileName, 
+									final HttpServletResponse response) throws IOException{
+		try { 
+			File file = new File(dirPath + "/" + documentId + "_" + FileName);
+			if(file != null){
+				FileInputStream fis = new FileInputStream (file);
+	            ByteArrayOutputStream bos = new ByteArrayOutputStream(1000);  
+	            byte[] b = new byte[1000];  
+	            int n;  
+	            while ((n = fis.read(b)) != -1) {  
+	                bos.write(b, 0, n);  
+	            }  
+	            fis.close();  
+	            bos.close();
+	            
+	            byte[] data = bos.toByteArray();  
+	            
+	            response.setContentType("image/jpeg");  
+	    	    response.setCharacterEncoding("UTF-8");  
+	    	    OutputStream outputSream = response.getOutputStream();  
+	    	    InputStream in = new ByteArrayInputStream(data);  
+	    	    int len = 0;  
+	    	    byte[] buf = new byte[1024];  
+	    	    while ((len = in.read(buf, 0, 1024)) != -1) {  
+	    	        outputSream.write(buf, 0, len);  
+	    	    }  
+	    	    outputSream.close();
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@RequestMapping("/deletePhotoByFileName")
+	@ResponseBody
+	public void deletePhotoByFileName (@RequestParam(value = "id") String documentId, 
+									   @RequestParam(value = "FileName") String FileName){
+		try {
+			File file = new File(dirPath + "/" + documentId + "_" + FileName);
+			log.info("删除文件：" + dirPath + "/" + documentId + "_" + FileName);
+			file.delete();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	@RequestMapping("/updateDocImage")
+	@ResponseBody
+	public JSONObject updateDocImage (HttpServletRequest request, 
+	  							HttpServletResponse response,
+	  							@RequestParam(value = "id") String documentId,
+	  							@RequestParam(value = "serverId") String serverId){
+		JSONObject returnMap = new JSONObject();
+		try {
+			System.out.println("serverId:" + serverId);
+			
+			HttpSession session = request.getSession();
+			
+			String sFileName = wxUtil.downloadMedia(dirPath, documentId, serverId, session);
+			
+			returnMap.put("code", 1);
+			returnMap.put("fileName", sFileName);
+		}catch (Exception e) {
+			returnMap.put("code", 0);
+			e.printStackTrace();
+		}
+		
+		return returnMap;
+	}
 }

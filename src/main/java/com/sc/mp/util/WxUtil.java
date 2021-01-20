@@ -2,9 +2,12 @@ package com.sc.mp.util;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -194,7 +197,9 @@ public class WxUtil {
 	 */
 	public String sendTextMessage(TextMessage tm, HttpSession session) {
 		String sAccessToken = this.getAccessToken(false, session);
-		String textMessage = JSONObject.parseObject(tm.toString()).toString();
+		String textMessage = tm.toString();
+		System.out.println(textMessage);
+//		String textMessage = JSONObject.parseObject(tm.toString()).toString();
 //		url = url.replaceAll("ACCESS_TOKEN", sAccessToken);
 		String url = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + sAccessToken;
 		log.info("调用的URL：" + url + "    msg:" + textMessage);
@@ -208,14 +213,14 @@ public class WxUtil {
 	 * @author wangrui
 	 * @return
 	 */
-	public  String sendTextMessage(TextMessage tm, String sAccessToken) {
-		String textMessage = JSONObject.parseObject(tm.toString()).toString();
-//		System.out.println(textMessage);
-//		url = url.replaceAll("ACCESS_TOKEN", sAccessToken);
-		String url = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + sAccessToken;
-		log.info("调用的URL：" + url + "    msg:" + textMessage);
-		return sendPost(url, textMessage);
-	}
+//	public  String sendTextMessage(TextMessage tm, String sAccessToken) {
+//		String textMessage = JSONObject.parseObject(tm.toString()).toString();
+////		System.out.println(textMessage);
+////		url = url.replaceAll("ACCESS_TOKEN", sAccessToken);
+//		String url = "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + sAccessToken;
+//		log.info("调用的URL：" + url + "    msg:" + textMessage);
+//		return sendPost(url, textMessage);
+//	}
 	
 	/**
 	 * weixin 网页jsdk调用签名生成
@@ -286,7 +291,7 @@ public class WxUtil {
 	   * @param contentType 内容类型
 	   * @return
 	   */
-	  public  String getFileexpandedName(String contentType) {
+	  public String getFileexpandedName(String contentType) {
 	    String fileEndWitsh = "";
 	    if ("image/jpeg".equals(contentType))
 	      fileEndWitsh = ".jpg";
@@ -306,36 +311,53 @@ public class WxUtil {
 	   * @param mediaId 媒体文件id
 	   * @param savePath 文件在本地服务器上的存储路径
 	   * */
-	  public byte[] downloadMedia(String mediaId, HttpSession session) {
-	      String accessToken = this.getAccessToken(false, session);
-	    // 拼接请求地址
-	    String requestUrl = "https://qyapi.weixin.qq.com/cgi-bin/media/get?access_token=ACCESS_TOKEN&media_id=MEDIA_ID";
-	    requestUrl = requestUrl.replace("ACCESS_TOKEN", accessToken).replace("MEDIA_ID", mediaId);
-	    byte[] b = null;
-	    try {
-	      URL url = new URL(requestUrl);
-	      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	      conn.setDoInput(true);
-	      conn.setRequestMethod("GET");
-	      // 根据内容类型获取扩展名
-	      this.getFileexpandedName(conn.getHeaderField("Content-Type"));
-	      // 将mediaId作为文件名
-	      InputStream is = conn.getInputStream();
-	      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		  byte[] buffer = new byte[1024];
-		  int len = 0;
-		  while ((len = is.read(buffer)) != -1) {
-			baos.write(buffer, 0, len);
-		  }
-		  b = baos.toByteArray();
-		  is.close();
-		  baos.close();
-	      conn.disconnect();
-	    } catch (Exception e) {
-	      String error = String.format("下载媒体文件失败：%s", e);
-	      System.out.println(error);
-	    }
-	    return b;
+	  public String downloadMedia(String dirPath, String documentId, String mediaId, HttpSession session) {
+		  String sFileName = "";
+			String accessToken = this.getAccessToken(false, session);
+		    // 拼接请求地址
+		    String requestUrl = "https://qyapi.weixin.qq.com/cgi-bin/media/get?access_token=ACCESS_TOKEN&media_id=MEDIA_ID";
+		    requestUrl = requestUrl.replace("ACCESS_TOKEN", accessToken).replace("MEDIA_ID", mediaId);
+		    byte[] b = null;
+		    try {
+		      URL url = new URL(requestUrl);
+		      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		      conn.setDoInput(true);
+		      conn.setRequestMethod("GET");
+		      // 根据内容类型获取扩展名
+		      String hz = this.getFileexpandedName(conn.getHeaderField("Content-Type"));
+		      System.out.println("hz:" + hz);
+		      
+		      File file = new File(dirPath + "/" + documentId + "_" + mediaId + hz);
+		      if (!file.exists())
+		      {
+		    	  file.createNewFile();
+		      }
+		      OutputStream os = new FileOutputStream(file);
+	            
+		      // 将mediaId作为文件名
+		      InputStream is = conn.getInputStream();
+		      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			  byte[] buffer = new byte[1024];
+			  int len = 0;
+			  while ((len = is.read(buffer)) != -1) {
+				baos.write(buffer, 0, len);
+			  }
+			  b = baos.toByteArray();
+			  is.close();
+			  baos.close();
+		      conn.disconnect();
+		      
+		      os.write(b);
+		      os.close();
+		      
+		      sFileName = mediaId + hz;
+		      System.out.println(sFileName);
+		      
+		    } catch (Exception e) {
+		      String error = String.format("下载媒体文件失败：%s", e);
+		      System.out.println(error);
+		    }
+		    return sFileName;
 	  }
 	
 //	public  String getAccessToken(){

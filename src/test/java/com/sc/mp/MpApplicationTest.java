@@ -1,7 +1,6 @@
 package com.sc.mp;
 
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.sc.mp.mapper.DocMapper;
 import com.sc.mp.model.WebScDoc;
-import com.sc.mp.model.WebScUser;
-import com.sc.mp.util.CalendarUtil;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

@@ -75,6 +75,10 @@ public class UserService {
 		return userMapper.selectUserInfo(user);
 	}
 	
+	public WebScUser selectByPrimaryKey(Integer userId){
+		return userMapper.selectByPrimaryKey(userId);
+	}
+	
 	public WebScUser selectByLoginInfo(String name, String password) {
 		WebScUser user = userMapper.selectByLoginName(name);
 		if (user == null) {

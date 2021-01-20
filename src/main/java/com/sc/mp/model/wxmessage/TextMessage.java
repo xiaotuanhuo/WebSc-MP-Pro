@@ -1,5 +1,7 @@
 package com.sc.mp.model.wxmessage;
 
+import javafx.scene.text.Text;
+
 /**
  * example:
  * {
@@ -81,9 +83,20 @@ public class TextMessage {
 	}
 	@Override
 	public String toString() {
-		return "TextMessage [touser=" + touser + ", toparty=" + toparty
-				+ ", totag=" + totag + ", msgtype=" + msgtype + ", agentid="
-				+ agentid + ", textcard=" + textcard + "]";
+		return "{\"touser\":\"" + touser + "\", " + 
+				"\"toparty\":\"" + toparty + "\", " + 
+				"\"totag\":\"" + totag + "\", " + 
+				"\"msgtype\":\"" + msgtype + "\", " + 
+				"\"agentid\":" + agentid + ", " +
+				"\"textcard\":{" + 
+				"\"title\" : \"" + this.textcard.getTitle() + "\", " +
+				"\"description\" : \"" + this.textcard.getDescription() + "\", " +
+				"\"url\" : \"" + this.textcard.getUrl() + "\", " +
+				"\"btntxt\":\"" + this.textcard.getBtntxt() + "\" " + 
+	   			"}," +
+	   			"\"enable_id_trans\": 0, " +
+	   			"\"enable_duplicate_check\": 0, " +
+	   			"\"duplicate_check_interval\": 1800 }";
 	}
 	
 }
