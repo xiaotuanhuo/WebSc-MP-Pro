@@ -110,6 +110,14 @@ public class XcxController {
 				throw new Exception("请先选择需要进行的手术");
 			}
 			
+			Date operativeDate = DateUtils.parseDate(doc.getOperateStartTime());
+			if(UnixtimeUtil.getUnixHour(new Date().getTime())+24>=
+			UnixtimeUtil.getUnixHour(operativeDate.getTime())) {
+				doc.setDocumentType("1");
+			}else {
+				doc.setDocumentType("0");
+			}
+			
 			docMapper.insert(doc);
 			
 			//插入通知消息
@@ -466,4 +474,22 @@ public class XcxController {
 		return resultBean;
 	}
 
+	@OperationLog("获取订单统计信息")
+    @GetMapping(value = "/getOrderStatistics")
+    @ResponseBody
+	public ResultBean getOrderStatistics(@RequestParam("orgId") String orgId) {
+		ResultBean resultBean = null;
+		try {
+			Map<String, Object> sourceMap = new HashMap<String, Object>();
+			
+			
+			resultBean = ResultBean.success(sourceMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("获取订单统计信息失败，"+e.getMessage());
+			resultBean = ResultBean.error("获取订单统计信息失败，"+e.getMessage());
+		}
+		return resultBean;
+	}
+	
 }
