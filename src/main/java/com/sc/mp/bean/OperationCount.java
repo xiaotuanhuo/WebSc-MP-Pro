@@ -10,9 +10,9 @@ public class OperationCount {
 	private Integer count;
 	private String pieConst = "const";	// 饼状图常量
 	
-	// 按年统计手术量要素
-	private String year;
-	private String month;
+	// 近3年总量统计、机构、手术大类
+	private String name;	// 图例
+	private String date;	// 坐标轴X
 	
 	// 按市统计手术量要素
 	private String cityCode;
@@ -46,26 +46,26 @@ public class OperationCount {
 		this.pieConst = pieConst;
 	}
 	
-	public String getYear() {
-		return year;
+	public String getName() {
+		return name;
 	}
 	
-	public void setYear(String year) {
-		this.year = year;
+	public void setName(String name) {
+		this.name = name;
 	}
 	
-	public String getMonth() {
-		return month;
+	public String getDate() {
+		return date;
 	}
 	
-	public void setMonth(String month) {
-		this.month = month;
+	public void setDate(String date) {
+		this.date = date;
 	}
 	
 	public String getCityCode() {
 		return cityCode;
 	}
-
+	
 	public void setCityCode(String proviceCode) {
 		this.cityCode = proviceCode;
 	}
