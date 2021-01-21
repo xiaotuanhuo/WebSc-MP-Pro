@@ -93,6 +93,31 @@ public interface DocMapper {
 			@Param("beforeLastYear") Integer beforeLastYear);
 	
 	/**
+	 * 统计某医疗机构本周每天的手术量
+	 * @param orgId
+	 * @param orgName
+	 * @return
+	 */
+	List<OperationCount> statsByWeekForOrgan(@Param("orgId") String orgId, @Param("orgName") String orgName);
+	
+	/**
+	 * 统计某医疗机构当月每天的手术量
+	 * @param orgId
+	 * @param orgName
+	 * @return
+	 */
+	List<OperationCount> statsByMonthForOrgan(@Param("orgId") String orgId, @Param("orgName") String orgName);
+	
+	/**
+	 * 统计某医疗机构当年每天的手术量
+	 * @param orgId
+	 * @param orgName
+	 * @return
+	 */
+	List<OperationCount> statsByYearForOrgan(@Param("orgId") String orgId, @Param("orgName") String orgName);
+	
+	
+	/**
 	 * 按市统计手术量TopX
 	 * @param top	统计前几位
 	 * @return
