@@ -27,5 +27,10 @@ public class WebScOperative implements Serializable {
 	public void setUrgenttime(Integer urgenttime) {
 		this.urgenttime = urgenttime;
 	}
+	@Override
+	public String toString() {
+		return "WebScOperative [operativeId=" + operativeId + ", operativeName=" + operativeName + ", urgenttime="
+				+ urgenttime + "]";
+	}
 
 }

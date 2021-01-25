@@ -1043,7 +1043,9 @@
     
     <select id="statsByWeekForOrgan" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">
     	SELECT
-    	    #{orgName,jdbcType=VARCHAR} as name,
+    		<if test="orgName != null and orgName != ''">
+    		#{orgName,jdbcType=VARCHAR} as name,
+    		</if>
     	    dayList.leftWeek as date,
     	    ifnull(doc.num, 0) as count
     	FROM 
@@ -1070,7 +1072,9 @@
     
     <select id="statsByMonthForOrgan" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">
     	SELECT
-    	    #{orgName,jdbcType=VARCHAR} as name,
+    		<if test="orgName != null and orgName != ''">
+    		#{orgName,jdbcType=VARCHAR} as name,
+    		</if>
     	    MID(dayList.leftDay, 9, 2) as date,
     	    ifnull(doc.num, 0) as count
     	FROM 
@@ -1099,7 +1103,9 @@
     
     <select id="statsByYearForOrgan" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">
     	select 
-    	    #{orgName,jdbcType=VARCHAR} as name,
+    	    <if test="orgName != null and orgName != ''">
+    		#{orgName,jdbcType=VARCHAR} as name,
+    		</if>
     	    MID(monthList.leftMonth, 6, 2) as date,
     	    ifnull(doc.num, 0) as count
     	from 

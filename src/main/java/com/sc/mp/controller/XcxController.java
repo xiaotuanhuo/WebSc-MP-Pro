@@ -26,6 +26,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.sc.mp.annotation.OperationLog;
+import com.sc.mp.bean.KeyValue;
+import com.sc.mp.bean.OperationCount;
 import com.sc.mp.bean.PageResultBean;
 import com.sc.mp.bean.ResultBean;
 import com.sc.mp.bean.enums.DocStateEnum;
@@ -480,10 +482,57 @@ public class XcxController {
 	public ResultBean getOrderStatistics(@RequestParam("orgId") String orgId) {
 		ResultBean resultBean = null;
 		try {
-			Map<String, Object> sourceMap = new HashMap<String, Object>();
+			Map<String, Object> resMap = new HashMap<String, Object>();
+			Date curDate = new Date();
+			//日手术量
+			long currentDateStamp = UnixtimeUtil.getUnixDay(curDate.getTime());
+			List<KeyValue> todaySslKeyValues = docMapper.selectSslStatisticsByState(
+					orgId, 
+					UnixtimeUtil.getStringDay(currentDateStamp), 
+					UnixtimeUtil.getStringDay(currentDateStamp+1));
+			resMap.put("todaySsl", todaySslKeyValues);
 			
+			//月度手术量
+			List<KeyValue> ydSslKeyValues = docMapper.selectSslStatisticsByState(
+					orgId, 
+					DateUtils.dateTime(CalendarUtil.getFirstDayOfGivenMonth(curDate)), 
+					DateUtils.dateTime(CalendarUtil.getFirstDayOfNextMonth(curDate)));
+			resMap.put("ydSsl", ydSslKeyValues);
 			
-			resultBean = ResultBean.success(sourceMap);
+			//周手术量
+			List<OperationCount> wocs = docMapper.statsByWeekForOrgan(orgId, "");
+			List<List<Object>> weekSsl = new ArrayList<List<Object>>();
+			for (OperationCount oc : wocs) {
+				List<Object> ocInfo = new ArrayList<Object>();
+				ocInfo.add(oc.getDate());
+				ocInfo.add(oc.getCount());
+				weekSsl.add(ocInfo);
+			}
+			resMap.put("weekSsl", weekSsl);
+			
+			//月手术量
+			List<OperationCount> mocs = docMapper.statsByMonthForOrgan(orgId, "");
+			List<KeyValue> monthSsl = new ArrayList<KeyValue>();
+			for (OperationCount oc : mocs) {
+				KeyValue kv = new KeyValue();
+				kv.setName(oc.getDate());
+				kv.setValue(oc.getCount());
+				monthSsl.add(kv);
+			}
+			resMap.put("monthSsl", monthSsl);
+			
+			//年手术量
+			List<OperationCount> yocs = docMapper.statsByYearForOrgan(orgId, "");
+			List<KeyValue> yearSsl = new ArrayList<KeyValue>();
+			for (OperationCount oc : yocs) {
+				KeyValue kv = new KeyValue();
+				kv.setName(oc.getDate());
+				kv.setValue(oc.getCount());
+				yearSsl.add(kv);
+			}
+			resMap.put("yearSsl", yearSsl);
+			
+			resultBean = ResultBean.success(resMap);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("获取订单统计信息失败，"+e.getMessage());

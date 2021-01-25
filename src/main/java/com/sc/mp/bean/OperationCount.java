@@ -141,5 +141,13 @@ public class OperationCount {
 	public void setWorkDesc(String workDesc) {
 		this.workDesc = workDesc;
 	}
+
+	@Override
+	public String toString() {
+		return "OperationCount [count=" + count + ", pieConst=" + pieConst + ", name=" + name + ", date=" + date
+				+ ", cityCode=" + cityCode + ", cityName=" + cityName + ", orgId=" + orgId + ", orgName=" + orgName
+				+ ", province=" + province + ", city=" + city + ", area=" + area + ", wholeDistrict=" + wholeDistrict
+				+ ", work=" + work + ", workDesc=" + workDesc + "]";
+	}
 	
 }

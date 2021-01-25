@@ -13,6 +13,9 @@ public class CalendarUtil {
 		
 //		System.out.println(getYear(new Date()));
 		
+		System.out.println(getFirstDayOfGivenMonth(new Date()));
+		System.out.println(getFirstDayOfNextMonth(new Date(120,11,30)));
+		
 	}
 	
 	/**
@@ -52,6 +55,32 @@ public class CalendarUtil {
 		int month = calendar.get(Calendar.MONTH);
 		
 		return month + 1;
+	}
+	
+	/**
+	 * 获取指定日期当月的第一天
+	 * @param date
+	 * @return
+	 */
+	public static Date getFirstDayOfGivenMonth(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.DAY_OF_MONTH,1);
+		calendar.add(Calendar.MONTH, 0);
+		return calendar.getTime();
+	}
+	
+	/**
+	 * 获取指定日期下个月的第一天
+	 * @param date
+	 * @return
+	 */
+	public static Date getFirstDayOfNextMonth(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.DAY_OF_MONTH,1);
+		calendar.add(Calendar.MONTH, 1);
+		return calendar.getTime();
 	}
 
 }
