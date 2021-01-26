@@ -222,6 +222,10 @@
 	    		and operate_start_time <= #{endDate,jdbcType=VARCHAR}
 	    	]]>
 	    </if>
+	    <if test="flag == 'evaluateOrder'" >
+	    	and document_state = '5'
+	    	and hospital_evaluate = '-1'
+	    </if>
 	    order by operate_start_time desc
 	</select>
     
