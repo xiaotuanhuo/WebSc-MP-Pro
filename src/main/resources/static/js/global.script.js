@@ -148,25 +148,19 @@ $(document).on('click','[data-loader]', function(){
 
 
 /*expandable list scrips****/
-$(document).on('click', '.expandable-item .expandable-header', function(){
-	if ($(this).parent().hasClass('accordion'))
-	{
-		if ($(this).parent().hasClass('active'))
-		{
+$(document).on('click', '.expandable-item .expandable-header', function() {
+	if ($(this).parent().hasClass('accordion')) {
+		if ($(this).parent().hasClass('active')) {
 			$(this).parent().removeClass('active');
 			$(this).parent().find('.expandable-content').attr('style','');
-		}
-		else
-		{
+		} else {
 			var accordionGroup = $(this).parent().attr('data-group');
 			$('[data-group="'+accordionGroup+'"]').removeClass('active');
 			$('[data-group="'+accordionGroup+'"]').find('.expandable-content').attr('style','');
 			$(this).parent().find('.expandable-content').css({'max-height':$(this).parent().find('.expandable-content')[0].scrollHeight});
 			$(this).parent().addClass('active');
 		}
-	}
-	else
-	{
+	} else {
 		if ($(this).parent().hasClass('active'))
 			$(this).parent().find('.expandable-content').attr('style','');
 		else
@@ -208,13 +202,20 @@ $(document).on('click', '[data-popup]', function(){
 });
 
 $(document).on('click', '.popup-overlay', function(e){
-	if ($(e.target).hasClass('popup-overlay'))
-	{
+	if ($(e.target).hasClass('popup-overlay')) {
 		$(this).fadeOut('fast');
 	}
 });
 
+$(document).on('click', '[data-dismiss="true"]', function(){
+	$(this).parents('.popup-overlay-multiselect').fadeOut('fast');
+});
 
+$(document).on('click', '.popup-overlay-multiselect', function(e){
+	if ($(e.target).hasClass('popup-overlay-multiselect')) {
+		$(this).fadeOut('fast');
+	}
+});
 
 /*search popup actions ************/
 

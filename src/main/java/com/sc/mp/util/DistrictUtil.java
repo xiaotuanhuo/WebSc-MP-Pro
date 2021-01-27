@@ -38,30 +38,6 @@ public class DistrictUtil implements CommandLineRunner {
 			e.printStackTrace();
 		}
 	}
-	
-	/**
-     * 递归获取所有行政区划
-     * @param jsonArray
-     * @param parentId
-     * @return
-     */
-//    private Map<String, CDO> getDistrict(JSONArray jsonArray, String parentId) {
-//    	Map<String, CDO> cdoMap = new HashMap<String, CDO>();
-//    	
-//    	for (int i = 0; i < jsonArray.size(); i++) {
-//    		CDO cdo = new CDO();
-//    		String id = jsonArray.getJSONObject(i).getString("code");
-//    		cdo.setId(id);
-//    		cdo.setName(jsonArray.getJSONObject(i).getString("name"));
-//    		cdo.setParentId(parentId);
-//        	JSONArray recursiveArray = jsonArray.getJSONObject(i).getJSONArray("childs");
-//        	if (recursiveArray != null) {
-//				getDistrict(recursiveArray, id);
-//			}
-//        	cdoMap.put(id, cdo);
-//    	}
-//    	return cdoMap;
-//    }
     
     private static void getDistrict(JSONArray jsonArray, String parentCode) {
     	for (int i = 0; i < jsonArray.size(); i++) {

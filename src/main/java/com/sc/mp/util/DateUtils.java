@@ -4,10 +4,13 @@ package com.sc.mp.util;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.lang.management.ManagementFactory;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 时间工具类
@@ -181,5 +184,17 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 	
 	public static void main(String[] args) {
 		System.out.println(getTime(new Date()));
+	}
+	
+	/**
+	 * 获取最近某时间段的第一天
+	 * @param days 时间段（days > 0）
+	 * @return
+	 */
+	public static String getFirstDay(int days) {
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.DAY_OF_MONTH, -(days - 1));
+		return format.format(c.getTime());
 	}
 }

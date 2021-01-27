@@ -66,11 +66,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
 		if (user == null) {
 			log.info("user is null");
-			if (state != null) {
-				response.sendRedirect("/login?code=" + code + "&state=" + state);
-			} else {
-				response.sendRedirect("/login?code=" + code + "&state=no");
-			}
+			response.sendRedirect("/login?code=" + code + "&state=" + state);
 			return false;
 		}
 		

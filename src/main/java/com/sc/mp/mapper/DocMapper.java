@@ -159,6 +159,30 @@ public interface DocMapper {
 	int statsYear();
 	
 	/**
+	 * 医生当日手术量统计
+	 * @return
+	 */
+	int statsTodayForDc(@Param("userId") String userId);
+	
+	/**
+	 * 医生当月手术量统计
+	 * @return
+	 */
+	int statsMonthForDc(@Param("userId") String userId);
+	
+	/**
+	 * 医生当年手术量统计
+	 * @return
+	 */
+	int statsYearForDc(@Param("userId") String userId);
+	
+	/**
+	 * 医生总手术量统计
+	 * @return
+	 */
+	int statsSumForDc(@Param("userId") String userId);
+	
+	/**
 	 * 按年统计每月手术量
 	 * @param year				今年
 	 * @param lastYear			去年

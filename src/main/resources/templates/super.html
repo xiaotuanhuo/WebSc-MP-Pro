@@ -6,8 +6,6 @@
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
 	<title>超级管理员</title>
 	
-	<!-- Google font file. If you want you can change. -->
-	<link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,900" rel="stylesheet">
 	<!-- Fontawesome font file css -->
 	<!-- <link rel="stylesheet" href="https://www.jq22.com/jquery/font-awesome.4.7.0.css"> -->
 	<link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}">
@@ -141,11 +139,40 @@
 						</ul>
 					</div>
 				</section>
-				
+
 				<!-- charts start -->
 				<section class="section container">
 					<div class="chart-body">
 						<div class="align-items-center chart-content">
+							
+							<!-- 分类统计start -->
+							<div>
+								<div class="d-flex justify-content-between" style="margin-bottom: 5px;">
+									<div class="slide-menu threeRow" style="flex: 0 0 135px;">
+										<span id="sortbg"></span>
+										<ul id="sortList">
+											<li data-type="or" data-popup="organPopup">机构</li>
+											<li data-type="s" class="active">总量</li>
+											<li data-type="op" data-popup="operationPopup">手术</li>
+										</ul>
+									</div>
+									<div class="RadioStyle2" style="flex: 1; margin-left: 16px; visibility: hidden;">
+										<div>
+											<input type="radio" name="timeKit" id="week"  class="radioCheck" />
+											<label for="week">周</label>
+											<input type="radio" name="timeKit" id="month" class="radioCheck" checked />
+											<label for="month" style="margin: 0 10px;">月</label>
+											<input type="radio" name="timeKit" id="year"  class="radioCheck" />
+											<label for="year">年</label>
+										</div>
+									</div>
+									<div class="RadioStyle3" style="flex: 0 0 40px;">
+										<label>报表</label>
+									</div>
+								</div>
+							</div>
+							<!-- 分类统计end -->
+							
 							<div class="col-12">
 								<div class="advertising-wrapper">
 									<canvas id="yearCount" class="chart-container"></canvas>
@@ -189,69 +216,37 @@
 				</div>
 				<!-- pie charts area end -->
 				
-				<section class="wallets-list container">
-					<!--expendable list item -->
-					<div class="expandable-item accordion" data-group="accordion">
-						<div class="expandable-header purp">
-							<i class="list-arrow fa fa-angle-down"></i>
-							<h3 class="list-title">统计报表</h3>
+				<!-- 医疗机构下拉多选模态框 start -->
+				<div class="popup-overlay-multiselect" id="organPopup">
+					<!-- if you dont want overlay add class .no-overlay -->
+					<div class="popup-container">
+						<div class="popup-header" style="display: none;">
+							<span class="popup-close organ-close" data-dismiss="true"><i class="fa fa-times"></i></span>
 						</div>
-						<div class="expandable-content">
-							<div class="padding-content">
-								<div class="recent-trans">
-									
-									<!-- <input type="text" class="form-control input-style" id="username" data-id=""> -->
-									<!-- <div class="form-group">
-										<input type="text" name="username" id="username" placeholder="医生或者护士" maxlength="40" />
-										<span>人员姓名</span>
-										<input type="text" id="username" class="form-field">
-									</div> -->
-									<div class="form-group">
-										<span>人员姓名</span>
-										<input type="text" id="username" class="form-field" style="border-radius: 0 6px 6px 0;">
-									</div>
-									<div class="form-group">
-										<span>开始时间</span>
-										<input type="text" id="dateSelector_begin" class="form-field">
-									</div>
-									<div class="form-group">
-										<span>结束时间</span>
-										<input type="text" id="dateSelector_end" class="form-field">
-									</div>
-									<div id="distpicker11">
-										<div class="form-group">
-											<label class="sr-only" for="province">province</label>
-											<select class="form-control" id="province"></select>
-										</div>
-										<div class="form-group">
-											<label class="sr-only" for="city">city</label>
-											<select class="form-control" id="city"></select>
-										</div>
-										<div class="form-group">
-											<label class="sr-only" for="district">district</label>
-											<select class="form-control" id="district"></select>
-										</div>
-									</div>
-									<div class="form-group">
-										<span>医疗机构</span>
-										<select class="form-field" id="orgs">
-											<option style='display: none'></option>
-										</select>
-									</div>
-									<div>
-										<a id="reportingBtn" class="button circle block" style="background: #00b4ef; color: #fff;">查询</a>
-									</div>
+						<div class="popup-content">
+							<div class="justify-content-between">
+								<div class="selectPickerWrapper showOrgan">
+									<select class="hidden"></select>
 								</div>
 							</div>
 						</div>
 					</div>
-				</section>
-				
-				<section class="container">
-					<div class="sp sp-wave"></div>
-					<ul id="reporting" class="transaction-list list-unstyled"></ul>
-				</section>
-				<div class="form-label-divider" style="display: none;"><span>没有更多数据了</span></div>
+				</div>
+				<!-- 医疗机构下拉多选模态框 end -->
+				<!-- 手术大类下拉多选模态框 start -->
+				<div class="popup-overlay-multiselect2" id="operationPopup">
+					<!-- if you dont want overlay add class .no-overlay -->
+					<div class="popup-container">
+						<div class="popup-content">
+							<div class="justify-content-between">
+								<div class="selectPickerWrapper showOperation">
+									<select class="hidden"></select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- 手术大类下拉多选模态框 end -->
 			</main>
 			<!-- Page content end -->
 		</div>
@@ -275,81 +270,71 @@
 	<script th:src="@{/js/mescroll.min.js}"></script>		
 	<!-- Template global script file. requared all pages -->
 	<script th:src="@{/js/global.script.js}"></script>
-	<!-- 日期选择插件 -->
-	<script th:src="@{/js/iScroll.js}"></script>
-	<script th:src="@{/js/Mdate.js}"></script>
-	
-	<script th:src="@{/js/distpicker.data.js}"></script>
-	<script th:src="@{/js/distpicker.js}"></script>
-	<script th:src="@{/js/jquery.autocompleter.min.js}"></script>
 	<script th:src="@{/js/MiniDialog-es5.min.js}"></script>
-	<!-- <script th:src="@{/js/main.js}"></script> -->
+	<script th:src="@{/js/simple.switch.js}"></script>
+	<script th:src="@{/js/multiSelect.js}"></script>
 	
 	<script type="text/javascript">
+		var multiVals = [];
+		// 按总量分类统计按钮
+		var sumRadio = false;
+		// 周月年单选按钮
+		var weekRadio = false;
+		var monthRadio = false;
+		var yearRadio = false;
+		var chart = new F2.Chart({
+			id : 'yearCount',
+			pixelRatio : window.devicePixelRatio
+		});
+		
 		$(document).ready(function() {
+			initOrganPopup();
 			drawMonthCount();
 			drawTopCity();
 			drawDoctorWork();
-			getOrganizations("", "", "");
-			//getOccupation();
-			getReporting("", "", "", "", "", "", "");
 		});
 		
-		// 监听省市区的变化 更新机构列表
-		$("#province").on("change", function() {
-			var provinceCode = $("#province").find(':selected').data('code');
-			$("#orgs").empty();
-			var organizationDom = document.getElementById("orgs");
-			var orgName = "";
-			var optionDom = document.createElement("option");
-			optionDom.setAttribute('style', 'display: none;');
-			optionDom.innerHTML = orgName;
-			organizationDom.appendChild(optionDom);
-			getOrganizations(provinceCode, "", "");
-		});
-		$("#city").on("change", function() {
-			var cityCode = $("#city").find(':selected').data('code');
-			$("#orgs").empty();
-			var organizationDom = document.getElementById("orgs");
-			var orgName = "";
-			var optionDom = document.createElement("option");
-			optionDom.setAttribute('style', 'display: none;');
-			optionDom.innerHTML = orgName;
-			organizationDom.appendChild(optionDom);
-			getOrganizations("", cityCode, "");
-		});
-		$("#district").on("change", function() {
-			var areaCode = $("#district").find(':selected').data('code');
-			$("#orgs").empty();
-			var organizationDom = document.getElementById("orgs");
-			var orgName = "";
-			var optionDom = document.createElement("option");
-			optionDom.setAttribute('style', 'display: none;');
-			optionDom.innerHTML = orgName;
-			organizationDom.appendChild(optionDom);
-			getOrganizations("", "", areaCode);
-		});
-	
-		$('#reportingBtn').on("click", function() {
-			$("#reporting").empty();
-			$(".sp-wave").show();
-			if ($("#username").val() == "") {
-				$("#username").removeAttr("data-id");
+		new Slideicon($("#sortList"), {
+			index:1,
+			cover:$("#sortbg"),
+			callback:function (data) {
+				if (data == "s" && !sumRadio) {
+					statsforSum();
+				}
 			}
-			var begin = $("#dateSelector_begin").val();
-			var end = $("#dateSelector_end").val();
-			var pCode = $("#province").find(':selected').data('code');
-			var cCode = $("#city").find(':selected').data('code');
-			var dCode = $("#district").find(':selected').data('code');
-			var oCode = $("#orgs").find(':selected').data('code');
-			var userId = $("#username").attr('data-id');
-			if (typeof(userId) == "undefined") {
-				userId = "";
-			}
-			getReporting(begin, end, pCode, cCode, dCode, oCode, userId);
-			//$(".expandable-item").removeClass("active");
-			//$(".expandable-content").removeAttr("style");
 		});
+		
+		// 初始化医疗机构下拉多选框
+		function initOrganPopup() {
+			$.ajax({
+		    	type: "POST",
+		    	dataType: "json",
+		    	url: "initOrgansMultiSelect",
+		    	contentType: "application/json",
+		    	success: function (result) {
+        			var map = result.data;
+        			$(".showOrgan").data("init",JSON.stringify(map));
+        			$(".showOrgan").mySelect({
+        				showSearch:true,
+        				multiple:true
+        			});
+        			$(".fa-search").on("click", function() {
+        		    	let checks = getCheckedValue();
+        		    	if (checks.vals.length == 0) {
+        		    		alert("未选择医疗机构");
+        		    		return;
+        		    	}
+        		    	multiVals = checks.vals;
+        		    	statsforOrgan("month");	// 默认统计当月
+        		    	$("#month").prop("checked", true);
+        		    	$('.organ-close').click();
+        			});
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
 		
 		/* 近3年每月手术统计 */
 		function drawMonthCount() {
@@ -359,17 +344,21 @@
 		    	url: "statsMonths",
 		    	contentType: "application/json",
 		    	success: function (result) {
-        			if(result.code == 0) {
+        			if (result.code == 0) {
+        				sumRadio = true;
         				var data = result.data;
-        				var chart = new F2.Chart({
+        				/* var chart = new F2.Chart({
     		    			id : 'yearCount',
     		    			pixelRatio : window.devicePixelRatio
-    		    		});
+    		    		}); */
     		    		chart.source(data);
     		    		chart.tooltip({
     		    			showTitle: true,
     		    			showCrosshairs : true
     		    		});
+						chart.scale('date', {
+							tickCount:10
+						});
     		    		chart.legend({
     		    			align: 'center',
     		    			marker: function marker(x, y, r, ctx) {
@@ -382,8 +371,8 @@
     		    				ctx.fill();
     		    			}
     		    		});
-    		    		chart.line().position('month*count').color('year');
-    		    		chart.point().position('month*count').color('year').style({
+    		    		chart.line().position('date*count').color('name');
+    		    		chart.point().position('date*count').color('name').style({
     		    			lineWidth : 1,
     		    			stroke : '#fff'
     		    		});
@@ -405,47 +394,44 @@
 		    	url: "statsCity",
 		    	contentType: "application/json",
 		    	success: function (result) {
-        			if(result.code == 0) {
+        			if (result.code == 0) {
         				var data2 = result.data;
         				const chart2 = new F2.Chart({
-        					  id: 'cityCount',
-        					  pixelRatio: window.devicePixelRatio
-        					});
-
-        					chart2.source(data2);
-        					chart2.coord('polar', {
-        					  transposed: true,
-        					  radius: 0.75
-        					});
-        					chart2.legend(false);
-        					chart2.axis(false);
-        					chart2.tooltip(false);
-
-        					// 添加饼图文本
-        					chart2.pieLabel({
-        					  sidePadding: 40,
-        					  label1: function label1(data2, color) {
-        					    return {
-        					      text: data2.cityName,
-        					      fill: color
-        					    };
-        					  },
-        					  label2: function label2(data2) {
-        					    return {
-        					      text: data2.count,
-        					      fill: '#808080',
-        					      fontWeight: 'bold'
-        					    };
-        					  }
-        					});
-
-        					chart2.interval()
-        					  .position('pieConst*count')
-        					  .color('cityCode', ['#1890FF', '#13C2C2', '#2FC25B', '#FACC14', '#F04864'])
-        					  .adjust('stack');
-        					chart2.render();
-        			} else {
-        				
+							id: 'cityCount',
+							pixelRatio: window.devicePixelRatio
+						});
+						chart2.source(data2);
+						chart2.coord('polar', {
+							transposed: true,
+							radius: 0.75
+						});
+						chart2.legend(false);
+						chart2.axis(false);
+						chart2.tooltip(false);
+						// 添加饼图文本
+						chart2.pieLabel({
+							sidePadding: 40,
+							label1: function label1(data2, color) {
+								return {
+									text: data2.cityName,
+									fill: color
+								};
+							},
+							label2: function label2(data2) {
+								return {
+									text: data2.count,
+									fill: '#808080',
+									fontWeight: 'bold'
+								};
+							}
+						});
+						chart2.interval()
+							.position('pieConst*count')
+							.color('cityCode', ['#1890FF', '#13C2C2', '#2FC25B', '#FACC14', '#F04864'])
+							.adjust('stack');
+						chart2.render();
+					} else {
+        					
         			}
 		    	},
 		    	error: function() {
@@ -460,8 +446,8 @@
 		    	dataType: "json",
 		    	url: "statsWork",
 		    	contentType: "application/json",
-		    	success: function (result) {
-        			if(result.code == 0) {
+		    	success: function(result) {
+        			if (result.code == 0) {
         				var data3 = result.data;
         				var sum = 0;
         				data3.forEach(function(obj) {
@@ -522,148 +508,8 @@
 			});
 		}
 		
-		function getOrganizations(province, city, area) {
-			$.ajax({
-		    	type: "POST",
-		    	dataType: "json",
-		    	url: 'organizations?province=' + province + "&city=" + city + "&area=" + area,
-		    	contentType: "application/json",
-		    	success: function (result) {
-		    		var organizations = result.data;
-		    		if (organizations.length > 0) {
-		    			var organizationDom = document.getElementById("orgs");
-		    			for (var i = 0; i < organizations.length; i++) {
-		    				var orgName = organizations[i].name;
-		    				var optionDom = document.createElement("option");
-		    				optionDom.setAttribute("data-code", organizations[i].id);
-		    				optionDom.innerHTML = orgName;
-		    				organizationDom.appendChild(optionDom);
-		    			}
-		    		}
-		    	},
-		    	error: function() {
-		    		
-		    	}
-			});
-		}
-		
-		function getOccupation(province, city, area) {
-			$.ajax({
-		    	type: "POST",
-		    	dataType: "json",
-		    	url: 'occupation?province=' + province + "&city=" + city + "&area=" + area,
-		    	contentType: "application/json",
-		    	success: function (result) {
-		    		var organizations = result.data;
-		    		if (organizations.length > 0) {
-		    			var organizationDom = document.getElementById("occupation");
-		    			for (var i = 0; i < organizations.length; i++) {
-		    				var orgName = organizations[i].name;
-		    				var optionDom = document.createElement("option");
-		    				optionDom.setAttribute("data-code", organizations[i].id);
-		    				optionDom.innerHTML = orgName;
-		    				organizationDom.appendChild(optionDom);
-		    			}
-		    		}
-		    	},
-		    	error: function() {
-		    		
-		    	}
-			});
-		}
-		
-		function getReporting(begin, end, province, city, area, orgId, userId) {
-			var jsonData = JSON.stringify({'beginTime': begin, 'endTime': end, 'province': province, 'city': city, 'area': area, 'orgId': orgId, 'userId': userId});
-			setTimeout(function() {
-				$.ajax({
-			    	type: "POST",
-			    	data: jsonData,
-			    	dataType: "json",
-			    	url: 'reporting',
-			    	contentType: "application/json",
-			    	success: function (result) {
-			    		$('.sp-wave').hide();
-			    		if (result.code == 0) {
-			    			var data = result.data;
-			    			if (data.length > 0) {
-			    				$(".form-label-divider").attr("style", "display: none;");
-			    				var ulDom = document.getElementById("reporting");
-					    		for (var i = 0; i < data.length; i++) {
-					    			var newObj = data[i];
-									var str = '<div class="d-flex align-items-center justify-content-between">';
-									str += '<div class="d-flex align-items-center">';
-									str += '<div class="ml-10">';
-									str += '<h6 class="coin-name">' + newObj.orgName + '</h6>';
-									str += '<small class="text-muted">' + newObj.wholeDistrict
-											+ '</small>';
-									str += '</div>';
-									str += '</div>';
-									str += '<div>';
-									str += '<small class="d-block mb-0 txt-muted">'
-											+ newObj.count + '</small>';
-									str += '</div>';
-									str += '</div>';
-									var liDom = document.createElement("li");
-									liDom.innerHTML = str;
-									ulDom.appendChild(liDom);//加在列表的后面,上拉加载
-					    		}
-			    			} else {
-			    				$(".form-label-divider").attr("style", "display: block;");
-			    			}
-			    		} else if (result.code == 9) {
-			    			Dialog.info(result.msg).okNotClose().ok(function (okBtn) {
-			    				okBtn.querySelector( "span" ).textContent = "即将跳转至登录页面...";
-			    				okBtn.classList.add( "mini-dialog-ok-disabled" );
-			    				window.setTimeout(function () {
-			    					Dialog.close();
-			    					window.location.href = result.data;
-			    				}, 1000);
-			    			});
-			    		} else {
-			    			alert(result.msg);
-			    		}
-			    	},
-			    	error: function() {
-			    		$('.sp-wave').hide();
-			    	}
-				});
-			}, 300);
-		}
-		
-		$("#dateSelector_begin").focus(function() {
-			document.activeElement.blur();
-		});
-		new Mdate("dateSelector_begin");
-		$("#dateSelector_end").focus(function() {
-			document.activeElement.blur();
-		});
-		new Mdate("dateSelector_end");
-		$("#distpicker11").distpicker({
-			autoSelect : false
-		});
-
-		$(".menu-logout").on("click", function() {
-			location.href = "logout";
-		});
-		
-		$('#username').autocompleter({
-			// marker for autocomplete matches
-			highlightMatches: true,
-			// object to local or url to remote search
-			source: "searchUser",
-			// custom template
-			template: '{{ label }} <span>({{ hex }})</span>',
-			// show hint
-			hint: true,
-			// abort source if empty field
-			empty: false,
-			// max results
-			limit: 5,
-			callback: function (value, index, selected) {
-				if (selected) {
-					$("#username").attr("data-id", selected.id);
-				}
-			}
+		$(".RadioStyle3").on("click", function() {
+			location.href = "toReporting";
 		});
 		
 		$(".box-content").on("click", function() {
@@ -673,6 +519,88 @@
 			$(".front").removeClass("back");
 			$(".box-temp").addClass("back");
 			$(".back").removeClass("box-temp");
+		});
+		
+		$(".radioCheck").on('click', function() {
+			$(this).prop("checked", true);
+			if (($(this).attr('id') == "week") && !weekRadio) {
+				statsforOrgan("week");
+			} else if (($(this).attr('id') == "month") && !monthRadio) {
+				statsforOrgan("month");
+			} else if (($(this).attr('id') == "year") && !yearRadio) {
+				statsforOrgan("year");
+			}
+		});
+		
+		function getCheckedValue() {
+			let checkedArrValue = [];
+			$(".select-picker-options-list-item").each(function() {
+				if ($(this).find('.duihao-checked').length > 0) {
+					let org = {};
+					org.name = $.trim($(this).text());
+					org.id = $.trim($(this).data("val")) || null;
+					checkedArrValue.push(org);
+				}
+			});
+			return {
+				vals: checkedArrValue,
+			};
+		}
+		
+		function statsforOrgan(timeType) {
+			var jsonData = JSON.stringify({"data": multiVals, "type": timeType});
+			$.ajax({
+		    	type: "POST",
+		    	data: jsonData,
+		    	dataType: "json",
+		    	url: 'statsOrgans',
+		    	contentType: "application/json",
+		    	success: function (result) {
+		    		sumRadio = false;
+		    		if (timeType == "week") {
+		    			weekRadio = true;
+						monthRadio = false;
+						yearRadio = false;
+		    		} else if (timeType == "month") {
+		    			monthRadio = true;
+		    			weekRadio = false;
+						yearRadio = false;
+		    		} else {
+		    			yearRadio = true;
+		    			weekRadio = false;
+		    			monthRadio = false;
+		    		}
+		    		$(".RadioStyle2").attr("style", "visibility: visible");
+		    		chart.changeData(result.data);
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
+		
+		function statsforSum() {
+			$.ajax({
+		    	type: "POST",
+		    	dataType: "json",
+		    	url: 'statsMonths',
+		    	contentType: "application/json",
+		    	success: function (result) {
+		    		sumRadio = true;
+		    		weekRadio = false;
+					monthRadio = false;
+					yearRadio = false;
+		    		$(".RadioStyle2").attr("style", "visibility: hidden");
+		    		chart.changeData(result.data);
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
+		
+		$(".menu-logout").on("click", function() {
+			location.href = "logout";
 		});
 	</script>
 </body>

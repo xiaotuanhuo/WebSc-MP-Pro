@@ -4,17 +4,12 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
-	<title>区域管理员</title>
+	<title>护士</title>
 	
-	<!-- Google font file. If you want you can change. -->
-	<link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,900" rel="stylesheet">
-	<!-- Fontawesome font file css -->
 	<link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}">
-	<!-- Template global css file. Requared all pages -->
 	<link rel="stylesheet" type="text/css" th:href="@{/css/global.style.css}">
 	<link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
 	<link rel="stylesheet" th:href="@{/css/mescroll.min.css}">
-	<link rel="stylesheet" th:href="@{/css/Mdate.css}">
 </head>
 
 <body>
@@ -141,30 +136,12 @@
 					                <img src="/img/cancel.png" alt="">
 					                <span>已取消</span>
 					            </div>
-					            <div class="content-col myrecord">
-					                <img src="/img/rest_record.png" alt="">
-					                <span>备案管理</span>
-					            </div>
 					        </div>
 					    </div>
 					</div>
 				</section>
 				<!-- Order area end -->
 				
-				<!-- 备休区域 start -->
-				<section class="container d-flex" style="padding: 30px 15px 15px;">
-					<!-- <h4 class="fm-auto" style="font-size: 16px;">备休情况</h4> -->
-					<div class="form-group">
-						<span>备休时间</span>
-						<input type="text" id="dateSelector" class="form-field">
-					</div>
-					<!-- <input type="text" id="dateSelector" class="" placeholder="选择日期"> -->
-				</section>
-				<section class="wallets-list container">
-					<div class="sp sp-wave"></div>
-					<div id="dayList"></div>
-				</section>
-				<!-- 备休区域 end -->
 			</main>
 			<!-- Page content end -->
 		</div>
@@ -188,96 +165,6 @@
 	<script th:src="@{/js/Mdate.js}"></script>
 	
 	<script type="text/javascript">
-		var date = "";
-		$(function() {
-			getCalendars("");
-			
-			$("#dateSelector").focus(function() {
-				document.activeElement.blur();
-			});
-			new Mdate("dateSelector", null, dateCallback);
-			
-			//日期选择的回调
-			function dateCallback(callbackDate) {
-				$('#dayList').empty();
-				$('.sp-wave').show();
-				date = callbackDate;
-				getCalendars(date);
-			}
-		});
-		
-		function getCalendars(date) {
-			setTimeout(function() {
-				$.ajax({
-					type: "GET",
-    				url: 'calendars?date=' + date,
-    				success: function(result) {
-    					$(".sp-wave").hide();
-    					var daysDom = document.getElementById("dayList");
-    					var dayCalendars = result.data;
-    					var len = dayCalendars.length;
-    					if (len > 0) {
-    						for (var i = 0; i < len; i++) {
-        						var dayCalendar = dayCalendars[i];
-        						var _day = dayCalendar.day;
-        						var _calendars = dayCalendar.calendars;
-        						
-        						var _html = '<div class="expandable-header purp2">';
-        						_html += '<i class="list-arrow fa fa-angle-down"></i>';
-        						_html += '<h3 class="list-title">' + _day + '</h3>';
-        						_html += '</div>';
-        						_html += '<div class="expandable-content">';
-        						_html += '<div class="padding-content">';
-        						_html += '<ul id="restList' + (i + 1) +'" class="transaction-list list-unstyled">';
-        						_html += '</ul>';
-        						_html += '</div>';
-        						_html += '</div>';
-        						
-        						var dayDom = document.createElement("div");
-        						dayDom.setAttribute("class", "expandable-item accordion");
-        						dayDom.setAttribute("data-group", "accordion");
-        						dayDom.innerHTML = _html;
-        						daysDom.appendChild(dayDom);
-        						
-        						var ulDom = document.getElementById("restList" + (i + 1));
-        						for (var j = 0; j < _calendars.length; j++) {
-        							var _calendar = _calendars[j];
-        							var _str = '<div class="d-flex align-items-center justify-content-between">';
-        							_str += '<div class="fl-100 align-items-center">';
-        							_str += '<div class="ml-10">';
-        							_str += '<h5 class="coin-name">' + _calendar.name + '</h5>';
-        							_str += '<small class="text-muted">' + _calendar.phone
-        									+ '</small>';
-        							_str += '</div>';
-        							_str += '</div>';
-        							_str += '<div class="fm-auto align-items-center mr-10">';
-        							_str += '<div class="ml-10">';
-        							_str += '<small class="text-muted">' + _calendar.dept
-        									+ '</small>';
-        							_str += '</div>';
-        							_str += '</div>';
-        							_str += '<div class="fr-70">';
-        							_str += '<small class="d-block mb-0 txt-green">'
-        									+ (_calendar.begin).substring(11, 16) + '-'
-        									+ (_calendar.end).substring(11, 16) + '</small>';
-        							_str += '</div>';
-        							_str += '</div>';
-        							var liDom = document.createElement("li");
-        							liDom.innerHTML = _str;
-        							ulDom.appendChild(liDom);
-        						}
-        					}
-    					} else {
-    						$('#dayList').html('暂无数据');
-    					}
-    				},
-    				error: function() {
-    					
-    				}
-    			});
-			}, 500);
-		}
-		
 		function goDocList(ds){
 			location.href = "toDocList?ds=" + ds;
 		}

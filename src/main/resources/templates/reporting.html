@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+	<title>报表统计</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}">
+	<!-- Template global css file. Requared all pages -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/global.style.css}">
+	<link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/jalendar.css}" />
+	<link rel="stylesheet" th:href="@{css/jquery.autocompleter.css}">
+</head>
+
+<body>
+	<div class="wrapper">
+		<div class="nav-menu">
+			<nav class="menu">
+				<!-- Menu navigation start -->
+				<div class="nav-container menu-container">
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">姓名</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">[[${user.userName}]]</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">性别</h5>
+							</div>
+						</div>
+						<div>
+							<div th:switch="${user.sex}">
+								<div th:case="'0'">
+									<h6 class="text-muted menu-info">女</h6>
+								</div>
+								<div th:case="*">
+									<h6 class="text-muted menu-info">男</h6>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">手机</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">[[${user.phone}]]</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">角色</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">[[${user.roleName}]]</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">机构</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">[[${user.deptName}]]</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h5 class="text-muted">区域</h5>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">[[${user.districtName}]]</h6>
+						</div>
+					</div>
+					
+					<button class="button circle red block menu-logout">登出</button>
+				</div>
+				<!-- Menu navigation end -->
+			</nav>
+		</div>
+		
+		<div class="wrapper-inline">
+			<!-- Header area start -->
+			<header class="no-background" style="margin-left: 300px;"> <!-- extra class no-background -->
+				<div class="navi-menu-button">
+					<em></em>
+					<em></em>
+					<em></em>
+				</div>
+			</header>
+			<!-- Header area end -->
+			
+			<!-- Page content start -->
+			
+			
+			<!-- 顶部分类筛选 start -->
+			<div class="screening">
+			    <ul>
+			        <li class="Sort overText" data-data="sortMonth"><span>一个月</span></li>
+			        <li class="Brand overText" data-data=""><span>医疗机构</span></li>
+			    </ul>
+			</div>
+			<!-- 时间段-->
+			<div class="Sort-eject Sort-height">
+				<ul class="Sort-Sort" id="Sort-Sort">
+					<li data-type="sortWeek" onclick="Sorts(this)">一周</li>
+					<li data-type="sortMonth" onclick="Sorts(this)" class="selected">一个月</li>
+					<li data-type="sortHalfYear" onclick="Sorts(this)">半年</li>
+					<li data-type="sortYear" onclick="Sorts(this)">一年</li>
+					<li data-type="sortCustom" onclick="Sorts(this)" data-popup="timePopup">自定义</li>
+				</ul>
+			</div>
+			<!--医疗机构-->
+			<div class="Category-eject Categoryw-height">
+				<ul class="Categoryw" id="Categorytw"></ul>
+			</div>
+			<!-- 顶部分类筛选 end -->
+			
+			<main class="margin mt-0" style="padding-top: 1rem;">
+			
+				<section class="wallets-list container">
+					<div class="d-flex" id="distpicker11">
+						<div class="form-group" style="flex: 0 0 33%;">
+							<label class="sr-only" for="province">province</label>
+							<select class="form-control" id="province"></select>
+						</div>
+						<div class="form-group" style="flex: 1; margin: 0 1px;">
+							<label class="sr-only" for="city">city</label>
+							<select class="form-control" id="city"></select>
+						</div>
+						<div class="form-group" style="flex: 0 0 33%;">
+							<label class="sr-only" for="district">district</label>
+							<select class="form-control" id="district"></select>
+						</div>
+					</div>
+					<div class="d-flex">
+						<div class="form-group" style="flex: 0 0 66%;">
+							<input type="text" id="username" class="form-field" style="border-radius: 6px;">
+						</div>
+						<div style="flex: 1; margin-left: 4px;">
+							<a id="reportingBtn" class="button circle block" style="background: #00b4ef; color: #fff;">查询</a>
+						</div>
+					</div>
+				</section>
+				<div class="container">
+					<div class="sp sp-wave"></div>
+					<div class="statsBox">
+						<ul  id="chart" class="statsList"></ul>
+					</div>
+				</div>
+
+				<!-- 自定义日期区间选择popup start -->
+				<div class="popup-overlay-multiselect" id="timePopup">
+					<div class="popup-container">
+						<div class="popup-header" style="display: none;">
+							<span class="popup-close" data-dismiss="true"><i class="fa fa-times"></i></span>
+						</div>
+						<div class="popup-content">
+							<div id="ranegeKit" class="jalendar"></div>
+						</div>
+					</div>
+				</div>
+				<!-- 自定义日期区间选择popup end -->
+			</main>
+			<!-- Page content end -->
+		</div>
+	</div>
+	<!--Page loader DOM Elements. Requared all pages-->
+	<div class="sweet-loader">
+		<div class="box">
+			<div class="circle1"></div>
+			<div class="circle2"></div>
+			<div class="circle3"></div>
+		</div>
+	</div>
+	
+	<!-- JQuery library file. requared all pages -->
+	<script th:src="@{/js/jquery.min.js}"></script>
+	<script th:src="@{/js/global.script.js}"></script>
+	<script th:src="@{/js/topSelectMenu.js}"></script>
+	<script th:src="@{/js/jalendar.min.js}" type="text/javascript" charset="utf-8"></script>
+	<script th:src="@{/js/distpicker.data.js}"></script>
+	<script th:src="@{/js/distpicker.js}"></script>
+	<script th:src="@{/js/jquery.autocompleter.min.js}"></script>
+	
+	<script type="text/javascript">
+		var newStyle = document.styleSheets[0];
+		var csslen;
+		$(document).ready(function() {
+			getOrganizations("", "", "");
+			showReportList("sortMonth", "", "", "", "", "");
+		});
+		$('#ranegeKit').jalendar({
+		    color: '#66CDAA', // Unlimited
+		    color2: '#8FBC8F', // Unlimited
+		    lang: 'CN',
+		    type: 'range',
+		    done: function(data) {
+		    	$('.Sort-Sort').find("li[class='selected']").removeClass("selected");
+		    	$('.Sort-Sort').find("li[data-type='sortCustom']").addClass("selected");
+		    	$('.Sort').attr("data-data", $('#ranegeKit input.data1').val() + '/' + $('#ranegeKit input.data2').val());
+		    	$('.Sort').find('span').text($('#ranegeKit input.data1').val() + '/' + $('#ranegeKit input.data2').val());
+		    	$('.popup-close').click();
+		    }
+		});
+		
+		$("#distpicker11").distpicker({
+			autoSelect : false
+		});
+		
+		$('#username').autocompleter({
+			// marker for autocomplete matches
+			highlightMatches: true,
+			// object to local or url to remote search
+			source: "searchUser",
+			// custom template
+			template: '{{ label }} <span>({{ hex }})</span>',
+			// show hint
+			hint: true,
+			// abort source if empty field
+			empty: false,
+			// max results
+			limit: 8,
+			callback: function (value, index, selected) {
+				//$.autocompleter('clearCache');
+				if (selected) {
+					$("#username").attr("data-id", selected.id);
+				}
+			}
+		});
+		
+		// 监听省市区的变化 更新机构列表
+		$("#province").on("change", function() {
+			var provinceCode = $("#province").find(':selected').data('code');
+			$('.Brand').find('span').text('医疗机构');
+			$("#Categorytw").empty();
+			/* var organizationDom = document.getElementById("orgs");
+			var orgName = "";
+			var optionDom = document.createElement("option");
+			optionDom.setAttribute('style', 'display: none;');
+			optionDom.innerHTML = orgName;
+			organizationDom.appendChild(optionDom); */
+			getOrganizations(provinceCode, "", "");
+		});
+		$("#city").on("change", function() {
+			var cityCode = $("#city").find(':selected').data('code');
+			$('.Brand').find('span').text('医疗机构');
+			$("#Categorytw").empty();
+			getOrganizations("", cityCode, "");
+		});
+		$("#district").on("change", function() {
+			var areaCode = $("#district").find(':selected').data('code');
+			$('.Brand').find('span').text('医疗机构');
+			$("#Categorytw").empty();
+			getOrganizations("", "", areaCode);
+		});
+		
+		$('#reportingBtn').on("click", function() {
+			$("#chart").empty();
+			$(".sp-wave").show();
+			if (csslen > 0) {
+				for (var i = 0; i < csslen * 2; i++) {
+					// 清除之前写入的动画样式
+					newStyle.deleteRule(0);
+				}
+			}
+			if ($("#username").val() == "") {
+				$("#username").removeAttr("data-id");
+			}
+			var slottime = $(".Sort").attr("data-data");
+			var pCode = $("#province").find(':selected').data('code');
+			var cCode = $("#city").find(':selected').data('code');
+			var dCode = $("#district").find(':selected').data('code');
+			var oCode = $(".Brand").attr("data-data");
+			var userId = $("#username").attr('data-id');
+			if (typeof(userId) == "undefined") {
+				userId = "";
+			}
+			showReportList(slottime, pCode, cCode, dCode, oCode, userId);
+		});
+		
+		function getOrganizations(province, city, area) {
+			$.ajax({
+		    	type: "POST",
+		    	dataType: "json",
+		    	url: 'organizations?province=' + province + "&city=" + city + "&area=" + area,
+		    	contentType: "application/json",
+		    	success: function (result) {
+		    		var organizations = result.data;
+		    		if (organizations.length > 0) {
+		    			var ulDom = document.getElementById("Categorytw");
+		    			for (var i = 0; i < organizations.length; i++) {
+		    				var orgName = organizations[i].name;
+		    				var liDom = document.createElement("li");
+		    				liDom.setAttribute("onclick", "Categorytw(this)");
+		    				liDom.setAttribute("data-code", organizations[i].id);
+		    				liDom.innerHTML = orgName;
+		    				ulDom.appendChild(liDom);
+		    			}
+		    		}
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
+		
+		function showReportList(slottime, province, city, area, orgId, userId) {
+			var jsonData = JSON.stringify({'slottime': slottime, 'province': province, 'city': city, 'area': area, 'orgId': orgId, 'userId': userId});
+			setTimeout(function() {
+				$.ajax({
+			    	type: "POST",
+			    	data: jsonData,
+			    	dataType: "json",
+			    	url: 'reportList',
+			    	contentType: "application/json",
+			    	success: function (result) {
+			    		$('.sp-wave').hide();
+			    		if (result.code == 0) {
+			    			var listdata = result.data;
+							var _html = '';
+							var len = listdata.length;
+							if (len > 0) {
+								csslen = len - 1;
+								for(var i = 1; i < len; i++) {
+									// 利用css3动画动态渲染多条数据
+									// 第一步构建动态thml
+									_html += '<li>';
+									_html += '<em>' + listdata[i]['orgName'] + '</em>';
+									_html += '<div class="expand-box"><span class="expand animations' + (i - 1) + ' fill_' + ((i - 1) % 10) + '"></span></div>';
+									_html += '<em>' + listdata[i]['count'] + '/' + listdata[0]['count'] + '</em>';
+									_html += '</li>';
+									// 第二步构建动态css
+									// 写入样式
+									Math.round(listdata[i]['count'] / listdata[0]['count'] * 10000) / 100.00
+									newStyle.insertRule(
+										".animations" + (i - 1) + " { " +
+										"width: " + (Math.round(listdata[i]['count'] / listdata[0]['count'] * 10000) / 100.00) + "%;" +
+										"-moz-animation:animations" + (i - i) + " 0.5s ease-out;" +
+										"-webkit-animation:animations" + (i - i) + " 0.5s ease-out;" +
+										"}", 0);
+									newStyle.insertRule(
+										"@keyframes animations" + (i - 1) + "{ " +
+										"0% { width: 0; } " +
+										"100% { width:" + (Math.round(listdata[i]['count'] / listdata[0]['count'] * 10000) / 100.00) + " % }" +
+										"}", 0);
+									$('#chart').html(_html);
+								}
+							} else {
+								$('#chart').html('暂无数据');
+							}
+			    		} else if (result.code == 9) {
+			    			Dialog.info(result.msg).okNotClose().ok(function (okBtn) {
+			    				okBtn.querySelector( "span" ).textContent = "即将跳转至登录页面...";
+			    				okBtn.classList.add( "mini-dialog-ok-disabled" );
+			    				window.setTimeout(function () {
+			    					Dialog.close();
+			    					window.location.href = result.data;
+			    				}, 1000);
+			    			});
+			    		} else {
+			    			alert(result.msg);
+			    		}
+			    	},
+			    	error: function() {
+			    		$('.sp-wave').hide();
+			    	}
+				});
+			}, 300);
+		}
+		
+		$(".menu-logout").on("click", function() {
+			location.href = "logout";
+		});
+		
+	</script>
+</body>
+
+</html>

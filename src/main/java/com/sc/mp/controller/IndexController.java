@@ -23,9 +23,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.sc.mp.annotation.OperationLog;
+import com.sc.mp.bean.DayCalendars;
 import com.sc.mp.bean.OperationCount;
 import com.sc.mp.bean.PageResultBean;
 import com.sc.mp.bean.ResultBean;
@@ -55,16 +57,20 @@ public class IndexController {
 	private String regionalRoleId;		// 区域管理员角色id
 	@Value("${sc.role.doctor}")
 	private String doctorRoleId;		// 医生角色id
+	@Value("${sc.role.nurse}")
+	private String nurseRoleId;			// 护士角色id
 	@Value("${sc.page.login}")
-	private String loginPage;			// 超级管理员角色登录后首页
+	private String loginPage;			// 登录页
 	@Value("${sc.page.super}")
 	private String superPage;			// 超级管理员角色登录后首页
 	@Value("${sc.page.regional}")
 	private String regionalPage;		// 区域管理员角色登录后首页
 	@Value("${sc.page.doctor}")
 	private String doctorPage;			// 医生角色登录后首页
+	@Value("${sc.page.nurse}")
+	private String nursePage;			// 护士角色登录后首页
 	@Value("${sc.wx.login}")
-	private String wxLogin;			// 医生角色登录后首页
+	private String wxLogin;				// 登录按钮跳转地址
 	
 	/**
 	 * 登录页面
@@ -99,9 +105,31 @@ public class IndexController {
 //		ra.addFlashAttribute("wxUserid", user.getWxUserid());
 //		ra.addFlashAttribute("openid", user.getWxOpenid());
 		
-		log.info("登出后重定向地址===");
+		log.info("登出后重定向地址===" + wxLogin);
 //		return "redirect:/toLogin";
 		return "redirect:" + wxLogin;
+	}
+	
+	/**
+	 * 统计报表页面跳转
+	 * @return
+	 */
+	@RequestMapping("/toReporting")
+	public String toReporting(HttpServletRequest request, Model model) {
+		WebScUser user = (WebScUser) request.getSession().getAttribute(ScConstant.USER_SESSION_KEY);
+		model.addAttribute("user", user);
+		return "reporting";
+	}
+	
+	/**
+	 * 我的备休页面跳转
+	 * @return
+	 */
+	@RequestMapping("/toRest")
+	public String toRest(HttpServletRequest request, Model model) {
+		WebScUser user = (WebScUser) request.getSession().getAttribute(ScConstant.USER_SESSION_KEY);
+		model.addAttribute("user", user);
+		return "rest";
 	}
 	
 	/**
@@ -121,8 +149,10 @@ public class IndexController {
 	public String wxworkLogin(HttpServletRequest request, @RequestParam(value = "code") String code,
 			@RequestParam(value = "state") String state, Model model) {
 		HttpSession session = request.getSession();
+		log.info("wxworkLogin oauthcode=" + code);
 		WebScUser wxUser = userService.getOpenid(code);	// 仅保存企业微信端的userid openid
-		log.info("indexcontroller state=" + state);
+		log.info("wxworkLogin openid=" + wxUser.getWxOpenid());
+		log.info("wxworkLogin state=" + state);
 		if (state.equals("gologin")) {
 			request.getSession().invalidate();
 			model.addAttribute("wxUserid", wxUser.getWxUserid());
@@ -141,6 +171,7 @@ public class IndexController {
 			request.getSession().invalidate();
 			model.addAttribute("wxUserid", wxUser.getWxUserid());
 			model.addAttribute("openid", wxUser.getWxOpenid());
+			log.info("get_login openid=" + wxUser.getWxOpenid());
 			return "login";
 		}
 //		return "login";
@@ -164,8 +195,9 @@ public class IndexController {
 		// 登录校验
 		WebScUser user = userService.selectByLoginInfo(username, password);
 		if (user != null) {
+			log.info("to_login=" + openid);
 			if (user.getRoleId().equals(superRoleId) || user.getRoleId().equals(regionalRoleId)
-					|| user.getRoleId().equals(doctorRoleId)) {
+					|| user.getRoleId().equals(doctorRoleId) || user.getRoleId().equals(nurseRoleId)) {
 				// userid openid与系统用户的解绑与重新绑定
 				if (user.getWxOpenid() == null || !user.getWxOpenid().equals(openid)) {
 					// openid是否绑定其他系统用户
@@ -218,13 +250,33 @@ public class IndexController {
 		} else if (user.getRoleId().equals(regionalRoleId)) {
 			retPage = regionalPage;
 		} else if (user.getRoleId().equals(doctorRoleId)) {
+			Map<String, Integer> map = userService.statsForDc(user.getUserId().toString());
+			model.addAttribute("statsDc", map);
 			retPage = doctorPage;
+		} else if (user.getRoleId().equals(nurseRoleId)) {
+			retPage = nursePage;
 		} else {
 			session.invalidate();
 			model.addAttribute("msg", ScConstant.NO_AUTH);
 		}
 		model.addAttribute("user", user);
 		return retPage;
+	}
+	
+	/**
+	 * 备休日期列表
+	 * @param request
+	 * @param date
+	 * @return
+	 */
+	@GetMapping("/days")
+	@ResponseBody
+	public ResultBean getDayList(HttpServletRequest request,
+			@RequestParam(value = "date", required = false) String date) {
+		HttpSession session = request.getSession();
+		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
+		List<String> dayList = userService.getDayList(date, user);
+		return ResultBean.success(dayList);
 	}
 	
 	/**
@@ -235,23 +287,41 @@ public class IndexController {
 	 * @param date
 	 * @return
 	 */
-	@GetMapping("/calendarScroll")
+	@GetMapping("/calendars")
 	@ResponseBody
-	public PageResultBean<WebScCalendar> getCalendarList(HttpServletRequest request,
-			@RequestParam(value = "page", defaultValue = "1") int page,
-			@RequestParam(value = "limit", defaultValue = "10") int limit,
+	public ResultBean getCalendars(HttpServletRequest request,
 			@RequestParam(value = "date", required = false) String date) {
 		HttpSession session = request.getSession();
 		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
-		List<WebScCalendar> calendars = userService.getCalendars(page, limit, date, user);
-		PageInfo<WebScCalendar> infos = new PageInfo<>(calendars);
-		return new PageResultBean<>(infos.getTotal(), infos.getList());
+		List<DayCalendars> calendars = userService.getCalendars(date, user);
+		return ResultBean.success(calendars);
 	}
+	
+	/**
+	 * 备休列表查询
+	 * @param request
+	 * @param page
+	 * @param limit
+	 * @param date
+	 * @return
+	 */
+//	@GetMapping("/calendarScroll")
+//	@ResponseBody
+//	public PageResultBean<WebScCalendar> getCalendarList(HttpServletRequest request,
+//			@RequestParam(value = "page", defaultValue = "1") int page,
+//			@RequestParam(value = "limit", defaultValue = "10") int limit,
+//			@RequestParam(value = "date", required = false) String date) {
+//		HttpSession session = request.getSession();
+//		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
+//		List<WebScCalendar> calendars = userService.getCalendars(page, limit, date, user);
+//		PageInfo<WebScCalendar> infos = new PageInfo<>(calendars);
+//		return new PageResultBean<>(infos.getTotal(), infos.getList());
+//	}
 	
 	/**
 	 * 我（医生）的备休信息查询
 	 */
-	@GetMapping("/calendars")
+	@GetMapping("/myCalendars")
 	@ResponseBody
 	public PageResultBean<WebScCalendar> getMyCalendars(HttpServletRequest request) {
 		HttpSession session = request.getSession();
@@ -317,7 +387,7 @@ public class IndexController {
 		return ResultBean.success(organizations);
 	}
 	
-	@PostMapping("/reporting")
+	@PostMapping("/reportList")
 	@ResponseBody
 	public ResultBean getReporting(@RequestBody String data) {
 		JSONObject jsonData = JSONObject.parseObject(data);
@@ -329,6 +399,7 @@ public class IndexController {
 	@PostMapping("/updateUserIndex")
 	@ResponseBody
 	public ResultBean updateUserIndex() {
+		log.info("开始更新用户名索引文件...");
 		userService.createDoctorAndNurseIndex();
 		return ResultBean.success();
 	}
@@ -336,9 +407,29 @@ public class IndexController {
 	@OperationLog("搜索用户名称列表")
     @GetMapping(value = "/searchUser")
     @ResponseBody
-	public String searchOperativeNames(@RequestParam(value = "query", required = true) String name,
+	public String searchUserNames(@RequestParam(value = "query", required = true) String name,
 			@RequestParam(value = "limit", required = true) Integer limit) {
 		return userService.searchIndex(name, limit);
 	}
 	
+	@PostMapping("/initOrgansMultiSelect")
+	@ResponseBody
+	public ResultBean getAllOrgans() {
+		List<WebScOrganization> organizations = userService.getAllOrgans();
+		return ResultBean.success(organizations);
+	}
+	
+	/**
+	 * 按周、月、年统计所选医疗机构
+	 * @param data
+	 * @return
+	 */
+	@PostMapping("/statsOrgans")
+	@ResponseBody
+	public ResultBean getSMDO(@RequestBody String data) {
+		JSONObject params = JSONObject.parseObject(data);
+		JSONArray datas = JSONArray.parseArray(params.getString("data"));
+		List<OperationCount> operationCounts = userService.statsOrgans(datas, params.getString("type"));
+		return ResultBean.success(operationCounts);
+	}
 }
