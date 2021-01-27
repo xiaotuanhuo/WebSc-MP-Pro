@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class WebScUser implements Serializable {
     private static final long serialVersionUID = -3200103254689137288L;
     
-	private Integer userId;
+	private String userId;
 	private String userName;
 	private String loginName;
 	private String loginPwd;
@@ -39,11 +39,11 @@ public class WebScUser implements Serializable {
 	private String districtName;	// 格式：省-市-区/县
 	private String deptName;		// 机构名称
 	
-	public Integer getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Integer userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 

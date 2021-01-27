@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sc.mp.mapper.UserMapper" >
   <resultMap id="BaseResultMap" type="com.sc.mp.model.WebScUser" >
-    <id column="user_id" property="userId" jdbcType="INTEGER" />
+    <id column="user_id" property="userId" jdbcType="VARCHAR" />
     <result column="user_name" property="userName" jdbcType="VARCHAR" />
     <result column="login_name" property="loginName" jdbcType="VARCHAR" />
     <result column="login_pwd" property="loginPwd" jdbcType="VARCHAR" />
@@ -37,21 +37,21 @@
     city, area, patient_type, operation_type, status, last_login_time, create_time, modify_time, 
     photo, wx_openid, wx_userid
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
     from WSC_USER
-    where user_id = #{userId,jdbcType=INTEGER}
+    where user_id = #{userId,jdbcType=VARCHAR}
   </select>
   <select id="selectByLoginName" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List"/>
     from WSC_USER
-    where login_name = #{loginName,jdbcType=INTEGER}
+    where login_name = #{loginName,jdbcType=VARCHAR}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from WSC_USER
-    where user_id = #{userId,jdbcType=INTEGER}
+    where user_id = #{userId,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.sc.mp.model.WebScUser" >
     insert into WSC_USER (user_id, user_name, login_name, 
@@ -64,7 +64,7 @@
       status, last_login_time, create_time, 
       modify_time, photo, wx_openid, 
       wx_userid)
-    values (#{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{loginName,jdbcType=VARCHAR}, 
+    values (#{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{loginName,jdbcType=VARCHAR}, 
       #{loginPwd,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
       #{age,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
       #{idCard,jdbcType=VARCHAR}, #{certificateNo,jdbcType=VARCHAR}, #{occupationalNo,jdbcType=VARCHAR}, 
@@ -366,19 +366,19 @@
       photo = #{photo,jdbcType=VARCHAR},
       wx_openid = #{wxOpenid,jdbcType=VARCHAR},
       wx_userid = #{wxUserid,jdbcType=VARCHAR}
-    where user_id = #{userId,jdbcType=INTEGER}
+    where user_id = #{userId,jdbcType=VARCHAR}
   </update>
-  <update id="unbindOpenid" parameterType="java.lang.Integer" >
+  <update id="unbindOpenid" parameterType="java.lang.String" >
     update WSC_USER
     set wx_openid = null,
       wx_userid = null
-    where user_id = #{userId,jdbcType=INTEGER}
+    where user_id = #{userId,jdbcType=VARCHAR}
   </update>
   <update id="bundOpenid" parameterType="com.sc.mp.model.WebScUser" >
     update WSC_USER
     set wx_openid = #{wxOpenid,jdbcType=VARCHAR},
       wx_userid = #{wxUserid,jdbcType=VARCHAR}
-    where user_id = #{userId,jdbcType=INTEGER}
+    where user_id = #{userId,jdbcType=VARCHAR}
   </update>
   <select id="selectDoctorAndNurse" resultMap="BaseResultMap">
   	select 
@@ -398,7 +398,7 @@
     from WSC_USER 
     where 1=1 
     <if test="userId != null" >
-        and user_id = #{userId,jdbcType=INTEGER}
+        and user_id = #{userId,jdbcType=VARCHAR}
 	</if>
   </select>
   <select id="statsDoctorWork" resultType="com.sc.mp.bean.OperationCount">

@@ -30,14 +30,14 @@ public interface UserMapper {
 	 * @return
 	 */
 	@Update("UPDATE WSC_USER SET wx_openid=#{openid} WHERE user_id=${userId}")
-	int updOpenid(@Param("openid") String openid, @Param("userId") int userId);
+	int updOpenid(@Param("openid") String openid, @Param("userId") String userId);
 	
 	/**
 	 * 解绑用户wxUserid wxopenid
 	 * @param userId
 	 * @return
 	 */
-	int unbindOpenid(@Param("userId") int userId);
+	int unbindOpenid(@Param("userId") String userId);
 	
 	/**
 	 * 系统用户绑定wxUserid openid
@@ -62,7 +62,7 @@ public interface UserMapper {
 	@Select("SELECT * FROM WSC_USER WHERE role_id='5' AND city LIKE CONCAT(#{cityPre},'%')")
 	List<WebScUser> selectDoctorsByQy(@Param("cityPre") String cityPre);
 	
-	WebScUser selectByPrimaryKey(Integer userId);
+	WebScUser selectByPrimaryKey(String userId);
 	
 	WebScUser selectUserInfo(WebScUser user);
 	
