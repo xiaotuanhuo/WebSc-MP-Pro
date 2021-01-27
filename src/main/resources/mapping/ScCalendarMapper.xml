@@ -3,7 +3,7 @@
 <mapper namespace="com.sc.mp.mapper.ScCalendarMapper" >
   <resultMap id="BaseResultMap" type="com.sc.mp.model.WebScCalendar" >
     <id column="calendar_id" property="calendarId" jdbcType="VARCHAR" />
-    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
     <result column="title" property="title" jdbcType="VARCHAR" />
     <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
     <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
@@ -57,7 +57,7 @@
     calendar_id,
     title,
     DATE_FORMAT(start_time, '%Y-%c-%e') as day
-    from WSC_CALENDAR where user_id = #{userId, jdbcType=INTEGER} and start_time <![CDATA[ >= ]]> DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S')
+    from WSC_CALENDAR where user_id = #{userId, jdbcType=VARCHAR} and start_time <![CDATA[ >= ]]> DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S')
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from WSC_CALENDAR
@@ -67,7 +67,7 @@
     insert into WSC_CALENDAR (calendar_id, user_id, title, 
       start_time, end_time, memo
       )
-    values (#{calendarId,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, 
+    values (#{calendarId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
       #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{memo,jdbcType=VARCHAR}
       )
   </insert>
@@ -98,7 +98,7 @@
         #{calendarId,jdbcType=VARCHAR},
       </if>
       <if test="userId != null" >
-        #{userId,jdbcType=INTEGER},
+        #{userId,jdbcType=VARCHAR},
       </if>
       <if test="title != null" >
         #{title,jdbcType=VARCHAR},
@@ -118,7 +118,7 @@
     update WSC_CALENDAR
     <set >
       <if test="userId != null" >
-        user_id = #{userId,jdbcType=INTEGER},
+        user_id = #{userId,jdbcType=VARCHAR},
       </if>
       <if test="title != null" >
         title = #{title,jdbcType=VARCHAR},
@@ -137,7 +137,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.sc.mp.model.WebScCalendar" >
     update WSC_CALENDAR
-    set user_id = #{userId,jdbcType=INTEGER},
+    set user_id = #{userId,jdbcType=VARCHAR},
       title = #{title,jdbcType=VARCHAR},
       start_time = #{startTime,jdbcType=TIMESTAMP},
       end_time = #{endTime,jdbcType=TIMESTAMP},

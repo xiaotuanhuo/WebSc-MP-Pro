@@ -32,7 +32,7 @@ public interface ScCalendarMapper {
 	 */
 	List<WebScCalendar> selectCalendarsByDate(@Param("date") String date, @Param("user") WebScUser user);
 	
-	List<WebScCalendar> selectByDoctor(@Param("userId") Integer doctorId);
+	List<WebScCalendar> selectByDoctor(@Param("userId") String doctorId);
 	
 	List<WebScCalendar> selectAll();
 	

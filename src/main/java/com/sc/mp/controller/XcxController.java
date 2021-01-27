@@ -123,7 +123,7 @@ public class XcxController {
 			docMapper.insert(doc);
 			
 			//插入通知消息
-			WebScUser user = userMapper.selectByPrimaryKey(Integer.parseInt(doc.getApplyUserId()));
+			WebScUser user = userMapper.selectByPrimaryKey(doc.getApplyUserId());
 			sendRecordService.insertSendRecord(docId, user, 1001, 0);
 			
 			resultBean = ResultBean.success("订单发布成功（订单号："+docId+"）");
@@ -304,7 +304,7 @@ public class XcxController {
 		ResultBean resultBean = null;
 		try {
 			
-			userMapper.updOpenid("", Integer.parseInt(paraMap.get("userId").toString()));
+			userMapper.updOpenid("", paraMap.get("userId").toString());
 			
 			resultBean = ResultBean.success("登出成功");
 			
