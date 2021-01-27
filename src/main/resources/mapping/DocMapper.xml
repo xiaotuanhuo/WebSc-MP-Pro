@@ -994,6 +994,38 @@
         where operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(),"%Y"), "%")
     </select>
     
+    <select id="statsTodayForDc" parameterType="java.lang.String" resultType="Integer">
+    	SELECT COUNT(1) FROM (
+			SELECT * FROM `WSC_DOCUMENT` WHERE qa_user_id = #{userId,jdbcType=VARCHAR} AND MID(operate_start_time,1,10) = DATE_FORMAT(CURDATE(),'%Y-%m-%d')
+			UNION
+			SELECT wd.* FROM WSC_DOCUMENT wd, (SELECT team_id FROM WSC_QATEAM WHERE user_id = #{userId,jdbcType=VARCHAR}) wq WHERE wd.qa_team_id = wq.team_id AND MID(wd.operate_start_time,1,10) = DATE_FORMAT(CURDATE(),'%Y-%m-%d')
+		) a
+    </select>
+    
+    <select id="statsMonthForDc" parameterType="java.lang.String" resultType="Integer">
+    	SELECT COUNT(1) FROM (
+			SELECT * FROM `WSC_DOCUMENT` WHERE qa_user_id = #{userId,jdbcType=VARCHAR} AND MID(operate_start_time,1,7) = DATE_FORMAT(CURDATE(),'%Y-%m')
+			UNION
+			SELECT wd.* FROM WSC_DOCUMENT wd, (SELECT team_id FROM WSC_QATEAM WHERE user_id = #{userId,jdbcType=VARCHAR}) wq WHERE wd.qa_team_id = wq.team_id AND MID(wd.operate_start_time,1,7) = DATE_FORMAT(CURDATE(),'%Y-%m')
+		) a
+    </select>
+    
+    <select id="statsYearForDc" parameterType="java.lang.String" resultType="Integer">
+    	SELECT COUNT(1) FROM (
+			SELECT * FROM `WSC_DOCUMENT` WHERE qa_user_id = #{userId,jdbcType=VARCHAR} AND MID(operate_start_time,1,4) = DATE_FORMAT(CURDATE(),'%Y')
+			UNION
+			SELECT wd.* FROM WSC_DOCUMENT wd, (SELECT team_id FROM WSC_QATEAM WHERE user_id = #{userId,jdbcType=VARCHAR}) wq WHERE wd.qa_team_id = wq.team_id AND MID(wd.operate_start_time,1,4) = DATE_FORMAT(CURDATE(),'%Y')
+		) a
+    </select>
+    
+    <select id="statsSumForDc" parameterType="java.lang.String" resultType="Integer">
+    	SELECT COUNT(1) FROM (
+			SELECT * FROM `WSC_DOCUMENT` WHERE qa_user_id = #{userId,jdbcType=VARCHAR}
+			UNION
+			SELECT wd.* FROM WSC_DOCUMENT wd, (SELECT team_id FROM WSC_QATEAM WHERE user_id = #{userId,jdbcType=VARCHAR}) wq WHERE wd.qa_team_id = wq.team_id
+		) a
+    </select>
+    
     <select id="statsByYear" parameterType="java.lang.Integer" resultType="com.sc.mp.bean.OperationCount">
     	select 
     	    MID(monthList.leftMonth, 1, 4) as name,
@@ -1041,15 +1073,14 @@
     	left join
     	    (select count(1) as num, MID(operate_start_time, 1, 7) rightMonth from WSC_DOCUMENT GROUP BY rightMonth) doc
     	    on monthList.leftMonth = doc.rightMonth
-    	    where monthList.leftMonth <![CDATA[ <= ]]> DATE_FORMAT(NOW(), '%Y-%m')
     	    order by monthList.leftMonth
     </select>
     
     <select id="statsByWeekForOrgan" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">
     	SELECT
     		<if test="orgName != null and orgName != ''">
-    		#{orgName,jdbcType=VARCHAR} as name,
-    		</if>
+    	    	#{orgName,jdbcType=VARCHAR} as name,
+    	    </if>
     	    dayList.leftWeek as date,
     	    ifnull(doc.num, 0) as count
     	FROM 
@@ -1077,8 +1108,8 @@
     <select id="statsByMonthForOrgan" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">
     	SELECT
     		<if test="orgName != null and orgName != ''">
-    		#{orgName,jdbcType=VARCHAR} as name,
-    		</if>
+    	    	#{orgName,jdbcType=VARCHAR} as name,
+    	    </if>
     	    MID(dayList.leftDay, 9, 2) as date,
     	    ifnull(doc.num, 0) as count
     	FROM 
@@ -1106,10 +1137,10 @@
     </select>
     
     <select id="statsByYearForOrgan" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">
-    	select 
-    	    <if test="orgName != null and orgName != ''">
-    		#{orgName,jdbcType=VARCHAR} as name,
-    		</if>
+    	select
+    		<if test="orgName != null and orgName != ''">
+    	    	#{orgName,jdbcType=VARCHAR} as name,
+    	    </if>
     	    MID(monthList.leftMonth, 6, 2) as date,
     	    ifnull(doc.num, 0) as count
     	from 
@@ -1152,52 +1183,57 @@
     </select>
     
     <select id="selectReporting" parameterType="java.util.Map" resultType="com.sc.mp.bean.OperationCount">
-        SELECT
-            COUNT(1) count,
-            wd.org_id as orgId,
-            wo.org_name as orgName,
-            wo.province,
-            wo.city,
-            wo.area
-        FROM `WSC_DOCUMENT` wd, WSC_ORGANIZATION wo
-        <where>
-        	<choose>
-        		<when test="params.orgId != null and params.orgId != ''">
-        			AND wd.org_id = #{params.orgId,jdbcType=VARCHAR}
-        		</when>
-        		<otherwise>
-        			<choose>
-        				<when test="params.area != null and params.area != ''">
-        					AND wd.org_id in (SELECT org_id FROM WSC_ORGANIZATION WHERE area = #{params.area,jdbcType=VARCHAR} AND leaf = 1)
-        				</when>
-        				<otherwise>
-        					<choose>
-        						<when test="params.city != null and params.city != ''">
-        							AND wd.org_id in (SELECT org_id FROM WSC_ORGANIZATION WHERE city = #{params.city,jdbcType=VARCHAR} AND leaf = 1)
-        						</when>
-        						<otherwise>
-        							<choose>
-        								<when test="params.province != null and params.province != ''">
-        									AND wd.org_id in (SELECT org_id FROM WSC_ORGANIZATION WHERE province = #{params.province,jdbcType=VARCHAR} AND leaf = 1)
-        								</when>
-        							</choose>
-        						</otherwise>
-        					</choose>
-        				</otherwise>
-        			</choose>
-        		</otherwise>
-        	</choose>
-        	<if test="params.userId != null and params.userId != ''">
-        		AND (wd.qa_user_id = #{params.userId,jdbcType=VARCHAR} or wd.qa_team_id in (select team_id from WSC_QATEAM where user_id = #{params.userId,jdbcType=VARCHAR}))
-        	</if>
-        	<if test="params.beginTime != null and params.beginTime != ''">
-        		AND wd.operate_start_time <![CDATA[ >= ]]> CONCAT(#{params.beginTime,jdbcType=VARCHAR}, ' 00:00:00')
-        	</if>
-        	<if test="params.endTime != null and params.endTime != ''">
-        		AND wd.operate_start_time <![CDATA[ <= ]]> CONCAT(#{params.endTime,jdbcType=VARCHAR}, ' 00:00:00')
-        	</if>
-        	AND wd.org_id = wo.org_id AND wd.document_state = '5' GROUP BY wd.org_id ORDER BY count DESC
-        </where>
+	     SELECT
+	     	leftTable.orgId,
+	     	ifnull(rightTable.org_name, 'ALL_ORGANIZATION') as orgName,
+	     	leftTable.count
+	     FROM  
+	        (SELECT
+	            ifnull(wd.org_id, 'zzzzzzzz_allOrgId') as orgId,
+	            COUNT(1) as count
+	        FROM `WSC_DOCUMENT` wd
+	        <where>
+	        	<choose>
+	        		<when test="params.orgId != null and params.orgId != ''">
+	        			AND wd.org_id = #{params.orgId,jdbcType=VARCHAR}
+	        		</when>
+	        		<otherwise>
+	        			<choose>
+	        				<when test="params.area != null and params.area != ''">
+	        					AND wd.org_id in (SELECT org_id FROM WSC_ORGANIZATION WHERE area = #{params.area,jdbcType=VARCHAR} AND leaf = 1)
+	        				</when>
+	        				<otherwise>
+	        					<choose>
+	        						<when test="params.city != null and params.city != ''">
+	        							AND wd.org_id in (SELECT org_id FROM WSC_ORGANIZATION WHERE city = #{params.city,jdbcType=VARCHAR} AND leaf = 1)
+	        						</when>
+	        						<otherwise>
+	        							<choose>
+	        								<when test="params.province != null and params.province != ''">
+	        									AND wd.org_id in (SELECT org_id FROM WSC_ORGANIZATION WHERE province = #{params.province,jdbcType=VARCHAR} AND leaf = 1)
+	        								</when>
+	        							</choose>
+	        						</otherwise>
+	        					</choose>
+	        				</otherwise>
+	        			</choose>
+	        		</otherwise>
+	        	</choose>
+	        	<if test="params.userId != null and params.userId != ''">
+	        		AND (wd.qa_user_id = #{params.userId,jdbcType=VARCHAR} or wd.qa_team_id in (select team_id from WSC_QATEAM where user_id = #{params.userId,jdbcType=VARCHAR}))
+	        	</if>
+	        	<if test="params.beginTime != null and params.beginTime != ''">
+	        		AND wd.operate_start_time <![CDATA[ >= ]]> CONCAT(#{params.beginTime,jdbcType=VARCHAR}, ' 00:00:00')
+	        	</if>
+	        	<if test="params.endTime != null and params.endTime != ''">
+	        		AND wd.operate_start_time <![CDATA[ <= ]]> CONCAT(#{params.endTime,jdbcType=VARCHAR}, ' 23:59:59')
+	        	</if>
+	        	AND wd.document_state = '5' GROUP BY wd.org_id WITH ROLLUP
+	        </where>) as leftTable
+		left join
+			WSC_ORGANIZATION as rightTable
+		on leftTable.orgId = rightTable.org_id
+		order by leftTable.count desc, leftTable.orgId desc
     </select>
     
 </mapper>
