@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class WebScCalendar {
 	private String calendarId;
-	private Integer userId;
+	private String userId;
 	private String title;
 	private Date startTime;
 	private Date endTime;
@@ -25,14 +25,14 @@ public class WebScCalendar {
 		this.calendarId = calendarId == null ? null : calendarId.trim();
 	}
 	
-	public Integer getUserId() {
+	public String getUserId() {
 		return userId;
 	}
-	
-	public void setUserId(Integer userId) {
+
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-	
+
 	public String getTitle() {
 		return title;
 	}
