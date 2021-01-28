@@ -5,9 +5,9 @@
   <resultMap id="BaseResultMap" type="com.sc.mp.model.WebScSendRecord" >
     <id column="record_id" property="recordId" jdbcType="VARCHAR" />
     <result column="document_id" property="documentId" jdbcType="VARCHAR" />
-    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
     <result column="memo" property="memo" jdbcType="VARCHAR" />
-    <result column="send_user_id" property="sendUserId" jdbcType="INTEGER" />
+    <result column="send_user_id" property="sendUserId" jdbcType="VARCHAR" />
     <result column="state" property="state" jdbcType="VARCHAR" />
     <result column="errmsg" property="state" jdbcType="VARCHAR" />
   </resultMap>
