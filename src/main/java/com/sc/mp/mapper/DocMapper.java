@@ -26,7 +26,7 @@ public interface DocMapper {
 	 * @return
 	 */
 	@Select("SELECT\r\n" + 
-			"	'已完成' AS NAME,\r\n" + 
+			"	'取消' AS NAME,\r\n" + 
 			"	count(*) AS VALUE\r\n" + 
 			"FROM\r\n" + 
 			"	WSC_DOCUMENT\r\n" + 
@@ -48,7 +48,7 @@ public interface DocMapper {
 			"	AND document_state NOT IN ('5', '6', '9')\r\n" + 
 			"	UNION\r\n" + 
 			"		SELECT\r\n" + 
-			"			'取消' AS NAME,\r\n" + 
+			"			'已完成' AS NAME,\r\n" + 
 			"			count(*) AS VALUE\r\n" + 
 			"		FROM\r\n" + 
 			"			WSC_DOCUMENT\r\n" + 
