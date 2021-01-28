@@ -29,7 +29,7 @@ public interface UserMapper {
 	 * @param userId
 	 * @return
 	 */
-	@Update("UPDATE WSC_USER SET wx_openid=#{openid} WHERE user_id=${userId}")
+	@Update("UPDATE WSC_USER SET wx_openid=#{openid} WHERE user_id=#{userId}")
 	int updOpenid(@Param("openid") String openid, @Param("userId") String userId);
 	
 	/**
