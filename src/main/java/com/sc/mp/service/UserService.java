@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageHelper;
 import com.sc.mp.bean.DayCalendars;
 import com.sc.mp.bean.OperationCount;
 import com.sc.mp.mapper.DeptMapper;
@@ -28,15 +27,15 @@ import com.sc.mp.mapper.OrganizationMapper;
 import com.sc.mp.mapper.RoleMapper;
 import com.sc.mp.mapper.ScCalendarMapper;
 import com.sc.mp.mapper.UserMapper;
-import com.sc.mp.model.WebScRole;
 import com.sc.mp.model.WebScCalendar;
 import com.sc.mp.model.WebScDept;
 import com.sc.mp.model.WebScOrganization;
+import com.sc.mp.model.WebScRole;
 import com.sc.mp.model.WebScUser;
-import com.sc.mp.util.ScConstant;
 import com.sc.mp.util.DateUtils;
 import com.sc.mp.util.DistrictUtil;
 import com.sc.mp.util.LuceneUtil;
+import com.sc.mp.util.ScConstant;
 import com.sc.mp.util.UUID19;
 import com.sc.mp.util.WxUtil;
 
@@ -78,7 +77,7 @@ public class UserService {
 		return userMapper.selectUserInfo(user);
 	}
 	
-	public WebScUser selectByPrimaryKey(Integer userId){
+	public WebScUser selectByPrimaryKey(String userId){
 		return userMapper.selectByPrimaryKey(userId);
 	}
 	
@@ -184,7 +183,7 @@ public class UserService {
 	 * @param doctorId
 	 * @return
 	 */
-	public WebScCalendar addCalendar(JSONObject calendarInfo, Integer doctorId) {
+	public WebScCalendar addCalendar(JSONObject calendarInfo, String doctorId) {
 		WebScCalendar calendar = new WebScCalendar();
 		String id = UUID19.uuid();
 		String day = calendarInfo.getString("day");			// 备休日

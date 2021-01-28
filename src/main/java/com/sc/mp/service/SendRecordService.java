@@ -28,7 +28,7 @@ public class SendRecordService {
 	 * @param user	用户信息
 	 * @param type  操作码
 	 */
-	public void insertSendRecord(String documentId, WebScUser user, int sendtype, int sendUserId) throws Exception{
+	public void insertSendRecord(String documentId, WebScUser user, int sendtype, String sendUserId) throws Exception{
 		//订单信息
 		WebScDoc searchDoc = new WebScDoc();
 		searchDoc.setDocumentId(documentId);
@@ -76,7 +76,7 @@ public class SendRecordService {
 				//获取订单对应区域管理员
 				//原管理员
 				record.setRecordId(UUID19.uuid());
-				record.setSendUserId(Integer.parseInt(doc.getAdminUserId()));
+				record.setSendUserId(doc.getAdminUserId());
 				sendRecordMapper.insert(record);
 			}else if(sendtype == 4002){
 				//接收订单
@@ -94,7 +94,7 @@ public class SendRecordService {
 				//通知订单原医生
 				if(doc.getTransferUserId() != null){
 					record.setRecordId(UUID19.uuid());
-					record.setSendUserId(Integer.parseInt(doc.getTransferUserId()));
+					record.setSendUserId(doc.getTransferUserId());
 					sendRecordMapper.insert(record);
 				}
 			}else if(sendtype == 4004){

@@ -3,9 +3,9 @@ package com.sc.mp.model;
 public class WebScSendRecord {
 	private String recordId;
 	private String documentId;
-	private Integer userId;
+	private String userId;
 	private String memo;
-	private Integer sendUserId;
+	private String sendUserId;
 	private String state;
 	private String errmsg;
 	
@@ -21,23 +21,11 @@ public class WebScSendRecord {
 	public void setDocumentId(String documentId) {
 		this.documentId = documentId;
 	}
-	public Integer getUserId() {
-		return userId;
-	}
-	public void setUserId(Integer userId) {
-		this.userId = userId;
-	}
 	public String getMemo() {
 		return memo;
 	}
 	public void setMemo(String memo) {
 		this.memo = memo;
-	}
-	public Integer getSendUserId() {
-		return sendUserId;
-	}
-	public void setSendUserId(Integer sendUserId) {
-		this.sendUserId = sendUserId;
 	}
 	public String getState() {
 		return state;
@@ -50,5 +38,17 @@ public class WebScSendRecord {
 	}
 	public void setErrmsg(String errmsg) {
 		this.errmsg = errmsg;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getSendUserId() {
+		return sendUserId;
+	}
+	public void setSendUserId(String sendUserId) {
+		this.sendUserId = sendUserId;
 	}
 }

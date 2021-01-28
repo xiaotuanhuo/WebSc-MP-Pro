@@ -431,27 +431,27 @@ public class DocController {
 					String qid = jo.get("qid").toString();
 					updateMap.put("qaUserId", qid);
 					log.info("区域管理员：" + user.getUserName() + "	分配订单：" + id + "	医生:" + qid + " 操作开始！");
-					sendRecordService.insertSendRecord(id, user, 3001, Integer.parseInt(qid));
+					sendRecordService.insertSendRecord(id, user, 3001, qid);
 				}else if(ods.equals("2") && ds.equals("1")){
 					//取消分配		区域管理员操作
 					updateMap.put("qaUserId", "");
 					log.info("区域管理员：" + user.getUserName() + "	取消分配订单：" + id + " 操作开始！");
-					sendRecordService.insertSendRecord(id, user, 3002, 0);
+					sendRecordService.insertSendRecord(id, user, 3002, "0");
 				}else if(ods.equals("2") && ds.equals("3")){
 					//确认接单		医生操作
 					log.info("医生：" + user.getUserName() + "	确认接取订单：" + id + " 操作开始！");
-					sendRecordService.insertSendRecord(id, user, 4001, 0);
+					sendRecordService.insertSendRecord(id, user, 4001, "0");
 				}else if(ods.equals("3") && ds.equals("2")){
 					//撤销分配单	医生操作
 					log.info("医生：" + user.getUserName() + "	撤销分配订单：" + id + " 操作开始！");
-					sendRecordService.insertSendRecord(id, user, 4002, 0);
+					sendRecordService.insertSendRecord(id, user, 4002, "0");
 				}else if(ods.equals("3") && ds.equals("3")){
 					//撤销转单		医生操作
 					String qid = jo.get("qid").toString();
 					updateMap.put("qaUserId", qid);
 					updateMap.put("transferUserId", "");
 					log.info("医生：" + user.getUserName() + "	撤销转单：" + id + " 操作开始！");
-					sendRecordService.insertSendRecord(id, user, 4003, 0);
+					sendRecordService.insertSendRecord(id, user, 4003, "0");
 				}else if(ods.equals("4") && ds.equals("5")){
 					//完成订单		管理员操作
 					log.info("区域管理员：" + user.getUserName() + "	完成订单：" + id + " 操作开始！");
@@ -462,7 +462,7 @@ public class DocController {
 					updateMap.put("memo", reason);
 					updateMap.put("qxRadio", qxRadio);
 					log.info("区域管理员：" + user.getUserName() + "	取消订单：" + id + " 操作开始！");
-					sendRecordService.insertSendRecord(id, user, 9001, 0);
+					sendRecordService.insertSendRecord(id, user, 9001, "0");
 				}else if(!ds.equals("6") && ods.equals("9")){
 					//拒绝取消订单		管理员操作
 					log.info("区域管理员：" + user.getUserName() + "	拒绝取消订单：" + id + " 操作开始！");
@@ -525,7 +525,7 @@ public class DocController {
 				
 				int iRet = docService.updateDocInfoByMap(updateMap);
 				
-				sendRecordService.insertSendRecord(id, user, 4004, Integer.parseInt(qid));
+				sendRecordService.insertSendRecord(id, user, 4004, qid);
 				
 				if(iRet > 0){
 					returnMap.put("code", 1);
@@ -574,7 +574,7 @@ public class DocController {
 					//完成订单
 					tmpUpdateMap.put("status", "1");
 					log.info("医生：" + user.getUserName() + "	完成订单：" + id + " 开始！");
-					sendRecordService.insertSendRecord(id, user, 4005, 0);
+					sendRecordService.insertSendRecord(id, user, 4005, "0");
 				}else if(ods.equals("3") && ds.equals("3")){
 					//保存草稿
 					tmpUpdateMap.put("status", "0");
