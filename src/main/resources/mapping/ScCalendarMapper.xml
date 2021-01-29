@@ -52,6 +52,37 @@
     	AND start_time like CONCAT(#{date, jdbcType=VARCHAR}, '%')
     </where>
   </select>
+  <select id="selectDateCalendar" resultType="java.lang.String" parameterType="java.lang.String" >
+    select 
+    DATE_FORMAT(wc.start_time, "%Y-%m-%d") as day
+    from WSC_CALENDAR wc, WSC_USER wu, WSC_DEPT wd
+    <where>
+    	<choose>
+    		<when test="user.area != null">
+    			AND wc.user_id = wu.user_id AND wu.area = #{user.area,jdbcType=VARCHAR} AND wu.role_type_id = wd.dept_id
+    		</when>
+    		<otherwise>
+    			<choose>
+    				<when test="user.city != null">
+    					AND wc.user_id = wu.user_id AND wu.city = #{user.city,jdbcType=VARCHAR} AND wu.role_type_id = wd.dept_id
+    				</when>
+    				<otherwise>
+    					AND wc.user_id = wu.user_id AND wu.province = #{user.province,jdbcType=VARCHAR} AND wu.role_type_id = wd.dept_id
+    				</otherwise>
+    			</choose>
+    		</otherwise>
+    	</choose>
+    	<choose>
+    		<when test="date != null and date != ''">
+    			AND date_format(start_time, '%Y-%m-%d') = #{date,jdbcType=VARCHAR}
+    		</when>
+    		<otherwise>
+    			AND date_format(start_time, '%Y-%m-%d') <![CDATA[ >= ]]> date_format(CURDATE(), '%Y-%m-%d')
+    		</otherwise>
+    	</choose>
+    </where>
+    group by day
+  </select>
   <select id="selectByDoctor" resultMap="BaseResultMap" parameterType="java.lang.Integer">
     select 
     calendar_id,
