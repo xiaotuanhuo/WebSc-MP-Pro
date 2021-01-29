@@ -112,12 +112,21 @@ public class XcxController {
 				throw new Exception("请先选择需要进行的手术");
 			}
 			
+			//是否是紧急订单，1：紧急，0：不急
 			Date operativeDate = DateUtils.parseDate(doc.getOperateStartTime());
 			if(UnixtimeUtil.getUnixHour(new Date().getTime())+24>=
 			UnixtimeUtil.getUnixHour(operativeDate.getTime())) {
 				doc.setDocumentType("1");
 			}else {
 				doc.setDocumentType("0");
+			}
+			//病人类型，1：未成年人，2：中年人，3：老年人
+			if (doc.getPatientAge()<=16) {
+				doc.setPatienttypeId("1");
+			}else if (doc.getPatientAge()>16&&doc.getPatientAge()<=60) {
+				doc.setPatienttypeId("2");
+			}else {
+				doc.setPatienttypeId("3");
 			}
 			
 			docMapper.insert(doc);
