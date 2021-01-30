@@ -36,6 +36,7 @@ sc:
         doctor: doctor
         nurse: nurse
     wx:
-        login: https://open.weixin.qq.com/connect/oauth2/authorize?appid=ww0a5757d175c0cfc6&redirect_uri=http%3a%2f%2ffw1.sucheng-group.com%3a9080%2findex&response_type=code&scope=snsapi_base&state=gologin#wechat_redirect
+        #login: https://open.weixin.qq.com/connect/oauth2/authorize?appid=ww0a5757d175c0cfc6&redirect_uri=http%3a%2f%2ffw1.sucheng-group.com%3a9080%2findex&response_type=code&scope=snsapi_base&state=gologin#wechat_redirect
+        login: /index?code=testCode&state=gologin
     stats:
-        top: 2
+        top: 5

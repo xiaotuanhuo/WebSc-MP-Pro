@@ -141,10 +141,10 @@
 					                <img src="/img/cancel.png" alt="">
 					                <span>已取消</span>
 					            </div>
-					            <div class="content-col myrecord">
+					            <!-- <div class="content-col myrecord">
 					                <img src="/img/rest_record.png" alt="">
 					                <span>备案管理</span>
-					            </div>
+					            </div> -->
 					        </div>
 					    </div>
 					</div>
@@ -234,7 +234,11 @@
         						_html += '</div>';
         						
         						var dayDom = document.createElement("div");
-        						dayDom.setAttribute("class", "expandable-item accordion");
+        						if (i == 0) {
+        							dayDom.setAttribute("class", "expandable-item accordion active");
+        						} else {
+        							dayDom.setAttribute("class", "expandable-item accordion");
+        						}
         						dayDom.setAttribute("data-group", "accordion");
         						dayDom.innerHTML = _html;
         						daysDom.appendChild(dayDom);

@@ -158,6 +158,12 @@
   font: 700 13px "Open Sans", "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
   /* inside .day */
 }
+.jalendar .jalendar-container .jalendar-pages .days .day.this-month.disable-selecting {
+	cursor:not-allowed!important
+}
+.jalendar .jalendar-container .jalendar-pages .days .day.this-month.disable-selecting span {
+	opacity:.7!important;cursor:not-allowed!important
+}
 .jalendar .jalendar-container .jalendar-pages .days .day.this-month span {
   color: rgba(0, 0, 0, 0.5);
   cursor: pointer;
