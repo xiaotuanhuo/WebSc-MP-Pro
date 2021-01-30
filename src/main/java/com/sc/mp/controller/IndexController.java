@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -197,7 +198,7 @@ public class IndexController {
 		if (user != null) {
 			log.info("to_login=" + openid);
 			if (user.getRoleId().equals(superRoleId) || user.getRoleId().equals(regionalRoleId)
-					|| user.getRoleId().equals(doctorRoleId) || user.getRoleId().equals(nurseRoleId)) {
+					|| user.getRoleId().equals(doctorRoleId)) {
 				// userid openid与系统用户的解绑与重新绑定
 				if (user.getWxOpenid() == null || !user.getWxOpenid().equals(openid)) {
 					// openid是否绑定其他系统用户
@@ -253,8 +254,6 @@ public class IndexController {
 			Map<String, Integer> map = userService.statsForDc(user.getUserId().toString());
 			model.addAttribute("statsDc", map);
 			retPage = doctorPage;
-		} else if (user.getRoleId().equals(nurseRoleId)) {
-			retPage = nursePage;
 		} else {
 			session.invalidate();
 			model.addAttribute("msg", ScConstant.NO_AUTH);
@@ -432,4 +431,5 @@ public class IndexController {
 		List<OperationCount> operationCounts = userService.statsOrgans(datas, params.getString("type"));
 		return ResultBean.success(operationCounts);
 	}
+	
 }

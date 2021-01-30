@@ -3537,18 +3537,36 @@ footer ul li a i {
 	width: 80px;
 	color:rgba(0, 54, 80, 1);
 }
-.threeRow li{
-	width: 45px;
-	color: white;
+.threeRow{
+	width: 135px;
+	flex: 0 0 135px;
+	background: #10aefc;
 }
 .threeRow .active{
 	color: #10aefc;
 }
-.threeRow{
-	width: 135px;
-	background: #10aefc;
+.threeRow li{
+	width: 45px;
+	color: white;
 }
 .threeRow span{
+	width: 37px;
+	background: white;
+}
+
+.twoRow{
+	width: 90px;
+	flex: 0 0 90px;
+	background: #10aefc;
+}
+.twoRow .active{
+	color: #10aefc;
+}
+.twoRow li{
+	width: 45px;
+	color: white;
+}
+.twoRow span{
 	width: 37px;
 	background: white;
 }
