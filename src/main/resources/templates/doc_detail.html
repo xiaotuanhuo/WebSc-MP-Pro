@@ -142,7 +142,7 @@
     				</tr>
     				<tr>
       					<th class="title">性别：</th>
-      					<th class="patient_val"><span th:text="${doc.patientSex == '0'? '男':'女'}"></span></th>
+      					<th class="patient_val"><span th:text="${doc.patientSex == '0'? '女':'男'}"></span></th>
     				</tr>
     				<tr>
       					<th class="title">年龄：</th>
@@ -1249,7 +1249,7 @@
 						result += "<tr>";
 						result +="<td>" + u.userName + "</td>";
 						result +="<td>" + u.age + "</td>";
-						if(u.sex == '0')
+						if(u.sex == '1')
 				        	result +="<td>男</td>";
 				  		else
 				  			result +="<td>女</td>";
@@ -1713,7 +1713,7 @@
 		console.info(tmpBody);
     	var fileName = tmpBody.find("#photo_" + id).attr("name");
     	layer.open({
-		    content: "确认删除图片：" + fileName,
+		    content: "确认删除图片？" ,
 		   	btn: ['确认','取消'],
 		    yes: function(index){
 		    	console.info("开始删除");
@@ -2053,7 +2053,7 @@
 						result += "<tr>";
 						result +="<td>" + u.userName + "</td>";
 						result +="<td>" + u.age + "</td>";
-						if(u.sex == '0')
+						if(u.sex == '1')
 				        	result +="<td>男</td>";
 				  		else
 				  			result +="<td>女</td>";
@@ -2191,7 +2191,7 @@
     			   "				</tr>" +
     			   "				<tr>" +
     			   "					<td>性别：</td>" +
-    			   "					<td>" + (user.sex == 0 ? '男':'女') + "</td>" +
+    			   "					<td>" + (user.sex == 1 ? '男':'女') + "</td>" +
     			   "				</tr>" +
     			   "			</table>" +
     			   "		</td>" +

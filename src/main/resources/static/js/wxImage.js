@@ -77,8 +77,7 @@ function imgUpload(body){
 	                                console.log("上传成功");
 	                                
 	                                var html = '<div id="photo_' + photoIdx + '" name="'+ data.fileName +'" class="file-iteme" style="width: 149px; height: 180px; float: left;"">';
-	            	         		if(doc.status == '0')
-	            	         			html += '<div style="float: left;position: absolute;" id="delPhotoBtn' + photoIdx + '" onclick="deletePhoto(' + photoIdx + ')"><i class="icon-2x icon-times"></i></div>';
+	            	         		html += '<div style="float: left;position: absolute;" id="delPhotoBtn' + photoIdx + '" onclick="deletePhoto(' + photoIdx + ')"><i class="icon-2x icon-times"></i></div>';
 	            	        		html += '<img style="width: 150px;height: 180px;" src="/getPhotoByFileName?id=' + doc.documentId + '&FileName='+ data.fileName +'">';
 	            	        		html += '</div>';
 	
@@ -152,8 +151,7 @@ function imgUpload(body){
 //        							alert(data.fileName);
         							
         							var html = '<div id="photo_' + photoIdx + '" name="'+ data.fileName +'" class="file-iteme" style="width: 149px; height: 180px; float: left;"">';
-	            	         		if(doc.status == '0')
-	            	         			html += '<div style="float: left;position: absolute;" id="delPhotoBtn' + photoIdx + '" onclick="deletePhoto(' + photoIdx + ')"><i class="icon-2x icon-times"></i></div>';
+	            	         		html += '<div style="float: left;position: absolute;" id="delPhotoBtn' + photoIdx + '" onclick="deletePhoto(' + photoIdx + ')"><i class="icon-2x icon-times"></i></div>';
 	            	        		html += '<img style="width: 150px;height: 180px;" src="/getPhotoByFileName?id=' + doc.documentId + '&FileName='+ data.fileName +'">';
 	            	        		html += '</div>';
 	

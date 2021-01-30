@@ -874,7 +874,7 @@
       		and qa_user_name like concat(#{qaUserName,jdbcType=VARCHAR}, '%')
       	</if>
       	order by operate_start_time desc 
-      	limit 100
+      	limit 50
     </select>
     
     <select id="findWebScDocOrg" parameterType="java.lang.String" resultType="com.sc.mp.model.WebScOrganization">

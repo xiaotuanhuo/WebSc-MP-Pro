@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.sc.mp.mapper.SendRecordMapper;
@@ -15,6 +17,8 @@ import com.sc.mp.util.UUID19;
 
 @Service
 public class SendRecordService {
+	private static final Logger log = LoggerFactory.getLogger(SendRecordService.class);
+			
 	@Resource
 	DocService docService;
 	@Resource
@@ -30,6 +34,7 @@ public class SendRecordService {
 	 */
 	public void insertSendRecord(String documentId, WebScUser user, int sendtype, String sendUserId) throws Exception{
 		//订单信息
+		log.info("单据：" + documentId + "   保存发送状态" + sendtype);
 		WebScDoc searchDoc = new WebScDoc();
 		searchDoc.setDocumentId(documentId);
 		WebScDoc doc = docService.selectWebScDoc(searchDoc);
@@ -38,7 +43,7 @@ public class SendRecordService {
 		record.setDocumentId(documentId);
 		record.setUserId(user.getUserId());
 		
-		if(user.getRoleId().equals("4")){
+//		if(user.getRoleId().equals("4")){
 			//管理员
 			if(sendtype == 3001){
 				//分配订单
@@ -68,7 +73,7 @@ public class SendRecordService {
 					sendRecordMapper.insert(record);
 				}
 			}
-		}else if(user.getRoleId().equals("5")){
+//		}else if(user.getRoleId().equals("5")){
 			//医生
 			if(sendtype == 4001){
 				//接收订单
@@ -115,7 +120,7 @@ public class SendRecordService {
 					sendRecordMapper.insert(record);
 				}
 			}
-		}else if(user.getRoleId().equals("8") || user.getRoleId().equals("9")){
+//		}else if(user.getRoleId().equals("8") || user.getRoleId().equals("9")){
 			//订单录入人员
 			if(sendtype == 1001){
 				//发布订单
@@ -129,7 +134,7 @@ public class SendRecordService {
 					sendRecordMapper.insert(record);
 				}
 			}
-		}
+//		}
 	}
 	
 	public void updateSendRecord(WebScSendRecord record){

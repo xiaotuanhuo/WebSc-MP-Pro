@@ -401,17 +401,17 @@ public class UserService {
 	 * @return
 	 */
 	public WebScUser getOpenid(String code) {
-		WebScUser user = wxUtil.getWxUserOpenid(code, null);
+//		WebScUser user = wxUtil.getWxUserOpenid(code, null);
 		
 //		// 模拟从企业微信获取userid openid
-//		WebScUser user = new WebScUser();
-//		if (code.equals("firefox")) {
-//			user.setWxUserid("aaa");
-//			user.setWxOpenid("bbb");
-//		} else {
-//			user.setWxUserid("ccc");
-//			user.setWxOpenid("ddd");
-//		}
+		WebScUser user = new WebScUser();
+		if (code.equals("firefox")) {
+			user.setWxUserid("aaa");
+			user.setWxOpenid("bbb");
+		} else {
+			user.setWxUserid("ccc");
+			user.setWxOpenid("ddd");
+		}
 		
 //		// 获取openid失败的处理
 //		if (user.getWxOpenid() == null) {

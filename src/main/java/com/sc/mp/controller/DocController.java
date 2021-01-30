@@ -7,7 +7,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -924,11 +926,22 @@ public class DocController {
 		try{
 			log.info("======开始上传图片======");
 			
+			//当前年月
+        	Date d = new Date();  
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");  
+            String dateNowStr = sdf.format(d);  
+            log.info("文件夹：" + dirPath  + File.separator + dateNowStr);              
+            
+            File path = new File(dirPath  + File.separator + dateNowStr);
+            if (!path.exists()) {
+            	path.mkdir();
+			}
+            
 			MultipartFile file = Base64DecodeMultipartFile.base64Convert(base64Data);
 			
 			if (Objects.nonNull(file)) {
 				String originalFilename = file.getOriginalFilename();
-	        	String filePath = "/" + documentId + "_" + originalFilename;
+				String filePath = File.separator + dateNowStr + File.separator + documentId + "_" + originalFilename;
 				
 	        	File dir = new File(dirPath + filePath);
 	        	System.out.println("路径:" + dirPath + filePath);
@@ -938,7 +951,7 @@ public class DocController {
 	        	}else{
 	    			file.transferTo(new File(new File(dirPath).getAbsoluteFile() + filePath));
 	    			
-	    			returnMap.put("fileName", originalFilename);
+	    			returnMap.put("fileName", filePath);
 	    			returnMap.put("code", 1);
 	        	}
 	        	log.info("======图片上传成功,路径======" + filePath);
@@ -958,7 +971,7 @@ public class DocController {
 									@RequestParam(value = "FileName") String FileName, 
 									final HttpServletResponse response) throws IOException{
 		try { 
-			File file = new File(dirPath + "/" + documentId + "_" + FileName);
+			File file = new File(dirPath + FileName);
 			if(file != null){
 				FileInputStream fis = new FileInputStream (file);
 	            ByteArrayOutputStream bos = new ByteArrayOutputStream(1000);  
@@ -993,8 +1006,8 @@ public class DocController {
 	public void deletePhotoByFileName (@RequestParam(value = "id") String documentId, 
 									   @RequestParam(value = "FileName") String FileName){
 		try {
-			File file = new File(dirPath + "/" + documentId + "_" + FileName);
-			log.info("删除文件：" + dirPath + "/" + documentId + "_" + FileName);
+			File file = new File(dirPath + FileName);
+			log.info("删除文件：" + dirPath + FileName);
 			file.delete();
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -1009,8 +1022,6 @@ public class DocController {
 	  							@RequestParam(value = "serverId") String serverId){
 		JSONObject returnMap = new JSONObject();
 		try {
-			System.out.println("serverId:" + serverId);
-			
 			HttpSession session = request.getSession();
 			
 			String sFileName = wxUtil.downloadMedia(dirPath, documentId, serverId, session);

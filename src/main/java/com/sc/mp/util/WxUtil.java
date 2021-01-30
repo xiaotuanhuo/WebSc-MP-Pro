@@ -319,45 +319,55 @@ public class WxUtil {
 		    requestUrl = requestUrl.replace("ACCESS_TOKEN", accessToken).replace("MEDIA_ID", mediaId);
 		    byte[] b = null;
 		    try {
-		      URL url = new URL(requestUrl);
-		      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		      conn.setDoInput(true);
-		      conn.setRequestMethod("GET");
-		      // 根据内容类型获取扩展名
-		      String hz = this.getFileexpandedName(conn.getHeaderField("Content-Type"));
-		      System.out.println("hz:" + hz);
-		      
-		      File file = new File(dirPath + "/" + documentId + "_" + mediaId + hz);
-		      if (!file.exists())
-		      {
-		    	  file.createNewFile();
-		      }
-		      OutputStream os = new FileOutputStream(file);
+		    	//当前年月
+	        	Date d = new Date();  
+	            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");  
+	            String dateNowStr = sdf.format(d);  
+	            log.info("文件夹：" + dirPath  + File.separator + dateNowStr);              
 	            
-		      // 将mediaId作为文件名
-		      InputStream is = conn.getInputStream();
-		      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			  byte[] buffer = new byte[1024];
-			  int len = 0;
-			  while ((len = is.read(buffer)) != -1) {
-				baos.write(buffer, 0, len);
-			  }
-			  b = baos.toByteArray();
-			  is.close();
-			  baos.close();
-		      conn.disconnect();
+	            File path = new File(dirPath  + File.separator + dateNowStr);
+	            if (!path.exists()) {
+	            	path.mkdir();
+				}
+	            
+	            URL url = new URL(requestUrl);
+	            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	            conn.setDoInput(true);
+	            conn.setRequestMethod("GET");
+		      	// 根据内容类型获取扩展名
+	            String hz = this.getFileexpandedName(conn.getHeaderField("Content-Type"));
 		      
-		      os.write(b);
-		      os.close();
+	            File file = new File(dirPath + File.separator + dateNowStr + File.separator + documentId + "_" + mediaId + hz);
+	            if (!file.exists())
+	            {
+		    	  file.createNewFile();
+	            }
+	            OutputStream os = new FileOutputStream(file);
+	            
+	            // 将mediaId作为文件名
+	            InputStream is = conn.getInputStream();
+	            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	            byte[] buffer = new byte[1024];
+	            int len = 0;
+	            while ((len = is.read(buffer)) != -1) {
+	            	baos.write(buffer, 0, len);
+	            }
+	            b = baos.toByteArray();
+				is.close();
+				baos.close();
+			 	conn.disconnect();
 		      
-		      sFileName = mediaId + hz;
-		      System.out.println(sFileName);
+			 	os.write(b);
+			 	os.close();
 		      
-		    } catch (Exception e) {
-		      String error = String.format("下载媒体文件失败：%s", e);
-		      System.out.println(error);
-		    }
-		    return sFileName;
+			 	sFileName = File.separator + dateNowStr + File.separator + documentId + "_" + mediaId + hz;
+			 	log.info(sFileName);
+		      
+	    	} catch (Exception e) {
+	    		String error = String.format("下载媒体文件失败：%s", e);
+	    		System.out.println(error);
+	    	}
+	    	return sFileName;
 	  }
 	
 //	public  String getAccessToken(){

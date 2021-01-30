@@ -15,6 +15,11 @@
 	<link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
 	<link rel="stylesheet" th:href="@{/css/mescroll.min.css}">
 	<link rel="stylesheet" th:href="@{/css/mzui.min.css}">
+	<style type="text/css">
+		.menu_active{
+			color:red;
+		}
+	</style>
 </head>
 
 <body>
@@ -119,34 +124,38 @@
 				<section class="bal-section container">
 					<div id="content">
 					    <div id="content-body" style="border-radius: 3px;">
-					    	<div class="content-head">
+							<div class="content-head">
 								<div class="d-flex align-items-center">
 								    <div class="d-flex flex-grow">
-								        <div class="mr-auto">
-								            <p class="mb-0" style="font-size: 15px;">我的订单</p>
+								        <div class="d-flex mr-auto">
+								            <p class="mb-0" style="font-size: 0.8rem;">我的订单</p>
 								        </div>
-								        <div>
-								        	<button type="button" class="btn text-primary" style="height:auto;line-height:1rem;font-size: 15px;" onclick="btnMain()">首页</button>
+								        <div class="mr-8">
+								            <p class="mb-0 text-blue" style="font-size: 0.8rem;" onclick="btnMain()">首页</p>
 								        </div>
 								    </div>
 								</div>
 							</div>
 					        <div class="content-row">
 					            <div class="content-col" onclick="setDocListInit(0)">
-				                	<img src="/img/pending.png">
-				                	<span>待处理</span>
+				                	<img src="/img/pending.png" style="margin: 0;">
+				                	<span id="memu_0">待处理</span>
 					            </div>
 					            <div class="content-col" onclick="setDocListInit(1)">
-					                <img src="/img/history.png">
-					                <span>历史订单</span>
+					                <img src="/img/history.png" style="margin: 0;">
+					                <span id="memu_1">历史订单</span>
 					            </div>
 					            <div class="content-col" onclick="setDocListInit(2)" th:if="${user.roleId=='4'}">
-					                <img src="/img/cancel.png" alt="">
-					                <span>已取消</span>
+					                <img src="/img/cancel.png"  style="margin: 0;">
+					                <span id="memu_2">已取消</span>
 					            </div>
 					            <div class="content-col" onclick="setDocListInit(3)" th:if="${user.roleId=='5'}">
-					                <img src="/img/grade.png" alt="">
-					                <span>未评价</span>
+					                <img src="/img/grade.png"  style="margin: 0;">
+					                <span id="memu_3">待评价</span>
+					            </div>
+					            <div class="content-col myrest" th:if="${user.roleId=='5'}">
+					                <img src="/img/rest_record.png" style="margin: 0;">
+					                <span id="memu_4">我的备休</span>
 					            </div>
 					        </div>
 					    </div>
@@ -205,12 +214,22 @@
 		function setDocListInit(ds){
 			state = ds;
 			
+			$("#memu_0").removeClass("menu_active");
+			$("#memu_1").removeClass("menu_active");
+			$("#memu_2").removeClass("menu_active");
+			$("#memu_3").removeClass("menu_active");
+			$("#memu_4").removeClass("menu_active");
+			$("#memu_" + ds).addClass("menu_active");
+			
+			$("#doclist").toggleClass("loading loading-light");
+			$("#doclist").html("");
 			$.ajax({
 				url: '/toDocListInit?ds=' + ds,
 				success: function(data) {
 					if(data.code == 1){
 						//设置数据
  						setListData(data.list, data.role, true);
+ 						$("#doclist").toggleClass("loading loading-light");
 					}else{
 						alert(data.msg);
 					}
@@ -330,6 +349,10 @@
 		function btnMain(){
 			location.href = "/index";
 		}
+		
+		$('.myrest').on('click', function() {
+			location.href = "toRest";
+		});
 	</script>
 </body>
 
