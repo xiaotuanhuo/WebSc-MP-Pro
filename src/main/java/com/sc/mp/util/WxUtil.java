@@ -50,7 +50,10 @@ public class WxUtil {
 	
 	public static String sCorpid = "ww0a5757d175c0cfc6";
 	
+	// 测试
 	public static String sCorpsecret = "tnRFaSEmGEXg1mWMpox527dQFhBQgWE2JBLRhZ7xyew";
+	// 生产
+//	public static String sCorpsecret = "NQv48aM5kv3gpr95nwpvk_7P1CElNGBHRKCRcLS-2wY";
 	
 	private Map<String, Date> AccessTokenMap = new HashMap<String, Date>();
 	private String qAccessToken;
