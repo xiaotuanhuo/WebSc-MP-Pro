@@ -1076,7 +1076,7 @@
     	    order by monthList.leftMonth
     </select>
     
-    <select id="statsByWeekForOrgan" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">
+    <!-- <select id="statsByWeekForOrgan" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">
     	SELECT
     		<if test="orgName != null and orgName != ''">
     	    	#{orgName,jdbcType=VARCHAR} as name,
@@ -1091,7 +1091,36 @@
 				SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w')-4) AS leftDay, '四' AS leftWeek UNION
 				SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w')-5) AS leftDay, '五' AS leftWeek UNION
 				SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w')-6) AS leftDay, '六' AS leftWeek UNION
-				SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w')-7) AS leftDay, '日' AS leftWeek
+				SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w')-0) AS leftDay, '日' AS leftWeek
+            ) dayList
+        LEFT JOIN
+    	    (
+    	        SELECT
+    	          count(1) as num, MID(operate_start_time, 1, 10) rightDay, org_id
+    	        FROM
+    	          WSC_DOCUMENT
+    	        WHERE org_id = #{orgId,jdbcType=VARCHAR}
+    	        GROUP BY rightDay, org_id) doc
+    	        ON dayList.leftDay = doc.rightDay
+    	        ORDER BY dayList.leftDay
+    </select> -->
+    
+    <select id="statsByWeekForOrgan" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">
+    	SELECT
+    		<if test="orgName != null and orgName != ''">
+    	    	#{orgName,jdbcType=VARCHAR} as name,
+    	    </if>
+    	    dayList.leftWeek as date,
+    	    ifnull(doc.num, 0) as count
+    	FROM 
+    	    (
+    	        SELECT DATE_SUB(CURDATE(),INTERVAL WEEKDAY(CURDATE()) DAY) AS leftDay, '一' AS leftWeek UNION
+SELECT DATE_SUB(CURDATE(),INTERVAL WEEKDAY(CURDATE() - 1) DAY) AS leftDay, '二' AS leftWeek UNION
+SELECT DATE_SUB(CURDATE(),INTERVAL WEEKDAY(CURDATE() - 2) DAY) AS leftDay, '三' AS leftWeek UNION
+SELECT DATE_SUB(CURDATE(),INTERVAL WEEKDAY(CURDATE() - 3) DAY) AS leftDay, '四' AS leftWeek UNION
+SELECT DATE_SUB(CURDATE(),INTERVAL WEEKDAY(CURDATE() - 4) DAY) AS leftDay, '五' AS leftWeek UNION
+SELECT DATE_SUB(CURDATE(),INTERVAL WEEKDAY(CURDATE() - 5) DAY) AS leftDay, '六' AS leftWeek UNION
+SELECT DATE_SUB(CURDATE(),INTERVAL WEEKDAY(CURDATE() - 6) DAY) AS leftDay, '日' AS leftWeek
             ) dayList
         LEFT JOIN
     	    (
