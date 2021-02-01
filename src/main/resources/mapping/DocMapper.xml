@@ -1271,7 +1271,7 @@
         (SELECT COUNT(1) as count, wo.city as cityCode
         FROM
         `WSC_DOCUMENT` wd, WSC_ORGANIZATION wo
-        WHERE wd.org_id = wo.org_id and (year(wd.operate_start_time) = year(now()) or year(wd.operate_start_time) = year(date_sub(now(),interval 1 year)))
+        WHERE wd.org_id = wo.org_id and (year(wd.operate_start_time) = year(now()))
         GROUP BY wo.city ORDER BY count DESC LIMIT #{top,jdbcType=INTEGER})
         UNION
         (SELECT IFNULL(SUM(t.c),0) as count, '86' as cityCode
@@ -1279,9 +1279,10 @@
         ((SELECT COUNT(1) as c, wo.city as cCode
         FROM
         `WSC_DOCUMENT` wd, WSC_ORGANIZATION wo
-        WHERE wd.org_id = wo.org_id and (year(wd.operate_start_time) = year(now()) or year(wd.operate_start_time) = year(date_sub(now(),interval 1 year)))
+        WHERE wd.org_id = wo.org_id and (year(wd.operate_start_time) = year(now()))
         GROUP BY wo.city ORDER BY c DESC LIMIT #{top,jdbcType=INTEGER}, 9999)) t)
     </select>
+    <!--  or year(wd.operate_start_time) = year(date_sub(now(),interval 1 year)) -->
     
     <select id="selectReporting" parameterType="java.util.Map" resultType="com.sc.mp.bean.OperationCount">
 	     SELECT
