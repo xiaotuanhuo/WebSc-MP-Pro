@@ -509,7 +509,8 @@ public class XcxController {
 			resMap.put("ydSsl", ydSslKeyValues);
 			
 			//周手术量
-			List<OperationCount> wocs = docMapper.statsByWeekForOrgan(orgId, "");
+			List<OperationCount> wocs = docMapper.statsByWeekForOrgan(
+					orgId, "", DateUtils.isSunday() ? "0" : "-1");
 			List<List<Object>> weekSsl = new ArrayList<List<Object>>();
 			for (OperationCount oc : wocs) {
 				List<Object> ocInfo = new ArrayList<Object>();
