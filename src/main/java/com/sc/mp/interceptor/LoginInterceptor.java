@@ -54,13 +54,6 @@ public class LoginInterceptor implements HandlerInterceptor {
 		String code = request.getParameter("code");
 		String state = request.getParameter("state");
 		
-//		String agent=request.getHeader("User-Agent").toLowerCase();
-//		if (agent.indexOf("firefox") != -1) {
-//			code = "firefox";
-//		} else {
-//			code = "chrome";
-//		}
-		
 		log.info("code=" + code);
 		log.info("state=" + state);
 		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);

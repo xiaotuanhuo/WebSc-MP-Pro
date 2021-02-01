@@ -42,7 +42,7 @@ public class ScheduleTask {
 				
 				if(senduser.getWxOpenid() != null && !senduser.getWxOpenid().equals("")){
 					TestMessageTextcard content = new TestMessageTextcard("订单通知", wsr.getMemo(), "http://localhost:9090/toDocDetail?id=" + wsr.getDocumentId() + "&state=0", "");
-					TextMessage tm = new TextMessage(senduser.getWxUserid(), "", "", "textcard", 1000016, content);
+					TextMessage tm = new TextMessage(senduser.getWxUserid(), "", "", "textcard", 1000015, content);
 					String ret = wxUtil.sendTextMessage(tm, null);
 					
 					JSONObject json = JSONObject.parseObject(ret);
