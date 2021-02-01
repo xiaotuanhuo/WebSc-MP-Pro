@@ -197,4 +197,17 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 		c.add(Calendar.DAY_OF_MONTH, -(days - 1));
 		return format.format(c.getTime());
 	}
+	
+	/**
+	 * 判断是否是周日
+	 * @return
+	 */
+	public static boolean isSunday() {
+		Calendar cal = Calendar.getInstance();
+		int week = cal.get(Calendar.DAY_OF_WEEK) - 1;
+		if (week == 0) {	// 0代表周日，6代表周六
+			return true;
+		}
+		return false;
+	}
 }

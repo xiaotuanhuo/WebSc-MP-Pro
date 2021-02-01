@@ -403,7 +403,7 @@ public class UserService {
 	public WebScUser getOpenid(String code) {
 		WebScUser user = wxUtil.getWxUserOpenid(code, null);
 		
-//		// 模拟从企业微信获取userid openid
+		// 模拟从企业微信获取userid openid
 //		WebScUser user = new WebScUser();
 //		if (code.equals("firefox")) {
 //			user.setWxUserid("aaa");
@@ -463,6 +463,7 @@ public class UserService {
 		try {
 			switch (type) {
 				case ScConstant.WEEK:
+					boolean isSunday = DateUtils.isSunday();
 					jsonArray.forEach(object -> {
 						if (object == null) {
 							return;
@@ -471,7 +472,8 @@ public class UserService {
 						if (jsonObject.getString("id") == null) {
 							return;
 						}
-						List<OperationCount> temp = docMapper.statsByWeekForOrgan(jsonObject.getString("id"), jsonObject.getString("name"));
+						List<OperationCount> temp = docMapper.statsByWeekForOrgan(jsonObject.getString("id"),
+								jsonObject.getString("name"), isSunday ? "0" : "-1");
 						operationCounts.addAll(temp);
 					});
 					break;

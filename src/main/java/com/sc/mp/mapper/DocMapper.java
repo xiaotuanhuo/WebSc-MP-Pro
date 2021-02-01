@@ -196,9 +196,11 @@ public interface DocMapper {
 	 * 统计某医疗机构本周每天的手术量
 	 * @param orgId
 	 * @param orgName
+	 * @param sunday 0：周日 -1：非周日
 	 * @return
 	 */
-	List<OperationCount> statsByWeekForOrgan(@Param("orgId") String orgId, @Param("orgName") String orgName);
+	List<OperationCount> statsByWeekForOrgan(@Param("orgId") String orgId, @Param("orgName") String orgName,
+			@Param("sunday") String sunday);
 	
 	/**
 	 * 统计某医疗机构当月每天的手术量
