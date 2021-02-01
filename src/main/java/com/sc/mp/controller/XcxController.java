@@ -261,7 +261,7 @@ public class XcxController {
 			//0、check用户名和密码
 			WebScUser webScUser = userMapper.selectByLoginName(paraMap.get("name").toString());
 			if(StringUtil.isNull(webScUser)) {
-				logger.info("用户名有误，loginname:"+webScUser.getLoginName());
+				logger.info("用户名有误，loginname:"+paraMap.get("name").toString());
 				resultBean = ResultBean.error("用户名或密码有误");
 			}else {
 				if(!(RoleEnum.JGDDLRY.getCode()+"").equals(webScUser.getRoleId())) {
