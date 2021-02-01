@@ -690,21 +690,117 @@
     </select>
     
     <select id="selectWebScDocList" parameterType="com.sc.mp.model.WebScDoc" resultMap="BaseResultMap">
-    select * from (
-    <![CDATA[
-    	select 
-    		doc.document_id,
-    		doc.operative_id,
+     <![CDATA[
+    select  document_id,
+    		operative_id,
 			(select GROUP_CONCAT(operative_name) 
 			from WSC_OPERATIVE 
 			where operative_id in (
 				(
 					select 
-					substring_index(substring_index(doc.operative_id, ',' , help_topic_id + 1), ',' , -1) 
+					substring_index(substring_index(tmpTab.operative_id, ',' , help_topic_id + 1), ',' , -1) 
 					from mysql.help_topic 
-					where help_topic_id < (length(doc.operative_id) - length(REPLACE(doc.operative_id, ',', '')) + 1 )
+					where help_topic_id < (length(tmpTab.operative_id) - length(REPLACE(tmpTab.operative_id, ',', '')) + 1 )
 				)
 			)) as operative_name,
+			anesthetic_id,
+			anesthetic_name,
+			patient_name,
+			patient_age,
+			patient_sex,
+    		
+            tmp_operative_id,
+			(select GROUP_CONCAT(operative_name) 
+			from WSC_OPERATIVE 
+			where operative_id in (
+				(
+					select 
+					substring_index(substring_index(tmpTab.tmp_operative_id, ',' , help_topic_id + 1), ',' , -1) 
+					from mysql.help_topic 
+					where help_topic_id < (length(tmpTab.tmp_operative_id) - length(REPLACE(tmpTab.tmp_operative_id, ',', '')) + 1 )
+				)
+			)) as tmp_operative_name,
+			tmp_anesthetic_id,
+			tmp_anesthetic_name,
+			tmp_patient_name,
+			tmp_patient_age,
+			tmp_patient_sex,
+			
+			patient_num,
+			patient_bednum,
+			patienttype_id,
+			operationtype_id,
+			document_title,
+			document_type,
+			operate_user,
+			operate_aide,
+			apply_user_id,
+			apply_user_name,
+			admin_user_id,
+			admin_user_name,
+			qa_user_id,
+			qa_user_name,
+			qa_team_id,
+			hospital_memo,
+			qa_memo,
+			admin_memo,
+			memo,
+			document_state,
+			operate_start_time,
+			operate_end_time,
+			create_date,
+			hospital_evaluate,
+			hospital_evaluate_memo,
+			doctor_evaluate,
+			doctor_evaluate_memo,
+			old_document_state,
+			delete_reason,
+			transfer_user_id,
+			
+			org_id,
+			org_name,
+			org_address,
+			org_tel,
+			leader_name,
+			leader_tel,
+			org_province,
+			org_city,
+			org_area,
+			
+			height,
+			weight,
+			asa,
+			xtbs,
+			shs,
+			shcs,
+			sskssj,
+			ssjssj,
+			sssc,
+			jmjs,
+			ywsj_hxxt,
+			ywsj_hxxt_qt,
+			ywsj_xhxt,
+			ywsj_xhxt_qt,
+			ywsj_gm,
+			ywsj_gm_socre,
+			ywsj_qt,
+			shbl_zw,
+			shbl_hbtt,
+			shbl_ex,
+			shbl_xy,
+			shbl_ot,
+			shbl_ot_score,
+			shttzl,
+			photo_1,
+			photo_2,
+			photo_3,
+			photo_4,
+			photo_5,
+			status 
+	 from (
+    	select 
+    		doc.document_id,
+    		doc.operative_id,
 			doc.anesthetic_id,
 			(select anesthetic_name from WSC_ANESTHETIC where anesthetic_id = doc.anesthetic_id) as anesthetic_name,
 			doc.patient_name,
@@ -712,16 +808,6 @@
 			doc.patient_sex,
     		
             doctmp.operative_id as tmp_operative_id,
-			(select GROUP_CONCAT(operative_name) 
-			from WSC_OPERATIVE 
-			where operative_id in (
-				(
-					select 
-					substring_index(substring_index(doctmp.operative_id, ',' , help_topic_id + 1), ',' , -1) 
-					from mysql.help_topic 
-					where help_topic_id < (length(doctmp.operative_id) - length(REPLACE(doctmp.operative_id, ',', '')) + 1 )
-				)
-			)) as tmp_operative_name,
 			doctmp.anesthetic_id as tmp_anesthetic_id,
 			(select anesthetic_name from WSC_ANESTHETIC where anesthetic_id = doctmp.anesthetic_id) as tmp_anesthetic_name,
 			doctmp.patient_name as tmp_patient_name,
@@ -874,7 +960,7 @@
       		and qa_user_name like concat(#{qaUserName,jdbcType=VARCHAR}, '%')
       	</if>
       	order by operate_start_time desc 
-      	limit 50
+      	limit 100
     </select>
     
     <select id="findWebScDocOrg" parameterType="java.lang.String" resultType="com.sc.mp.model.WebScOrganization">

@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -113,6 +114,7 @@ public class DocController {
 		
 		try{
 			if(user != null){
+				log.info("用户：" + user.getLoginName() + "省：" + user.getProvince() + " 市：" + user.getCity() + " 区：" + user.getArea());
 				//用户角色
 				String roleId = user.getRoleId();
 				//查询条件
@@ -174,19 +176,19 @@ public class DocController {
 				List<WebScDoc> docList = docService.selectWebScDocList(docQuery);
 				for(WebScDoc d : docList){
 		    		if(d.getStatus() != null && !d.getStatus().equals("")){
-		    			if(d.getTmpPatientName() != null)
+		    			if(d.getTmpPatientName() != null && !d.getTmpPatientName().equals(""))
 		    				d.setPatientName(d.getTmpPatientName());
-		    			if(d.getTmpPatientAge() != null)
+		    			if(d.getTmpPatientAge() != null && !d.getTmpPatientAge().equals(""))
 		    				d.setPatientAge(d.getTmpPatientAge());
-		    			if(d.getTmpPatientSex() != null)
+		    			if(d.getTmpPatientSex() != null && !d.getTmpPatientSex().equals(""))
 		    				d.setPatientSex(d.getTmpPatientSex());
-		    			if(d.getTmpOperativeId() != null)
+		    			if(d.getTmpOperativeId() != null && !d.getTmpOperativeId().equals(""))
 		    				d.setOperativeId(d.getTmpOperativeId());
-		    			if(d.getTmpOperativeName() != null)
+		    			if(d.getTmpOperativeName() != null && !d.getTmpOperativeName().equals(""))
 		    				d.setOperativeName(d.getTmpOperativeName());
-		    			if(d.getTmpAnestheticId() != null)
+		    			if(d.getTmpAnestheticId() != null && !d.getTmpAnestheticId().equals(""))
 		    				d.setAnestheticId(d.getTmpAnestheticId());
-		    			if(d.getTmpAnestheticName() != null)
+		    			if(d.getTmpAnestheticName() != null && !d.getTmpAnestheticName().equals(""))
 		    				d.setAnestheticName(d.getTmpAnestheticName());
 		    			
 		    			//呼吸系统
@@ -288,19 +290,19 @@ public class DocController {
 			WebScDoc doc = docService.selectWebScDoc(searchDoc);
 			
 			if(doc.getStatus() != null && !doc.getStatus().equals("")){
-				if(doc.getTmpPatientName() != null)
+				if(doc.getTmpPatientName() != null && !doc.getTmpPatientName().equals(""))
     				doc.setPatientName(doc.getTmpPatientName());
-    			if(doc.getTmpPatientAge() != null)
+    			if(doc.getTmpPatientAge() != null && !doc.getTmpPatientAge().equals(""))
     				doc.setPatientAge(doc.getTmpPatientAge());
-    			if(doc.getTmpPatientSex() != null)
+    			if(doc.getTmpPatientSex() != null && !doc.getTmpPatientSex().equals(""))
     				doc.setPatientSex(doc.getTmpPatientSex());
-    			if(doc.getTmpOperativeId() != null)
+    			if(doc.getTmpOperativeId() != null && !doc.getTmpOperativeId().equals(""))
     				doc.setOperativeId(doc.getTmpOperativeId());
-    			if(doc.getTmpOperativeName() != null)
+    			if(doc.getTmpOperativeName() != null && !doc.getTmpOperativeName().equals(""))
     				doc.setOperativeName(doc.getTmpOperativeName());
-    			if(doc.getTmpAnestheticId() != null)
+    			if(doc.getTmpAnestheticId() != null && !doc.getTmpAnestheticId().equals(""))
     				doc.setAnestheticId(doc.getTmpAnestheticId());
-    			if(doc.getTmpAnestheticName() != null)
+    			if(doc.getTmpAnestheticName() != null && !doc.getTmpAnestheticName().equals(""))
     				doc.setAnestheticName(doc.getTmpAnestheticName());
 
     			//呼吸系统
@@ -551,6 +553,17 @@ public class DocController {
 					updateMap.put("qaMemo", doctorMemo);
 				}
 				
+				log.info("id:" + id + " sskssj:" + tmpUpdateMap.get("sskssj") + " ssjssj:" + tmpUpdateMap.get("ssjssj") + " sssc:" + tmpUpdateMap.get("sssc"));
+				if(tmpUpdateMap.get("sssc") == null || tmpUpdateMap.get("sssc").toString().equals("NaN")){
+					String sskssj = tmpUpdateMap.get("sskssj").toString();
+					String ssjssj = tmpUpdateMap.get("ssjssj").toString();
+					long min = getDistanceMin(sskssj, ssjssj);
+					tmpUpdateMap.put("sssc", min);
+				}
+				if(tmpUpdateMap.get("sssc").toString().equals("")){
+					tmpUpdateMap.put("sssc", 0);
+				}
+				
 				tmpUpdateMap.put("photo_1", "");
 				tmpUpdateMap.put("photo_2", "");
 				tmpUpdateMap.put("photo_3", "");
@@ -734,13 +747,27 @@ public class DocController {
 				//查询订单当日医院情况
 				WebScDoc doc = docs.get(0);
 				if(doc.getStatus() != null && !doc.getStatus().equals("")){
-	    			doc.setPatientName(doc.getTmpPatientName());
-	    			doc.setPatientAge(doc.getTmpPatientAge());
-	    			doc.setPatientSex(doc.getTmpPatientSex());
-	    			doc.setOperativeId(doc.getTmpOperativeId());
-	    			doc.setOperativeName(doc.getTmpOperativeName());
-	    			doc.setAnestheticId(doc.getTmpAnestheticId());
-	    			doc.setAnestheticName(doc.getTmpAnestheticName());
+					if(doc.getTmpPatientName() != null && !doc.getTmpPatientName().equals(""))
+	    				doc.setPatientName(doc.getTmpPatientName());
+	    			if(doc.getTmpPatientAge() != null && !doc.getTmpPatientAge().equals(""))
+	    				doc.setPatientAge(doc.getTmpPatientAge());
+	    			if(doc.getTmpPatientSex() != null && !doc.getTmpPatientSex().equals(""))
+	    				doc.setPatientSex(doc.getTmpPatientSex());
+	    			if(doc.getTmpOperativeId() != null && !doc.getTmpOperativeId().equals(""))
+	    				doc.setOperativeId(doc.getTmpOperativeId());
+	    			if(doc.getTmpOperativeName() != null && !doc.getTmpOperativeName().equals(""))
+	    				doc.setOperativeName(doc.getTmpOperativeName());
+	    			if(doc.getTmpAnestheticId() != null && !doc.getTmpAnestheticId().equals(""))
+	    				doc.setAnestheticId(doc.getTmpAnestheticId());
+	    			if(doc.getTmpAnestheticName() != null && !doc.getTmpAnestheticName().equals(""))
+	    				doc.setAnestheticName(doc.getTmpAnestheticName());
+//	    			doc.setPatientName(doc.getTmpPatientName());
+//	    			doc.setPatientAge(doc.getTmpPatientAge());
+//	    			doc.setPatientSex(doc.getTmpPatientSex());
+//	    			doc.setOperativeId(doc.getTmpOperativeId());
+//	    			doc.setOperativeName(doc.getTmpOperativeName());
+//	    			doc.setAnestheticId(doc.getTmpAnestheticId());
+//	    			doc.setAnestheticName(doc.getTmpAnestheticName());
 
 	    			String photo = "";
 	    			if(doc.getPhoto_1() != null && !doc.getPhoto_1().trim().equals("")){
@@ -1035,4 +1062,27 @@ public class DocController {
 		
 		return returnMap;
 	}
+
+	public static long getDistanceMin(String str1, String str2) throws Exception{
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date one;
+        Date two;
+        long days=0;
+        try {
+            one = df.parse(str1);
+            two = df.parse(str2);
+            long time1 = one.getTime();
+            long time2 = two.getTime();
+            long diff ;
+            if(time1<time2) {
+                diff = time2 - time1;
+            } else {
+                diff = time1 - time2;
+            }
+            days = diff / (1000 * 60);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return days;
+    }
 }
