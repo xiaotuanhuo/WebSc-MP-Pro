@@ -1015,6 +1015,9 @@
     	where role_id = '5'
     	and province = #{province,jdbcType=VARCHAR} 
     ]]>	
+    	<if test="city != null">
+    		and city = #{city,jdbcType=VARCHAR} 
+  		</if>
     	<if test="qaName != null">
     		<![CDATA[
     		and wu.user_name like concat(#{qaName,jdbcType=VARCHAR}, '%')

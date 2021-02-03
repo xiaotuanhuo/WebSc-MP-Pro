@@ -124,6 +124,9 @@ public class DocService {
 	    	Map<String, String> searchMap = new HashMap<String, String>();
 	    	searchMap.put("qaName", qaName);
 	    	searchMap.put("province", user.getProvince());
+	    	if(user.getCity() != null && !user.getCity().equals("")){
+	    		searchMap.put("city", user.getCity());
+	    	}
 	    	searchMap.put("org_id",org.getOrgId());
 	    	searchMap.put("operate_start_time", doc.getOperateStartTime());
 	    	//获取医生信息
