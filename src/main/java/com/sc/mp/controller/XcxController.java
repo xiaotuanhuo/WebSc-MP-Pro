@@ -36,7 +36,9 @@ import com.sc.mp.mapper.AnestheticMapper;
 import com.sc.mp.mapper.DocMapper;
 import com.sc.mp.mapper.OperativeMapper;
 import com.sc.mp.mapper.UserMapper;
+import com.sc.mp.mapper.WebScGzhMediaMapper;
 import com.sc.mp.model.WebScDoc;
+import com.sc.mp.model.WebScGzhMedia;
 import com.sc.mp.model.WebScOperative;
 import com.sc.mp.model.WebScUser;
 import com.sc.mp.service.SendRecordService;
@@ -64,6 +66,8 @@ public class XcxController {
 	DocMapper docMapper;
 	@Autowired
 	UserMapper userMapper;
+	@Autowired
+	WebScGzhMediaMapper webScGzhMediaMapper;
 	
 	@Value("${operativeName-lucene-path}")
 	private String operativeNameLucenePath;
@@ -551,4 +555,32 @@ public class XcxController {
 		return resultBean;
 	}
 	
+	@OperationLog("获取公众号图文信息")
+    @PostMapping(value = "/getGzhMedias")
+    @ResponseBody
+	public PageResultBean<WebScGzhMedia> getGzhMedias(@RequestBody() Map<String, Object> paraMap) {
+		PageResultBean<WebScGzhMedia> prb = null;
+		try {
+			logger.info(paraMap.toString());
+			
+			prb = new PageResultBean<WebScGzhMedia>();
+			PageHelper.startPage(paraMap.get("page")==null?1:(int)paraMap.get("page"), 
+					paraMap.get("limit")==null?10:(int)paraMap.get("limit"));
+			
+			List<WebScGzhMedia> medias = webScGzhMediaMapper.selectGzhMedias();
+			
+			PageInfo<WebScGzhMedia> pageInfo = new PageInfo<>(medias);
+			
+			prb.setCount(Long.valueOf(pageInfo.getTotal()).intValue());
+			prb.setData(medias);
+			prb.setCode(0);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("获取公众号图文信息列表出错，"+e.getMessage());
+			prb = new PageResultBean<WebScGzhMedia>();
+			prb.setCode(-1);
+		}
+		
+        return prb;
+    }
 }

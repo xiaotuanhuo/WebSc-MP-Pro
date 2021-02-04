@@ -31,11 +31,18 @@ redis:
     
 # 微信小程序所需配置
 operativeName-lucene-path: D:\\lucene\\lucene-db\\sc\\operativeName
-#wx-appid: wx5139fc8c8b8878f7
-#wx-secret: f46eab7526212299671b17e854a2a5d7
-wx-appid: wx2df456c78c6b50ae
-wx-secret: 7b427872fbb9902ab2c32130d4fbe076
+wx-appid: wx5139fc8c8b8878f7
+wx-secret: f46eab7526212299671b17e854a2a5d7
+#wx-appid: wx2df456c78c6b50ae
+#wx-secret: 7b427872fbb9902ab2c32130d4fbe076
 wx-api-uri: https://api.weixin.qq.com/sns/jscode2session?
 lucene-token: operativeluceneupdtoken1234
 
 userName-lucene-path: D:\\lucene\\lucene-db\\sc\\userName
+
+#wx-gzh-appid: wx5d6d3e879d4eb8c8
+#wx-gzh-secret: 0dabfe7f043b7cfa6fb6ace566f9c596
+wx-gzh-appid: wxfdc16ad1198bf14a
+wx-gzh-secret: b3db511490703a3c474f55be87f104c7
+wx-gzh-api-uri: https://api.weixin.qq.com/cgi-bin/
+gzh-media-cron-expression: 0 50 10 * * ?
