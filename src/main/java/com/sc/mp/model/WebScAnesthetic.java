@@ -8,6 +8,7 @@ public class WebScAnesthetic implements Serializable {
 	
 	private String anestheticId;
 	private String anestheticName;
+	private int indexNo;
 	
 	public String getAnestheticId() {
 		return anestheticId;
@@ -20,5 +21,16 @@ public class WebScAnesthetic implements Serializable {
 	}
 	public void setAnestheticName(String anestheticName) {
 		this.anestheticName = anestheticName;
+	}
+	public int getIndexNo() {
+		return indexNo;
+	}
+	public void setIndexNo(int indexNo) {
+		this.indexNo = indexNo;
+	}
+	@Override
+	public String toString() {
+		return "WebScAnesthetic [anestheticId=" + anestheticId + ", anestheticName=" + anestheticName + ", indexNo="
+				+ indexNo + "]";
 	}
 }

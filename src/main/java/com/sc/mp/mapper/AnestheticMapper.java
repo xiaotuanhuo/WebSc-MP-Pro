@@ -10,7 +10,7 @@ import com.sc.mp.model.WebScAnesthetic;
 
 @Mapper
 public interface AnestheticMapper {
-	@Select(value = "SELECT * FROM WSC_ANESTHETIC")
+	@Select(value = "SELECT * FROM WSC_ANESTHETIC ORDER BY index_no ASC")
 	List<WebScAnesthetic> getWebScAnesthetics();
 	
 	@Select("SELECT * FROM WSC_ANESTHETIC WHERE anesthetic_id = #{anestheticId} limit 1")

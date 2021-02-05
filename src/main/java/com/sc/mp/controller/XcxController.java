@@ -109,13 +109,6 @@ public class XcxController {
 			doc.setDocumentId(docId);
 			doc.setDocumentState("0");
 			
-			if (StringUtil.isEmpty(doc.getOperateUser())) {
-				throw new Exception("手术医生不能为空");
-			}
-			if(StringUtil.isEmpty(doc.getOperativeId())) {
-				throw new Exception("请先选择需要进行的手术");
-			}
-			
 			//是否是紧急订单，1：紧急，0：不急
 			Date operativeDate = DateUtils.parseDate(doc.getOperateStartTime());
 			if(UnixtimeUtil.getUnixHour(new Date().getTime())+24>=

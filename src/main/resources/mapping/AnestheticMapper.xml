@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.sc.mp.model.WebScAnesthetic">
     <id column="anesthetic_id" jdbcType="VARCHAR" property="anestheticId" />
     <result column="anesthetic_name" jdbcType="VARCHAR" property="anestheticName" />
+    <result column="index_no" jdbcType="INTEGER" property="indexNo" />
   </resultMap>
   
   <select id="getWebScAnestheticList" parameterType="java.lang.String" resultMap="BaseResultMap">
