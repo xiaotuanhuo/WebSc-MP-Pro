@@ -1174,7 +1174,7 @@
     	    ifnull(doc.num, 0) as count
     	FROM 
     	<choose>
-    		<when test="sunday == '0'">
+    		<when test='sunday == "0"'>
     			(
 	    	        SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 6) AS leftDay, '一' AS leftWeek UNION
 				    SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 5) AS leftDay, '二' AS leftWeek UNION
