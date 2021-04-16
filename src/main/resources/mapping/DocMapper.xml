@@ -1165,6 +1165,50 @@
     	    order by monthList.leftMonth
     </select>
     
+    <select id="xcxStatsByWeekForOrgan" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">
+    	SELECT
+    		<if test="orgName != null and orgName != ''">
+    	    	#{orgName,jdbcType=VARCHAR} as name,
+    	    </if>
+    	    dayList.leftWeek as date,
+    	    ifnull(doc.num, 0) as count
+    	FROM 
+    	<choose>
+    		<when test="sunday == '0'">
+    			(
+	    	        SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 6) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 6),'%m-%d'),'一') AS leftWeek UNION
+				    SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 5) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 5),'%m-%d'),'二') AS leftWeek UNION
+				    SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 4) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 4),'%m-%d'),'三') AS leftWeek UNION
+				    SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 3) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 3),'%m-%d'),'四') AS leftWeek UNION
+				    SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 2) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 2),'%m-%d'),'五') AS leftWeek UNION
+			    	SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 1) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 1),'%m-%d'),'六') AS leftWeek UNION
+			    	SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w')) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w')),'%m-%d'),'日') AS leftWeek
+	            ) dayList
+    		</when>
+    		<otherwise>
+    			(
+	    	        SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 1) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 1),'%m-%d'),'一') AS leftWeek UNION
+			    	SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 2) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 2),'%m-%d'),'二') AS leftWeek UNION
+			    	SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 3) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 3),'%m-%d'),'三') AS leftWeek UNION
+			    	SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 4) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 4),'%m-%d'),'四') AS leftWeek UNION
+			    	SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 5) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 5),'%m-%d'),'五') AS leftWeek UNION
+		    		SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 6) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 6),'%m-%d'),'六') AS leftWeek UNION
+			    	SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 7) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 7),'%m-%d'),'日') AS leftWeek
+	            ) dayList
+    		</otherwise>
+    	</choose>
+        LEFT JOIN
+    	    (
+    	        SELECT
+    	          count(1) as num, MID(operate_start_time, 1, 10) rightDay, org_id
+    	        FROM
+    	          WSC_DOCUMENT
+    	        WHERE org_id = #{orgId,jdbcType=VARCHAR}
+    	        GROUP BY rightDay, org_id) doc
+    	        ON dayList.leftDay = doc.rightDay
+    	        ORDER BY dayList.leftDay
+    </select>
+    
     <select id="statsByWeekForOrgan" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">
     	SELECT
     		<if test="orgName != null and orgName != ''">

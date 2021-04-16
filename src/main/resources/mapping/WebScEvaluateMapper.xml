@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sc.mp.mapper.WebScEvaluateMapper" >
+  <resultMap id="BaseResultMap" type="com.sc.mp.model.WebScEvaluate" >
+    <result column="document_id" property="documentId" jdbcType="VARCHAR" />
+    <result column="score" property="score" jdbcType="REAL" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="fftd" property="fftd" jdbcType="CHAR" />
+    <result column="phd" property="phd" jdbcType="CHAR" />
+    <result column="sqpg" property="sqpg" jdbcType="CHAR" />
+    <result column="szgl" property="szgl" jdbcType="CHAR" />
+    <result column="shbfz" property="shbfz" jdbcType="CHAR" />
+    <result column="shtt" property="shtt" jdbcType="CHAR" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sc.mp.model.WebScEvaluate" >
+    insert into WSC_EVALUATE (document_id, score, remark, 
+      fftd, phd, sqpg, szgl, 
+      shbfz, shtt)
+    values (#{documentId,jdbcType=VARCHAR}, #{score,jdbcType=REAL}, #{remark,jdbcType=VARCHAR}, 
+      #{fftd,jdbcType=CHAR}, #{phd,jdbcType=CHAR}, #{sqpg,jdbcType=CHAR}, #{szgl,jdbcType=CHAR}, 
+      #{shbfz,jdbcType=CHAR}, #{shtt,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sc.mp.model.WebScEvaluate" >
+    insert into WSC_EVALUATE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="documentId != null" >
+        document_id,
+      </if>
+      <if test="score != null" >
+        score,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="fftd != null" >
+        fftd,
+      </if>
+      <if test="phd != null" >
+        phd,
+      </if>
+      <if test="sqpg != null" >
+        sqpg,
+      </if>
+      <if test="szgl != null" >
+        szgl,
+      </if>
+      <if test="shbfz != null" >
+        shbfz,
+      </if>
+      <if test="shtt != null" >
+        shtt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="documentId != null" >
+        #{documentId,jdbcType=VARCHAR},
+      </if>
+      <if test="score != null" >
+        #{score,jdbcType=REAL},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="fftd != null" >
+        #{fftd,jdbcType=CHAR},
+      </if>
+      <if test="phd != null" >
+        #{phd,jdbcType=CHAR},
+      </if>
+      <if test="sqpg != null" >
+        #{sqpg,jdbcType=CHAR},
+      </if>
+      <if test="szgl != null" >
+        #{szgl,jdbcType=CHAR},
+      </if>
+      <if test="shbfz != null" >
+        #{shbfz,jdbcType=CHAR},
+      </if>
+      <if test="shtt != null" >
+        #{shtt,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

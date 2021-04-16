@@ -193,6 +193,16 @@ public interface DocMapper {
 			@Param("beforeLastYear") Integer beforeLastYear);
 	
 	/**
+	 * 统计某医疗机构本周每天的手术量（小程序用）
+	 * @param orgId
+	 * @param orgName
+	 * @param sunday 0：周日 -1：非周日
+	 * @return
+	 */
+	List<OperationCount> xcxStatsByWeekForOrgan(@Param("orgId") String orgId, @Param("orgName") String orgName,
+			@Param("sunday") String sunday);
+	
+	/**
 	 * 统计某医疗机构本周每天的手术量
 	 * @param orgId
 	 * @param orgName

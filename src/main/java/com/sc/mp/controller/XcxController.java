@@ -36,8 +36,10 @@ import com.sc.mp.mapper.AnestheticMapper;
 import com.sc.mp.mapper.DocMapper;
 import com.sc.mp.mapper.OperativeMapper;
 import com.sc.mp.mapper.UserMapper;
+import com.sc.mp.mapper.WebScEvaluateMapper;
 import com.sc.mp.mapper.WebScGzhMediaMapper;
 import com.sc.mp.model.WebScDoc;
+import com.sc.mp.model.WebScEvaluate;
 import com.sc.mp.model.WebScGzhMedia;
 import com.sc.mp.model.WebScOperative;
 import com.sc.mp.model.WebScUser;
@@ -68,6 +70,8 @@ public class XcxController {
 	UserMapper userMapper;
 	@Autowired
 	WebScGzhMediaMapper webScGzhMediaMapper;
+	@Autowired
+	WebScEvaluateMapper webScEvaluateMapper;
 	
 	@Value("${operativeName-lucene-path}")
 	private String operativeNameLucenePath;
@@ -167,6 +171,33 @@ public class XcxController {
 			//麻醉方法
 			webScDoc.setAnestheticName(anestheticMapper.selectAnestheticById(webScDoc.getAnestheticId()).getAnestheticName());
 			
+			//格式化手术时间
+			webScDoc.setOperateStartTime(
+					DateUtils.parseDateToStr("yyyy-MM-dd HH:mm", 
+							DateUtils.parseDate(webScDoc.getOperateStartTime())));
+			
+			//麻醉医生
+			if(StringUtil.isNotEmpty(webScDoc.getQaUserId())) {
+				String qaDoctorName = userMapper.selectByPrimaryKey(webScDoc.getQaUserId()).getUserName();
+				
+				webScDoc.setQaUserName(qaDoctorName.substring(0, 1)+"医生");
+			}else {
+				webScDoc.setQaUserName("");
+			}
+			
+			//手术医生
+//			if(StringUtil.isNotEmpty(webScDoc.getOperateUser())) {
+//				String operativeUsers[] = webScDoc.getOperateUser().split(";");
+//				String operativeUser = "";
+//				for (String ou : operativeUsers) {
+//					if(StringUtil.isEmpty(operativeUser)) {
+//						operativeUser = ou.substring(0, 1)+"医生";
+//					}else {
+//						operativeUser = operativeUser +";"+ ou.substring(0, 1)+"医生";
+//					}
+//				}
+//			}
+			
 			resultBean = ResultBean.success(webScDoc);
 			
 		} catch (Exception e) {
@@ -209,7 +240,23 @@ public class XcxController {
 				}
 				doc.setOperativeName(operativeName);
 				
+				//手术时间
+				doc.setOperateStartTime(
+						DateUtils.parseDateToStr("yyyy-MM-dd HH:mm", 
+								DateUtils.parseDate(doc.getOperateStartTime())));
+				//手术状态
 				doc.setDocumentState(DocStateEnum.getvalueOf(doc.getDocumentState()).getTxt());
+				//麻醉方法
+				doc.setAnestheticName(anestheticMapper.selectAnestheticById(doc.getAnestheticId()).getAnestheticName());
+				//麻醉医生
+				if(StringUtil.isNotEmpty(doc.getQaUserId())) {
+					String qaDoctorName = userMapper.selectByPrimaryKey(doc.getQaUserId()).getUserName();
+					
+					doc.setQaUserName(qaDoctorName.substring(0, 1)+"医生");
+				}else {
+					doc.setQaUserName("");
+				}
+				
 			}
 			
 			PageInfo<WebScDoc> pageInfo = new PageInfo<>(docs);
@@ -230,19 +277,36 @@ public class XcxController {
 	@OperationLog("评价")
     @PostMapping(value = "/orderEvaluate")
     @ResponseBody
-	public ResultBean orderEvaluate(@RequestBody() Map<String, Object> paraMap) {
+	public ResultBean orderEvaluate(@RequestBody() WebScEvaluate evaluate) {
 		ResultBean resultBean = null;
 		try {
-			docMapper.updDocById(
-					paraMap.get("documentId").toString(), 
-					paraMap.get("evaluateText").toString(), 
-					Float.parseFloat(paraMap.get("evaluateStar").toString()));
+			docMapper.updDocById(evaluate.getDocumentId(), evaluate.getRemark(), evaluate.getScore());
+			webScEvaluateMapper.insert(evaluate);
 			resultBean = ResultBean.success("评价成功，谢谢！");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("评价失败（订单号："+paraMap.get("documentId").toString()+"），"+e.getMessage());
-			resultBean = ResultBean.error("评价失败（订单号："+paraMap.get("documentId").toString()+"），"+e.getMessage());
+			logger.error("评价失败（订单号："+evaluate.getDocumentId()+"），"+e.getMessage());
+			resultBean = ResultBean.error("评价失败（订单号："+evaluate.getDocumentId()+"），"+e.getMessage());
+		}
+		
+        return resultBean;
+    }
+	
+	@OperationLog("获取评价信息")
+    @GetMapping(value = "/getEvaluate")
+    @ResponseBody
+	public ResultBean getEvaluate(@RequestParam("documentId") String documentId) {
+		ResultBean resultBean = null;
+		try {
+			WebScEvaluate webScEvaluate = webScEvaluateMapper.selectEvaluate(documentId);
+			
+			resultBean = ResultBean.success(webScEvaluate);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("获取订单明细失败，"+e.getMessage());
+			resultBean = ResultBean.error("获取订单明细失败，"+e.getMessage());
 		}
 		
         return resultBean;
@@ -506,14 +570,14 @@ public class XcxController {
 			resMap.put("ydSsl", ydSslKeyValues);
 			
 			//周手术量
-			List<OperationCount> wocs = docMapper.statsByWeekForOrgan(
+			List<OperationCount> wocs = docMapper.xcxStatsByWeekForOrgan(
 					orgId, "", DateUtils.isSunday() ? "0" : "-1");
-			List<List<Object>> weekSsl = new ArrayList<List<Object>>();
+			List<KeyValue> weekSsl = new ArrayList<KeyValue>();
 			for (OperationCount oc : wocs) {
-				List<Object> ocInfo = new ArrayList<Object>();
-				ocInfo.add(oc.getDate());
-				ocInfo.add(oc.getCount());
-				weekSsl.add(ocInfo);
+				KeyValue kv = new KeyValue();
+				kv.setName(oc.getDate());
+				kv.setValue(oc.getCount());
+				weekSsl.add(kv);
 			}
 			resMap.put("weekSsl", weekSsl);
 			
