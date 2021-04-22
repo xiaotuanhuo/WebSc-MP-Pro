@@ -15,6 +15,7 @@
 	<link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
 	<link rel="stylesheet" th:href="@{/css/mescroll.min.css}">
 	<link rel="stylesheet" th:href="@{/css/Mdate.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/jalendar.css}" />
 </head>
 
 <body>
@@ -26,7 +27,7 @@
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
 							<div>
-								<h5 class="text-muted">姓名</h5>
+								<h6 class="text-muted">姓名</h6>
 							</div>
 						</div>
 						<div>
@@ -36,7 +37,7 @@
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
 							<div>
-								<h5 class="text-muted">性别</h5>
+								<h6 class="text-muted">性别</h6>
 							</div>
 						</div>
 						<div>
@@ -53,7 +54,7 @@
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
 							<div>
-								<h5 class="text-muted">手机</h5>
+								<h6 class="text-muted">手机</h6>
 							</div>
 						</div>
 						<div>
@@ -63,7 +64,7 @@
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
 							<div>
-								<h5 class="text-muted">角色</h5>
+								<h6 class="text-muted">角色</h6>
 							</div>
 						</div>
 						<div>
@@ -73,7 +74,7 @@
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
 							<div>
-								<h5 class="text-muted">机构</h5>
+								<h6 class="text-muted">机构</h6>
 							</div>
 						</div>
 						<div>
@@ -83,7 +84,7 @@
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
 							<div>
-								<h5 class="text-muted">区域</h5>
+								<h6 class="text-muted">区域</h6>
 							</div>
 						</div>
 						<div>
@@ -91,7 +92,7 @@
 						</div>
 					</div>
 					
-					<button class="button circle red block menu-logout">登出</button>
+					<button class="button circle red block menu-logout">退出</button>
 				</div>
 				<!-- Menu navigation end -->
 			</nav>
@@ -141,29 +142,36 @@
 					                <img src="/img/cancel.png" alt="">
 					                <span>已取消</span>
 					            </div>
-					            <!-- <div class="content-col myrecord">
-					                <img src="/img/rest_record.png" alt="">
-					                <span>备案管理</span>
-					            </div> -->
 					        </div>
 					    </div>
 					</div>
 				</section>
 				<!-- Order area end -->
 				
+				
 				<!-- 备休区域 start -->
-				<section class="container d-flex" style="padding: 30px 15px 15px;">
-					<!-- <h4 class="fm-auto" style="font-size: 16px;">备休情况</h4> -->
+				<section class="container">
+					<div id="yourId" class="jalendar">
+						<div class="sp sp-wave"></div>
+					</div>
+				</section>
+				<!-- 备休区域 end -->
+				
+				
+				
+				<!-- 备休区域 start -->
+				<!-- <section class="container d-flex" style="padding: 30px 15px 15px;">
+					<h4 class="fm-auto" style="font-size: 16px;">备休情况</h4>
 					<div class="form-group">
 						<span>备休时间</span>
 						<input type="text" id="dateSelector" class="form-field">
 					</div>
-					<!-- <input type="text" id="dateSelector" class="" placeholder="选择日期"> -->
+					<input type="text" id="dateSelector" class="" placeholder="选择日期">
 				</section>
 				<section class="wallets-list container">
 					<div class="sp sp-wave"></div>
 					<div id="dayList"></div>
-				</section>
+				</section> -->
 				<!-- 备休区域 end -->
 			</main>
 			<!-- Page content end -->
@@ -181,105 +189,59 @@
 	<script th:src="@{/js/jquery.min.js}"></script>
 	<!-- Template global script file. requared all pages -->
 	<script th:src="@{/js/global.script.js}"></script>
-	<!-- 下拉刷新 下拉加载插件 -->
-	<script th:src="@{/js/mescroll.min.js}"></script>
-	<!-- 日期选择插件 -->
-	<script th:src="@{/js/iScroll.js}"></script>
-	<script th:src="@{/js/Mdate.js}"></script>
+	<script th:src="@{/js/jalendar.min.js}" type="text/javascript" charset="utf-8"></script>
 	
 	<script type="text/javascript">
 		var date = "";
 		$(function() {
-			getCalendars("");
-			
+			getDataList();
 			$("#dateSelector").focus(function() {
 				document.activeElement.blur();
 			});
-			new Mdate("dateSelector", null, dateCallback);
-			
-			//日期选择的回调
-			function dateCallback(callbackDate) {
-				$('#dayList').empty();
-				$('.sp-wave').show();
-				date = callbackDate;
-				getCalendars(date);
-			}
 		});
 		
-		function getCalendars(date) {
+		/*加载备休数据*/
+		function getDataList() {
 			setTimeout(function() {
 				$.ajax({
-					type: "GET",
-    				url: 'calendars?date=' + date,
-    				success: function(result) {
-    					$(".sp-wave").hide();
-    					var daysDom = document.getElementById("dayList");
-    					var dayCalendars = result.data;
-    					var len = dayCalendars.length;
-    					if (len > 0) {
-    						for (var i = 0; i < len; i++) {
-        						var dayCalendar = dayCalendars[i];
-        						var _day = dayCalendar.day;
-        						var _calendars = dayCalendar.calendars;
-        						
-        						var _html = '<div class="expandable-header purp2">';
-        						_html += '<i class="list-arrow fa fa-angle-down"></i>';
-        						_html += '<h3 class="list-title">' + _day + '</h3>';
-        						_html += '</div>';
-        						_html += '<div class="expandable-content">';
-        						_html += '<div class="padding-content">';
-        						_html += '<ul id="restList' + (i + 1) +'" class="transaction-list list-unstyled">';
-        						_html += '</ul>';
-        						_html += '</div>';
-        						_html += '</div>';
-        						
-        						var dayDom = document.createElement("div");
-        						if (i == 0) {
-        							dayDom.setAttribute("class", "expandable-item accordion active");
-        						} else {
-        							dayDom.setAttribute("class", "expandable-item accordion");
-        						}
-        						dayDom.setAttribute("data-group", "accordion");
-        						dayDom.innerHTML = _html;
-        						daysDom.appendChild(dayDom);
-        						
-        						var ulDom = document.getElementById("restList" + (i + 1));
-        						for (var j = 0; j < _calendars.length; j++) {
-        							var _calendar = _calendars[j];
-        							var _str = '<div class="d-flex align-items-center justify-content-between">';
-        							_str += '<div class="fl-100 align-items-center">';
-        							_str += '<div class="ml-10">';
-        							_str += '<h5 class="coin-name">' + _calendar.name + '</h5>';
-        							_str += '<small class="text-muted">' + _calendar.phone
-        									+ '</small>';
-        							_str += '</div>';
-        							_str += '</div>';
-        							_str += '<div class="fm-auto align-items-center mr-10">';
-        							_str += '<div class="ml-10">';
-        							_str += '<small class="text-muted">' + _calendar.dept
-        									+ '</small>';
-        							_str += '</div>';
-        							_str += '</div>';
-        							_str += '<div class="fr-70">';
-        							_str += '<small class="d-block mb-0 txt-green">'
-        									+ (_calendar.begin).substring(11, 16) + '-'
-        									+ (_calendar.end).substring(11, 16) + '</small>';
-        							_str += '</div>';
-        							_str += '</div>';
-        							var liDom = document.createElement("li");
-        							liDom.innerHTML = _str;
-        							ulDom.appendChild(liDom);
-        						}
-        					}
-    					} else {
-    						$('#dayList').html('暂无数据');
-    					}
-    				},
-    				error: function() {
-    					
-    				}
-    			});
+					url: 'calendars',
+					success : function(result) {
+						$('.sp-wave').hide();
+						setListData(result.data);
+						renderCalendar();
+					},
+					error : function() {
+						$('.sp-wave').hide();
+					}
+				});
 			}, 500);
+		}
+		
+		/*设置列表数据*/
+		function setListData(data) {
+			var listDom = document.getElementById("yourId");
+			for (var i = 0; i < data.length; i++) {
+				var newObj = data[i];
+				var divDom = document.createElement("div");
+				divDom.setAttribute("class", "added-event");
+				divDom.setAttribute("data-date", newObj.day);
+				divDom.setAttribute("data-title", newObj.title);
+				divDom.setAttribute("data-id", newObj.calendarId);
+				
+				listDom.appendChild(divDom);
+			}
+		}
+		
+		function renderCalendar() {
+			$('#yourId').jalendar({
+			    color: '#FFFFFF', // Unlimited
+			    color2: '#FFFFFF', // Unlimited
+			    lang: 'CN',
+			    selectingAfterToday: true,
+			    done: function(data) {
+			    	
+			    }
+			});
 		}
 		
 		function goDocList(ds){

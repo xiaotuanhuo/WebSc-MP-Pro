@@ -22,7 +22,7 @@ public interface ScCalendarMapper {
 	 * @param user
 	 * @return
 	 */
-	List<String> selectDateCalendar(@Param("date") String date, @Param("user") WebScUser user);
+	List<String> selectDateCalendar(@Param("user") WebScUser user);
 	
 	/**
 	 * 查询指定日期备休列表
@@ -31,6 +31,8 @@ public interface ScCalendarMapper {
 	 * @return
 	 */
 	List<WebScCalendar> selectCalendarsByDate(@Param("date") String date, @Param("user") WebScUser user);
+	
+	List<WebScCalendar> selectCalendars(@Param("user") WebScUser user);
 	
 	List<WebScCalendar> selectByDoctor(@Param("userId") String doctorId);
 	

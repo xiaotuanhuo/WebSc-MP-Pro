@@ -8,6 +8,8 @@ spring:
         auto: true
     jmx:
         default-domain: "websc-mp"
+    jackson:
+        time-zone: GMT+8
 
 projectDomainName: fw1.sucheng-group.com:9080
 dirPath: /home/photo

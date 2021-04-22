@@ -137,7 +137,6 @@ body{
 	background-position: center center;
 	background-size: cover;
 	background-repeat: no-repeat;
-	
 }
 
 /*end of part 2----------------------------------------------------*/
@@ -252,6 +251,9 @@ nav .nav-container{
 .ml-10{
 	margin-left: 7px
 }
+.ml-10 small{
+	font-size: 14px;
+}
 .mr-10{
 	margin-right: 8px
 }
@@ -297,7 +299,7 @@ nav .nav-container{
 	width: 100%;
 	bottom: 0;
 	top: 0;
-	background-color: #f9fafb;
+	background-color: #eff2f5;
 	overflow: auto;
 }
 .wrapper.with-bg-image .wrapper-inline{
@@ -1927,7 +1929,7 @@ header.no-background.set-bg .search-button .not-icon1{
 }
 .product-item .product-price{
 	font-size: 12px;
-	    line-height: 30px;
+	line-height: 30px;
 }
 .product-item .add-to-chart{
 	border:none;
@@ -2857,7 +2859,9 @@ h1 .button{
 	margin: 10px 0;
 	font-size: 16px
 }
-
+.wallet-card p{
+	font-size: 14px
+}
 .wallets-list{
 	position: relative;
 }

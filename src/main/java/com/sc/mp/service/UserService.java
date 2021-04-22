@@ -27,9 +27,11 @@ import com.sc.mp.mapper.OrganizationMapper;
 import com.sc.mp.mapper.RoleMapper;
 import com.sc.mp.mapper.ScCalendarMapper;
 import com.sc.mp.mapper.UserMapper;
+import com.sc.mp.mapper.WebScRecordMapper;
 import com.sc.mp.model.WebScCalendar;
 import com.sc.mp.model.WebScDept;
 import com.sc.mp.model.WebScOrganization;
+import com.sc.mp.model.WebScRecord;
 import com.sc.mp.model.WebScRole;
 import com.sc.mp.model.WebScUser;
 import com.sc.mp.util.DateUtils;
@@ -51,6 +53,9 @@ public class UserService {
 	
 	@Resource
 	private DeptMapper deptMapper;
+	
+	@Resource
+	private WebScRecordMapper recordMapper;
 	
 	@Resource
 	private ScCalendarMapper scCalendarMapper;
@@ -115,9 +120,9 @@ public class UserService {
 		return user;
 	}
 	
-	public List<String> getDayList(String date, WebScUser user) {
-		return scCalendarMapper.selectDateCalendar(date, user);
-	}
+//	public List<String> getDayList(String date, WebScUser user) {
+//		return scCalendarMapper.selectDateCalendar(date, user);
+//	}
 	
 	/**
 	 * 区域备休信息查询
@@ -127,17 +132,22 @@ public class UserService {
 	 * @param user
 	 * @return
 	 */
-	public List<DayCalendars> getCalendars(String date, WebScUser user) {
-		List<String> dayList = scCalendarMapper.selectDateCalendar(date, user);
-		List<DayCalendars> dateCalendars = new ArrayList<DayCalendars>();
-		for (String day : dayList) {
-			DayCalendars temp = new DayCalendars();
-			List<WebScCalendar> calendars = scCalendarMapper.selectCalendarsByDate(day, user);
-			temp.setDay(day);
-			temp.setCalendars(calendars);
-			dateCalendars.add(temp);
-		}
-		return dateCalendars;
+//	public List<DayCalendars> getCalendars(String date, WebScUser user) {
+//		List<String> dayList = scCalendarMapper.selectDateCalendar(date, user);
+//		List<DayCalendars> dateCalendars = new ArrayList<DayCalendars>();
+//		for (String day : dayList) {
+//			DayCalendars temp = new DayCalendars();
+//			List<WebScCalendar> calendars = scCalendarMapper.selectCalendarsByDate(day, user);
+//			temp.setDay(day);
+//			temp.setCalendars(calendars);
+//			dateCalendars.add(temp);
+//		}
+//		return dateCalendars;
+//	}
+	
+	public List<WebScCalendar> getCalendars(WebScUser user) {
+		List<WebScCalendar> calendars = scCalendarMapper.selectCalendars(user);
+		return calendars;
 	}
 	
 	/**
@@ -211,7 +221,7 @@ public class UserService {
 					break;
 				default:
 					endTime = format.parse(day + " " + end + ":00");
-					title = ScConstant.CAL_PREFIX + begin + ":00" + " - " + end + ":00";
+					title = ScConstant.CAL_PREFIX + begin + " - " + end;
 					break;
 			}
 			calendar.setStartTime(startTime);
@@ -260,14 +270,15 @@ public class UserService {
 	 */
 	public Map<String, Integer> statsForDc(String userId) {
 		Map<String, Integer> statsMap = new HashMap<String, Integer>();
+		Map<String, String> dayMap = DateUtils.getWeekDate();
 		int todayCount = docMapper.statsTodayForDc(userId);
+		int weekCount = docMapper.statsWeekForDc(userId, dayMap.get("monday"), dayMap.get("sunday"));
 		int monthCount = docMapper.statsMonthForDc(userId);
 		int yearCount = docMapper.statsYearForDc(userId);
-		int sumCount = docMapper.statsSumForDc(userId);
 		statsMap.put("today", todayCount);
+		statsMap.put("week", weekCount);
 		statsMap.put("month", monthCount);
 		statsMap.put("year", yearCount);
-		statsMap.put("sum", sumCount);
 		return statsMap;
 	}
 	
@@ -401,17 +412,17 @@ public class UserService {
 	 * @return
 	 */
 	public WebScUser getOpenid(String code) {
-		WebScUser user = wxUtil.getWxUserOpenid(code, null);
+//		WebScUser user = wxUtil.getWxUserOpenid(code, null);
 		
 		// 模拟从企业微信获取userid openid
-//		WebScUser user = new WebScUser();
-//		if (code.equals("firefox")) {
-//			user.setWxUserid("aaa");
-//			user.setWxOpenid("bbb");
-//		} else {
-//			user.setWxUserid("ccc");
-//			user.setWxOpenid("ddd");
-//		}
+		WebScUser user = new WebScUser();
+		if (code.equals("firefox")) {
+			user.setWxUserid("aaa");
+			user.setWxOpenid("bbb");
+		} else {
+			user.setWxUserid("ccc");
+			user.setWxOpenid("ddd");
+		}
 		
 //		// 获取openid失败的处理
 //		if (user.getWxOpenid() == null) {
@@ -510,5 +521,12 @@ public class UserService {
 			log.error("按医疗机构统计失败：" + e.getMessage());
 		}
 		return operationCounts;
+	}
+	
+	/**
+	 * 获取医生有效（备案结束日期未到）备案列表
+	 */
+	public List<WebScRecord> getRecords(String userId) {
+		return recordMapper.selectMyRecords(userId);
 	}
 }

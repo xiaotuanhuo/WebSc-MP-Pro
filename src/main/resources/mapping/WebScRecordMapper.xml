@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sc.mp.mapper.WebScRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.sc.mp.model.WebScRecord" >
+    <id column="record_id" property="recordId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="org_id" property="orgId" jdbcType="VARCHAR" />
+    <result column="doctor_name" property="doctorName" jdbcType="VARCHAR" />
+    <result column="doctor_phone" property="doctorPhone" jdbcType="VARCHAR" />
+    <result column="doctor_city" property="doctorCity" jdbcType="VARCHAR" />
+    <result column="org_name" property="orgName" jdbcType="VARCHAR" />
+    <result column="record_date" property="recordDate" jdbcType="DATE" />
+    <result column="end_date" property="endDate" jdbcType="DATE" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    record_id, user_id, org_id, doctor_name, doctor_phone, doctor_city, org_name, record_date, 
+    end_date, create_date
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from WSC_RECORD
+    where record_id = #{recordId,jdbcType=INTEGER}
+  </select>
+  <!-- 分组后查询备案结束日期最晚的记录，由于mysql5.7之后子查询不在排序，limit 10000的条件需要注意 -->
+  <select id="selectMyRecords" resultMap="BaseResultMap" parameterType="java.lang.String" >
+	select
+	lt.record_id, lt.org_id, rt.org_name, lt.record_date, lt.end_date FROM
+	(select a.* FROM (select * FROM WSC_RECORD WHERE user_id =
+	#{userId,jdbcType=VARCHAR} AND end_date >= CURDATE() ORDER BY end_date
+	DESC
+	LIMIT 10000) a GROUP BY a.org_id ORDER BY a.end_date) lt LEFT JOIN
+	WSC_ORGANIZATION rt ON lt.org_id = rt.org_id;
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from WSC_RECORD
+    where record_id = #{recordId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.sc.mp.model.WebScRecord" >
+    insert into WSC_RECORD (record_id, user_id, org_id, 
+      doctor_name, doctor_phone, doctor_city, 
+      org_name, record_date, end_date, 
+      create_date)
+    values (#{recordId,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR}, #{orgId,jdbcType=VARCHAR}, 
+      #{doctorName,jdbcType=VARCHAR}, #{doctorPhone,jdbcType=VARCHAR}, #{doctorCity,jdbcType=VARCHAR}, 
+      #{orgName,jdbcType=VARCHAR}, #{recordDate,jdbcType=DATE}, #{endDate,jdbcType=DATE}, 
+      #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sc.mp.model.WebScRecord" >
+    insert into WSC_RECORD
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="recordId != null" >
+        record_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="orgId != null" >
+        org_id,
+      </if>
+      <if test="doctorName != null" >
+        doctor_name,
+      </if>
+      <if test="doctorPhone != null" >
+        doctor_phone,
+      </if>
+      <if test="doctorCity != null" >
+        doctor_city,
+      </if>
+      <if test="orgName != null" >
+        org_name,
+      </if>
+      <if test="recordDate != null" >
+        record_date,
+      </if>
+      <if test="endDate != null" >
+        end_date,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="recordId != null" >
+        #{recordId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null" >
+        #{orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorName != null" >
+        #{doctorName,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorPhone != null" >
+        #{doctorPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorCity != null" >
+        #{doctorCity,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null" >
+        #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="recordDate != null" >
+        #{recordDate,jdbcType=DATE},
+      </if>
+      <if test="endDate != null" >
+        #{endDate,jdbcType=DATE},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sc.mp.model.WebScRecord" >
+    update WSC_RECORD
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null" >
+        org_id = #{orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorName != null" >
+        doctor_name = #{doctorName,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorPhone != null" >
+        doctor_phone = #{doctorPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="doctorCity != null" >
+        doctor_city = #{doctorCity,jdbcType=VARCHAR},
+      </if>
+      <if test="orgName != null" >
+        org_name = #{orgName,jdbcType=VARCHAR},
+      </if>
+      <if test="recordDate != null" >
+        record_date = #{recordDate,jdbcType=DATE},
+      </if>
+      <if test="endDate != null" >
+        end_date = #{endDate,jdbcType=DATE},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where record_id = #{recordId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sc.mp.model.WebScRecord" >
+    update WSC_RECORD
+    set user_id = #{userId,jdbcType=VARCHAR},
+      org_id = #{orgId,jdbcType=VARCHAR},
+      doctor_name = #{doctorName,jdbcType=VARCHAR},
+      doctor_phone = #{doctorPhone,jdbcType=VARCHAR},
+      doctor_city = #{doctorCity,jdbcType=VARCHAR},
+      org_name = #{orgName,jdbcType=VARCHAR},
+      record_date = #{recordDate,jdbcType=DATE},
+      end_date = #{endDate,jdbcType=DATE},
+      create_date = #{createDate,jdbcType=TIMESTAMP}
+    where record_id = #{recordId,jdbcType=INTEGER}
+  </update>
+</mapper>

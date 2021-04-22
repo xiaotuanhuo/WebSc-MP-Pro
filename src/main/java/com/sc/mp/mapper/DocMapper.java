@@ -165,6 +165,15 @@ public interface DocMapper {
 	int statsTodayForDc(@Param("userId") String userId);
 	
 	/**
+	 * 医生本周手术量统计
+	 * @param userId
+	 * @param monday	周一日期
+	 * @param sunday	周日日期
+	 * @return
+	 */
+	int statsWeekForDc(@Param("userId") String userId, @Param("mon") String monday, @Param("sun") String sunday);
+	
+	/**
 	 * 医生当月手术量统计
 	 * @return
 	 */
@@ -175,12 +184,6 @@ public interface DocMapper {
 	 * @return
 	 */
 	int statsYearForDc(@Param("userId") String userId);
-	
-	/**
-	 * 医生总手术量统计
-	 * @return
-	 */
-	int statsSumForDc(@Param("userId") String userId);
 	
 	/**
 	 * 按年统计每月手术量

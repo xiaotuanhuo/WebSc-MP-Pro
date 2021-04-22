@@ -22,7 +22,7 @@
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
 							<div>
-								<h5 class="text-muted">姓名</h5>
+								<h6 class="text-muted">姓名</h6>
 							</div>
 						</div>
 						<div>
@@ -32,7 +32,7 @@
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
 							<div>
-								<h5 class="text-muted">性别</h5>
+								<h6 class="text-muted">性别</h6>
 							</div>
 						</div>
 						<div>
@@ -49,7 +49,7 @@
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
 							<div>
-								<h5 class="text-muted">手机</h5>
+								<h6 class="text-muted">手机</h6>
 							</div>
 						</div>
 						<div>
@@ -59,7 +59,7 @@
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
 							<div>
-								<h5 class="text-muted">角色</h5>
+								<h6 class="text-muted">角色</h6>
 							</div>
 						</div>
 						<div>
@@ -69,7 +69,7 @@
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
 							<div>
-								<h5 class="text-muted">机构</h5>
+								<h6 class="text-muted">机构</h6>
 							</div>
 						</div>
 						<div>
@@ -79,7 +79,7 @@
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
 							<div>
-								<h5 class="text-muted">区域</h5>
+								<h6 class="text-muted">区域</h6>
 							</div>
 						</div>
 						<div>
@@ -87,7 +87,7 @@
 						</div>
 					</div>
 					
-					<button class="button circle red block menu-logout">登出</button>
+					<button class="button circle red block menu-logout">退出</button>
 				</div>
 				<!-- Menu navigation end -->
 			</nav>
@@ -159,7 +159,7 @@
 				<div class="container">
 					<div class="sp sp-wave"></div>
 					<div class="statsBox">
-						<ul  id="chart" class="statsList"></ul>
+						<ul id="chart" class="statsList"></ul>
 					</div>
 				</div>
 
@@ -192,7 +192,7 @@
 	<script th:src="@{/js/jquery.min.js}"></script>
 	<script th:src="@{/js/global.script.js}"></script>
 	<script th:src="@{/js/topSelectMenu.js}"></script>
-	<script th:src="@{/js/jalendar.min.js}" type="text/javascript" charset="utf-8"></script>
+	<script th:src="@{/js/jalendar.special.js}" type="text/javascript" charset="utf-8"></script>
 	<script th:src="@{/js/distpicker.data.js}"></script>
 	<script th:src="@{/js/distpicker.js}"></script>
 	<script th:src="@{/js/jquery.autocompleter.min.js}"></script>
@@ -205,8 +205,8 @@
 			showReportList("sortMonth", "", "", "", "", "");
 		});
 		$('#ranegeKit').jalendar({
-		    color: '#66CDAA', // Unlimited
-		    color2: '#8FBC8F', // Unlimited
+		    color: '#FFFFFF', // Unlimited
+		    color2: '#FFFFFF', // Unlimited
 		    lang: 'CN',
 		    type: 'range',
 		    done: function(data) {
@@ -361,7 +361,8 @@
 									$('#chart').html(_html);
 								}
 							} else {
-								$('#chart').html('暂无数据');
+								$('#chart').attr('style', 'text-align: center; font-size: 14px;');
+								$('#chart').html('--暂无数据--');
 							}
 			    		} else if (result.code == 9) {
 			    			Dialog.info(result.msg).okNotClose().ok(function (okBtn) {

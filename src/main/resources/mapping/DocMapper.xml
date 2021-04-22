@@ -1085,33 +1085,33 @@
     
     <select id="statsTodayForDc" parameterType="java.lang.String" resultType="Integer">
     	SELECT COUNT(1) FROM (
-			SELECT * FROM `WSC_DOCUMENT` WHERE qa_user_id = #{userId,jdbcType=VARCHAR} AND MID(operate_start_time,1,10) = DATE_FORMAT(CURDATE(),'%Y-%m-%d')
+			SELECT * FROM `WSC_DOCUMENT` WHERE qa_user_id = #{userId,jdbcType=VARCHAR} AND document_state <![CDATA[ <> ]]> '6' AND document_state <![CDATA[ <> ]]> '9' AND operate_start_time like CONCAT((DATE_FORMAT(CURDATE(),'%Y-%m-%d')), '%') AND operative_id <![CDATA[ <> ]]> '1879'
 			UNION
-			SELECT wd.* FROM WSC_DOCUMENT wd, (SELECT team_id FROM WSC_QATEAM WHERE user_id = #{userId,jdbcType=VARCHAR}) wq WHERE wd.qa_team_id = wq.team_id AND MID(wd.operate_start_time,1,10) = DATE_FORMAT(CURDATE(),'%Y-%m-%d')
+			SELECT wd.* FROM WSC_DOCUMENT wd, (SELECT team_id FROM WSC_QATEAM WHERE user_id = #{userId,jdbcType=VARCHAR}) wq WHERE wd.qa_team_id = wq.team_id AND wd.document_state <![CDATA[ <> ]]> '6' AND wd.document_state <![CDATA[ <> ]]> '9' AND wd.operate_start_time like CONCAT((DATE_FORMAT(CURDATE(),'%Y-%m-%d')), '%') AND wd.operative_id <![CDATA[ <> ]]> '1879'
+		) a
+    </select>
+    
+    <select id="statsWeekForDc" parameterType="java.lang.String" resultType="Integer">
+    	SELECT COUNT(1) FROM (
+			SELECT * FROM `WSC_DOCUMENT` WHERE qa_user_id = #{userId,jdbcType=VARCHAR} AND document_state <![CDATA[ <> ]]> '6' AND document_state <![CDATA[ <> ]]> '9' AND operate_start_time <![CDATA[ >= ]]> CONCAT(#{mon,jdbcType=VARCHAR}, ' 00:00:00') AND operate_start_time <![CDATA[ <= ]]> CONCAT(#{sun,jdbcType=VARCHAR}, ' 23:59:59') AND operative_id <![CDATA[ <> ]]> '1879'
+			UNION
+			SELECT wd.* FROM WSC_DOCUMENT wd, (SELECT team_id FROM WSC_QATEAM WHERE user_id = #{userId,jdbcType=VARCHAR}) wq WHERE wd.qa_team_id = wq.team_id AND wd.document_state <![CDATA[ <> ]]> '6' AND wd.document_state <![CDATA[ <> ]]> '9' AND wd.operate_start_time <![CDATA[ >= ]]> CONCAT(#{mon,jdbcType=VARCHAR}, ' 00:00:00') AND wd.operate_start_time <![CDATA[ <= ]]> CONCAT(#{sun,jdbcType=VARCHAR}, ' 23:59:59') AND wd.operative_id <![CDATA[ <> ]]> '1879'
 		) a
     </select>
     
     <select id="statsMonthForDc" parameterType="java.lang.String" resultType="Integer">
     	SELECT COUNT(1) FROM (
-			SELECT * FROM `WSC_DOCUMENT` WHERE qa_user_id = #{userId,jdbcType=VARCHAR} AND MID(operate_start_time,1,7) = DATE_FORMAT(CURDATE(),'%Y-%m')
+			SELECT * FROM `WSC_DOCUMENT` WHERE qa_user_id = #{userId,jdbcType=VARCHAR} AND document_state <![CDATA[ <> ]]> '6' AND document_state <![CDATA[ <> ]]> '9' AND operate_start_time like CONCAT((DATE_FORMAT(CURDATE(),'%Y-%m')), '%') AND operative_id <![CDATA[ <> ]]> '1879'
 			UNION
-			SELECT wd.* FROM WSC_DOCUMENT wd, (SELECT team_id FROM WSC_QATEAM WHERE user_id = #{userId,jdbcType=VARCHAR}) wq WHERE wd.qa_team_id = wq.team_id AND MID(wd.operate_start_time,1,7) = DATE_FORMAT(CURDATE(),'%Y-%m')
+			SELECT wd.* FROM WSC_DOCUMENT wd, (SELECT team_id FROM WSC_QATEAM WHERE user_id = #{userId,jdbcType=VARCHAR}) wq WHERE wd.qa_team_id = wq.team_id AND wd.document_state <![CDATA[ <> ]]> '6' AND wd.document_state <![CDATA[ <> ]]> '9' AND wd.operate_start_time like CONCAT((DATE_FORMAT(CURDATE(),'%Y-%m')), '%') AND wd.operative_id <![CDATA[ <> ]]> '1879'
 		) a
     </select>
     
     <select id="statsYearForDc" parameterType="java.lang.String" resultType="Integer">
     	SELECT COUNT(1) FROM (
-			SELECT * FROM `WSC_DOCUMENT` WHERE qa_user_id = #{userId,jdbcType=VARCHAR} AND MID(operate_start_time,1,4) = DATE_FORMAT(CURDATE(),'%Y')
+			SELECT * FROM `WSC_DOCUMENT` WHERE qa_user_id = #{userId,jdbcType=VARCHAR} AND document_state <![CDATA[ <> ]]> '6' AND document_state <![CDATA[ <> ]]> '9' AND operate_start_time like CONCAT((DATE_FORMAT(CURDATE(),'%Y')), '%') AND operative_id <![CDATA[ <> ]]> '1879'
 			UNION
-			SELECT wd.* FROM WSC_DOCUMENT wd, (SELECT team_id FROM WSC_QATEAM WHERE user_id = #{userId,jdbcType=VARCHAR}) wq WHERE wd.qa_team_id = wq.team_id AND MID(wd.operate_start_time,1,4) = DATE_FORMAT(CURDATE(),'%Y')
-		) a
-    </select>
-    
-    <select id="statsSumForDc" parameterType="java.lang.String" resultType="Integer">
-    	SELECT COUNT(1) FROM (
-			SELECT * FROM `WSC_DOCUMENT` WHERE qa_user_id = #{userId,jdbcType=VARCHAR}
-			UNION
-			SELECT wd.* FROM WSC_DOCUMENT wd, (SELECT team_id FROM WSC_QATEAM WHERE user_id = #{userId,jdbcType=VARCHAR}) wq WHERE wd.qa_team_id = wq.team_id
+			SELECT wd.* FROM WSC_DOCUMENT wd, (SELECT team_id FROM WSC_QATEAM WHERE user_id = #{userId,jdbcType=VARCHAR}) wq WHERE wd.qa_team_id = wq.team_id AND wd.document_state <![CDATA[ <> ]]> '6' AND wd.document_state <![CDATA[ <> ]]> '9' AND wd.operate_start_time like CONCAT((DATE_FORMAT(CURDATE(),'%Y')), '%') AND wd.operative_id <![CDATA[ <> ]]> '1879'
 		) a
     </select>
     

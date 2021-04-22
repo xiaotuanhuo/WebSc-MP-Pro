@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -36,9 +35,11 @@ import com.sc.mp.config.DequeManager;
 import com.sc.mp.config.SessionContext;
 import com.sc.mp.model.WebScCalendar;
 import com.sc.mp.model.WebScOrganization;
+import com.sc.mp.model.WebScRecord;
 import com.sc.mp.model.WebScUser;
 import com.sc.mp.service.UserService;
 import com.sc.mp.util.ScConstant;
+import com.sc.mp.util.WxUtil;
 
 @Controller
 public class IndexController {
@@ -46,6 +47,8 @@ public class IndexController {
 	
 	@Resource
 	private UserService userService;
+	@Resource
+	private WxUtil wxUtil;
 	
 	@Autowired
 	private SessionContext context;
@@ -268,15 +271,15 @@ public class IndexController {
 	 * @param date
 	 * @return
 	 */
-	@GetMapping("/days")
-	@ResponseBody
-	public ResultBean getDayList(HttpServletRequest request,
-			@RequestParam(value = "date", required = false) String date) {
-		HttpSession session = request.getSession();
-		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
-		List<String> dayList = userService.getDayList(date, user);
-		return ResultBean.success(dayList);
-	}
+//	@GetMapping("/days")
+//	@ResponseBody
+//	public ResultBean getDayList(HttpServletRequest request,
+//			@RequestParam(value = "date", required = false) String date) {
+//		HttpSession session = request.getSession();
+//		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
+//		List<String> dayList = userService.getDayList(date, user);
+//		return ResultBean.success(dayList);
+//	}
 	
 	/**
 	 * 备休列表查询
@@ -286,14 +289,32 @@ public class IndexController {
 	 * @param date
 	 * @return
 	 */
+//	@GetMapping("/calendars")
+//	@ResponseBody
+//	public ResultBean getCalendars(HttpServletRequest request,
+//			@RequestParam(value = "date", required = false) String date) {
+//		HttpSession session = request.getSession();
+//		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
+//		List<DayCalendars> calendars = userService.getCalendars(date, user);
+//		return ResultBean.success(calendars);
+//	}
+	
+	/**
+	 * 备休列表查询（管理员角色）
+	 * @param request
+	 * @param page
+	 * @param limit
+	 * @param date
+	 * @return
+	 */
 	@GetMapping("/calendars")
 	@ResponseBody
-	public ResultBean getCalendars(HttpServletRequest request,
-			@RequestParam(value = "date", required = false) String date) {
+	public PageResultBean<WebScCalendar> getCalendars(HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
-		List<DayCalendars> calendars = userService.getCalendars(date, user);
-		return ResultBean.success(calendars);
+		List<WebScCalendar> calendars = userService.getCalendars(user);
+		PageInfo<WebScCalendar> infos = new PageInfo<>(calendars);
+		return new PageResultBean<>(infos.getTotal(), infos.getList());
 	}
 	
 	/**
@@ -432,4 +453,19 @@ public class IndexController {
 		return ResultBean.success(operationCounts);
 	}
 	
+	@RequestMapping("/toTest")
+	public String toTest(HttpServletRequest request, Model model) {
+		WebScUser user = (WebScUser) request.getSession().getAttribute(ScConstant.USER_SESSION_KEY);
+		model.addAttribute("user", user);
+		return "test";
+	}
+	
+	@GetMapping("/myRecords")
+	@ResponseBody
+	public ResultBean getMyRecords(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
+		List<WebScRecord> records = userService.getRecords(user.getUserId());
+		return ResultBean.success(records);
+	}
 }

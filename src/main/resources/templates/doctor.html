@@ -21,7 +21,7 @@
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
 							<div>
-								<h5 class="text-muted">姓名</h5>
+								<h6 class="text-muted">姓名</h6>
 							</div>
 						</div>
 						<div>
@@ -31,7 +31,7 @@
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
 							<div>
-								<h5 class="text-muted">性别</h5>
+								<h6 class="text-muted">性别</h6>
 							</div>
 						</div>
 						<div>
@@ -48,7 +48,7 @@
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
 							<div>
-								<h5 class="text-muted">手机</h5>
+								<h6 class="text-muted">手机</h6>
 							</div>
 						</div>
 						<div>
@@ -58,7 +58,7 @@
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
 							<div>
-								<h5 class="text-muted">角色</h5>
+								<h6 class="text-muted">角色</h6>
 							</div>
 						</div>
 						<div>
@@ -68,7 +68,7 @@
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
 							<div>
-								<h5 class="text-muted">机构</h5>
+								<h6 class="text-muted">机构</h6>
 							</div>
 						</div>
 						<div>
@@ -78,7 +78,7 @@
 					<div class="d-flex align-items-center justify-content-between container-list">
 						<div class="menu-list-flex align-items-center">
 							<div>
-								<h5 class="text-muted">区域</h5>
+								<h6 class="text-muted">区域</h6>
 							</div>
 						</div>
 						<div>
@@ -86,7 +86,7 @@
 						</div>
 					</div>
 					
-					<button class="button circle red block menu-logout">登出</button>
+					<button class="button circle red block menu-logout">退出</button>
 				</div>
 				<!-- Menu navigation end -->
 			</nav>
@@ -146,36 +146,41 @@
 					</div>
 				</section>
 				<!-- Order area end -->
-				
 				<section class="container mt-10">
 					<div class="resources-card-wrapper">
-						<div class="ref-statistics mr-10">
-                          	<div class="d-flex flex-column ml-md-2">
-	                          	<h4 class="mt-10 mb-5 ">[[${statsDc.today}]]</h4>
-	                            <p class="text-muted font-weight-medium">今日手术量</p>
-                        	</div>
-	                    </div>
-	                    <div class="ref-statistics ml-10">
-                          	<div class="d-flex flex-column ml-md-2">
-	                          	<h4 class="mt-10 mb-5 ">[[${statsDc.month}]]</h4>
-	                            <p class="text-muted font-weight-medium">本月手术量</p>
-                        	</div>
+		    			<div class="wallet-card mr-10 white">
+							<div class="flex-column flex-md-row">
+								<h3 class="">[[${statsDc.today}]]</h3>
+								<p class="mb-0 font-weight-medium">日手术量</p>
+							</div>
+						</div>
+						<div class="wallet-card ml-10 white">
+							<div class="flex-column flex-md-row">
+								<h3>[[${statsDc.week}]]</h3>
+								<p class="mb-0 font-weight-medium">周手术量</p>
+							</div>
+						</div>
+					</div>
+					<div class="resources-card-wrapper mt-15">
+		    			<div class="wallet-card mr-10 white">
+							<div class="flex-column flex-md-row">
+							<h3 class="">[[${statsDc.month}]]</h3>
+							<p class="mb-0 font-weight-medium">月手术量</p>
+							</div>
+						</div>
+						<div class="wallet-card ml-10 white">
+							<div class="flex-column flex-md-row">
+								<h3 class="">[[${statsDc.year}]]</h3>
+								<p class="mb-0 font-weight-medium">年手术量</p>
+							</div>
 	                    </div>
 					</div>
-					<div class="resources-card-wrapper">
-						<div class="ref-statistics mr-10">
-                          	<div class="d-flex flex-column ml-md-2">
-	                          	<h4 class="mt-10 mb-5 ">[[${statsDc.year}]]</h4>
-	                            <p class="text-muted font-weight-medium">当年手术量</p>
-                        	</div>
-	                    </div>
-	                    <div class="ref-statistics ml-10">
-                          	<div class="d-flex flex-column ml-md-2">
-	                          	<h4 class="mt-10 mb-5 ">[[${statsDc.sum}]]</h4>
-	                            <p class="text-muted font-weight-medium">总手术量</p>
-                        	</div>
-	                    </div>
-					</div>
+				</section>
+				<section class="container">
+					<h4 class="title-main">我的备案</h4>
+					<div class="sp sp-wave"></div>
+					<ul id="recordList" class="transaction-list list-unstyled">
+					</ul>
 				</section>
 			</main>
 			<!-- Page content end -->
@@ -193,16 +198,62 @@
 	<script th:src="@{/js/jquery.min.js}"></script>
 	<!-- Template global script file. requared all pages -->
 	<script th:src="@{/js/global.script.js}"></script>
-	
 	<script type="text/javascript">
+		$(function() {
+			getMyRecords();
+		});
 		
 		$('.myrest').on('click', function() {
 			location.href = "toRest";
 		});
 		
-		function goDocList(ds){
-			location.href = "toDocList?ds=" + ds;
+		function getMyRecords() {
+			setTimeout(function() {
+				$.ajax({
+					type: "GET",
+    				url: 'myRecords',
+    				success: function(result) {
+    					$(".sp-wave").hide();
+    					var listDom = document.getElementById("recordList");
+    					var records = result.data;
+    					var len = records.length;
+    					if (len > 0) {
+    						for (var i = 0; i < len; i++) {
+    							console.log(123);
+        						var record = records[i];
+        						var str = '<div class="d-flex align-items-center justify-content-between">';
+        						str += '<div class="d-flex align-items-center">';
+        						str += '<div class="ml-10">';
+        						str += '<small class="text-muted">' + record.orgName
+        								+ '</small>';
+        						str += '</div>';
+        						str += '</div>';
+        						str += '<div>';
+        						str += '<small class="text-muted  d-block">'
+        								+ record.recordDate.substring(0, 10) + '</small>';
+        						str += '<small class="mb-0 txt-green">'
+        								+ record.endDate.substring(0, 10) + '</small>';
+        						str += '</div>';
+        						str += '</div>';
+        						var liDom = document.createElement("li");
+        						liDom.innerHTML = str;
+        						listDom.appendChild(liDom);
+        					}
+    					} else {
+    						$('#recordList').attr('style', 'text-align: center; font-size: 14px;');
+    						$('#recordList').html('--暂无备案--');
+    					}
+    				},
+    				error: function() {
+    					
+    				}
+    			});
+			}, 500);
 		}
+		
+		function goDocList(ds) {
+			location.href = "toDocList?ds=" + ds;
+		};
 		
 		$(".menu-logout").on("click", function() {
 			location.href = "logout";

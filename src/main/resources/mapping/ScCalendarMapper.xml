@@ -52,6 +52,24 @@
     	AND start_time like CONCAT(#{date, jdbcType=VARCHAR}, '%')
     </where>
   </select>
+  <select id="selectCalendars" resultMap="BaseResultMap" >
+    select 
+    wc.calendar_id,
+    CONCAT(wu.user_name, ' - ', wc.title) as title,
+    DATE_FORMAT(wc.start_time, '%Y-%c-%e') as day
+    from WSC_CALENDAR wc, WSC_USER wu
+    <where>
+    	<choose>
+			<when test="user.city != null">
+				AND wc.user_id = wu.user_id AND wu.city = #{user.city,jdbcType=VARCHAR}
+			</when>
+			<otherwise>
+				AND wc.user_id = wu.user_id AND wu.province = #{user.province,jdbcType=VARCHAR}
+			</otherwise>
+		</choose>
+		AND wc.start_time <![CDATA[ >= ]]> DATE_ADD(NOW(), INTERVAL - 1 MONTH)
+    </where>
+  </select>
   <select id="selectDateCalendar" resultType="java.lang.String" parameterType="java.lang.String" >
     select 
     DATE_FORMAT(wc.start_time, "%Y-%m-%d") as day
@@ -88,7 +106,7 @@
     calendar_id,
     title,
     DATE_FORMAT(start_time, '%Y-%c-%e') as day
-    from WSC_CALENDAR where user_id = #{userId, jdbcType=VARCHAR} and start_time <![CDATA[ >= ]]> DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%S')
+    from WSC_CALENDAR where user_id = #{userId, jdbcType=VARCHAR} and start_time <![CDATA[ >= ]]> DATE_ADD(NOW(), INTERVAL - 2 MONTH)
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from WSC_CALENDAR
