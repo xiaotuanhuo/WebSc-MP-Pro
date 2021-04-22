@@ -547,7 +547,7 @@ select.form-element{
 }
 
 .button{
-	padding: 10px 20px;
+	padding: 6px 20px;
 	background-color: #FFF;
 	border:none;
 	border-radius: 3px;
@@ -578,8 +578,8 @@ select.form-element{
 	box-shadow: none;
 }
 .button.orange{
-	background-color: #2eb18d;
-	color: #FFF;
+	background-color: #abc5bf;
+	color: #fff;
 	border-color:transparent;
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
@@ -2571,7 +2571,7 @@ h1 .button{
 [31. Content Styles]
 *------------------background: url(../img/logo.png) no-repeat center center;------------------------------------------------*/
 .dash-balance{
-	background: transparent;
+	background-color: #F0F9F0;
 	background-size: cover;
 	position: relative;
 	overflow: hidden;

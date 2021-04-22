@@ -186,7 +186,6 @@
         _check: function(e) {
             let _this = $(e.currentTarget);
             if ($('.duihao-checked').length == 3 && _this.find('.duihao-nocheck').length > 0) {
-        		console.log(123);
         		return;
         	}
             if (_this.is(".chooseAll")) {
