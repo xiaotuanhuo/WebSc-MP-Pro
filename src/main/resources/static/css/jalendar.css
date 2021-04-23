@@ -201,7 +201,7 @@
 }
 .jalendar .jalendar-container .jalendar-pages .days .day.today span {
   color: rgba(255, 255, 255, 0.8);
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0,123,255, 0.3);
   border-radius: 50px;
 }
 .jalendar .jalendar-container .jalendar-pages .days .day.today span a {
