@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sc.mp.mapper.WebOrgOperativesMapper" >
+  <resultMap id="BaseResultMap" type="com.sc.mp.model.WebOrgOperatives" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="org_id" property="orgId" jdbcType="VARCHAR" />
+    <result column="operative_id" property="operativeId" jdbcType="VARCHAR" />
+    <result column="operative_name" property="operativeName" jdbcType="VARCHAR" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sc.mp.model.WebOrgOperatives" >
+    insert into WSC_ORG_OPERATIVES (id, org_id, operative_id, 
+      operative_name)
+    values (#{id,jdbcType=INTEGER}, #{orgId,jdbcType=VARCHAR}, #{operativeId,jdbcType=VARCHAR}, 
+      #{operativeName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sc.mp.model.WebOrgOperatives" >
+    insert into WSC_ORG_OPERATIVES
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="orgId != null" >
+        org_id,
+      </if>
+      <if test="operativeId != null" >
+        operative_id,
+      </if>
+      <if test="operativeName != null" >
+        operative_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="orgId != null" >
+        #{orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="operativeId != null" >
+        #{operativeId,jdbcType=VARCHAR},
+      </if>
+      <if test="operativeName != null" >
+        #{operativeName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

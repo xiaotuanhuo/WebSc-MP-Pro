@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +39,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
+import org.apache.ibatis.javassist.compiler.ast.NewExpr;
 
 /**
  * HTTP和HTTPS请求工具类
@@ -253,10 +255,20 @@ public class HttpsUtil {
 	
 	public static void main(String[] args) {
 		try {
-			URI uri = new URI(
-					"https://api.weixin.qq.com/sns/jscode2session?appid=wx2df456c78c6b50ae&secret=d71c67d447de31c252a43a0ca60d0d4c&js_code=123123&grant_type=123123");
-			String responseMsg = getHttps(uri);
-			System.out.println(responseMsg);
+//			URI uri = new URI(
+//					"https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx5d6d3e879d4eb8c8&secret=0dabfe7f043b7cfa6fb6ace566f9c596");
+//			String responseMsg = getHttps(uri);
+//			System.out.println(responseMsg);
+			
+//			String materials = postHttps("https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=41_AW-3nwpbmQDXFW_YEjYwqujwYmM-MkbGd8DOMwWkIEHr0sLGP29XGc-7-dwZwzXLhxyJBzBkVVR1x9gh4gSaOtV9BZpUMDOaT7yyrTbarWs7zgylSG3JJetFHZ-Hi4GLHnq1D5_dlumlq5M1DMTjAHAXGN", "{\r\n" + 
+//					"    \"type\":\"news\",\r\n" + 
+//					"    \"offset\":0,\r\n" + 
+//					"    \"count\":20\r\n" + 
+//					"}");
+//			System.out.println(materials);
+			
+			System.out.println(new Date(1612230340l*1000));
+			System.out.println(new Date().getTime());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

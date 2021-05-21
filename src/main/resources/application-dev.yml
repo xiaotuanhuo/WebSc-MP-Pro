@@ -45,4 +45,5 @@ userName-lucene-path: D:\\lucene\\lucene-db\\sc\\userName
 wx-gzh-appid: wxfdc16ad1198bf14a
 wx-gzh-secret: b3db511490703a3c474f55be87f104c7
 wx-gzh-api-uri: https://api.weixin.qq.com/cgi-bin/
-gzh-media-cron-expression: 0 50 10 * * ?
+gzh-media-cron-expression: 0 5 14 * * ?
+statistics-org-operative-cron-expression: 0 1 17 * * ?

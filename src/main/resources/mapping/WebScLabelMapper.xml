@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sc.mp.mapper.WebScLabelMapper" >
+  <resultMap id="BaseResultMap" type="com.sc.mp.model.WebScLabel" >
+    <result column="label_id" property="labelId" jdbcType="VARCHAR" />
+    <result column="label_name" property="labelName" jdbcType="VARCHAR" />
+    <result column="parent_id" property="parentId" jdbcType="VARCHAR" />
+    <result column="label_level" property="labelLevel" jdbcType="CHAR" />
+    <result column="leaf" property="leaf" jdbcType="CHAR" />
+  </resultMap>
+  <insert id="insert" parameterType="com.sc.mp.model.WebScLabel" >
+    insert into WSC_LABEL (label_id, label_name, parent_id, 
+      label_level, leaf)
+    values (#{labelId,jdbcType=VARCHAR}, #{labelName,jdbcType=VARCHAR}, #{parentId,jdbcType=VARCHAR}, 
+      #{labelLevel,jdbcType=CHAR}, #{leaf,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sc.mp.model.WebScLabel" >
+    insert into WSC_LABEL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="labelId != null" >
+        label_id,
+      </if>
+      <if test="labelName != null" >
+        label_name,
+      </if>
+      <if test="parentId != null" >
+        parent_id,
+      </if>
+      <if test="labelLevel != null" >
+        label_level,
+      </if>
+      <if test="leaf != null" >
+        leaf,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="labelId != null" >
+        #{labelId,jdbcType=VARCHAR},
+      </if>
+      <if test="labelName != null" >
+        #{labelName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=VARCHAR},
+      </if>
+      <if test="labelLevel != null" >
+        #{labelLevel,jdbcType=CHAR},
+      </if>
+      <if test="leaf != null" >
+        #{leaf,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

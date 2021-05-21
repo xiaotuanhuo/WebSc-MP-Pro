@@ -18,6 +18,9 @@ import com.sc.mp.model.WebScUser_Distribution;
 @Mapper
 public interface DocMapper {
 	
+	@Select("SELECT * FROM WSC_DOCUMENT ORDER BY CREATE_DATE DESC LIMIT ${limit}")
+	List<WebScDoc> selectDocs(@Param("limit") int limit);
+	
 	/**
 	 * 根据document_state订单状态统计某一时间段的手术量
 	 * @param orgId 医疗机构id
@@ -204,6 +207,41 @@ public interface DocMapper {
 	 */
 	List<OperationCount> xcxStatsByWeekForOrgan(@Param("orgId") String orgId, @Param("orgName") String orgName,
 			@Param("sunday") String sunday);
+	
+	/**
+	 * 统计某医疗机构本周每天的手术量（小程序用）
+	 * @param orgId
+	 * @param orgName
+	 * @param sunday 0：周日 -1：非周日
+	 * @param date 指定日期当前周数据
+	 * @return
+	 */
+	List<OperationCount> xcxStatsByWeekForOrgan2(@Param("orgId") String orgId, @Param("orgName") String orgName,
+			@Param("sunday") String sunday, @Param("date") String date);
+	
+	/**
+	 * 统计某医疗机构指定月每天的手术量
+	 * @param orgId
+	 * @param orgName
+	 * @param date
+	 * @return
+	 */
+	List<OperationCount> xcxStatsByMonthForOrgan(
+			@Param("orgId") String orgId, 
+			@Param("orgName") String orgName,
+			@Param("date") String date);
+	
+	/**
+	 * 统计某医疗机构指定年每月的手术量
+	 * @param orgId
+	 * @param orgName
+	 * @param date
+	 * @return
+	 */
+	List<OperationCount> xcxStatsByYearForOrgan(
+			@Param("orgId") String orgId, 
+			@Param("orgName") String orgName,
+			@Param("date") String date);
 	
 	/**
 	 * 统计某医疗机构本周每天的手术量

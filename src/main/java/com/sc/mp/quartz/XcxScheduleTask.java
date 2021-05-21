@@ -2,6 +2,7 @@ package com.sc.mp.quartz;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,22 +13,58 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.sc.mp.mapper.OperativeMapper;
+import com.sc.mp.mapper.OrganizationMapper;
+import com.sc.mp.mapper.WebOrgOperativesMapper;
+import com.sc.mp.mapper.WebScDocOperativeMapper;
 import com.sc.mp.mapper.WebScGzhMediaMapper;
+import com.sc.mp.model.WebOrgOperatives;
 import com.sc.mp.model.WebScGzhMedia;
+import com.sc.mp.model.WebScOperative;
+import com.sc.mp.model.WebScOrganization;
 import com.sc.mp.util.HttpsUtil;
+import com.sc.mp.util.StringUtil;
 
 @Component
-public class GzhMediaScheduleTask {
-	private static final Logger logger = LoggerFactory.getLogger(GzhMediaScheduleTask.class);
+public class XcxScheduleTask {
+	private static final Logger logger = LoggerFactory.getLogger(XcxScheduleTask.class);
 	
 	@Autowired
 	WebScGzhMediaMapper webScGzhMediaMapper;
+	@Autowired
+	OrganizationMapper organizationMapper;
+	@Autowired
+	WebScDocOperativeMapper webScDocOperativeMapper;
+	@Autowired
+	OperativeMapper operativeMapper;
+	@Autowired
+	WebOrgOperativesMapper webOrgOperativesMapper;
+	
 	@Value("${wx-gzh-appid}")
 	private String gzhAppid;
 	@Value("${wx-gzh-secret}")
 	private String gzhSecret;
 	@Value("${wx-gzh-api-uri}")
 	private String gzhUri;
+	
+	@Scheduled(cron = "${statistics-org-operative-cron-expression}")
+	public void statisticsOrgOperative() {
+		List<WebScOrganization> organizations = organizationMapper.getOrgs();
+		for (WebScOrganization webScOrganization : organizations) {
+			List<String> operativeIds = webScDocOperativeMapper.getCommonlyUsedOperative(webScOrganization.getOrgId(), 10);
+			for (String operativeId : operativeIds) {
+				WebScOperative operative = operativeMapper.selectOperativeById(operativeId);
+				
+				if(StringUtil.isNotNull(operative)) {
+					WebOrgOperatives webOrgOperative = new WebOrgOperatives();
+					webOrgOperative.setOrgId(webScOrganization.getOrgId());
+					webOrgOperative.setOperativeId(operativeId);
+					webOrgOperative.setOperativeName(operative.getOperativeName());
+					webOrgOperativesMapper.insert(webOrgOperative);
+				}
+			}
+		}
+	}
 	
 	@Scheduled(cron = "${gzh-media-cron-expression}")
     public void updGzhMedia(){

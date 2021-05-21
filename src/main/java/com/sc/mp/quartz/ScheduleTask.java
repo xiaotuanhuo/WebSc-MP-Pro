@@ -32,42 +32,42 @@ public class ScheduleTask {
 	private WxUtil wxUtil;
 	
 	public void schedule_sendmsg() {
-		log.info("schedule_sendmsg  开始定时执行");
-		//执行存储过程schedule_sendmsg
-		try {
-			List<WebScSendRecord> recordList = sendRecordService.getWebScSendRecord();
-			
-			for(WebScSendRecord wsr : recordList){
-				WebScUser senduser = userService.selectByPrimaryKey(wsr.getSendUserId());
-				
-				if(senduser.getWxOpenid() != null && !senduser.getWxOpenid().equals("")){
-					TestMessageTextcard content = new TestMessageTextcard("订单通知", wsr.getMemo(), "http://fw1.sucheng-group.com:9020//toDocDetail?id=" + wsr.getDocumentId() + "&state=0", "");
-					TextMessage tm = new TextMessage(senduser.getWxUserid(), "", "", "textcard", 1000016, content);
-					String ret = wxUtil.sendTextMessage(tm, null);
-					
-					JSONObject json = JSONObject.parseObject(ret);
-					Integer iErrCode = (Integer) json.get("errcode");
-					log.info("消息ID：" + wsr.getRecordId() + " 发送状态：" + iErrCode);
-//					System.out.print("发给：" + us.getWxUserid() + "    iErrCode:" + iErrCode);
-					if(iErrCode == 0){
-						WebScSendRecord updateRd = new WebScSendRecord();
-						updateRd.setRecordId(wsr.getRecordId());
-						updateRd.setState("1");
-						sendRecordService.updateSendRecord(updateRd);
-					}else{
-						WebScSendRecord updateRd = new WebScSendRecord();
-						updateRd.setRecordId(wsr.getRecordId());
-						updateRd.setErrmsg(iErrCode + "");
-						updateRd.setState("9");
-						sendRecordService.updateSendRecord(updateRd);
-					}
-				}
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		log.info("schedule_sendmsg  执行结束");
+//		log.info("schedule_sendmsg  开始定时执行");
+//		//执行存储过程schedule_sendmsg
+//		try {
+//			List<WebScSendRecord> recordList = sendRecordService.getWebScSendRecord();
+//			
+//			for(WebScSendRecord wsr : recordList){
+//				WebScUser senduser = userService.selectByPrimaryKey(wsr.getSendUserId());
+//				
+//				if(senduser.getWxOpenid() != null && !senduser.getWxOpenid().equals("")){
+//					TestMessageTextcard content = new TestMessageTextcard("订单通知", wsr.getMemo(), "http://fw1.sucheng-group.com:9020//toDocDetail?id=" + wsr.getDocumentId() + "&state=0", "");
+//					TextMessage tm = new TextMessage(senduser.getWxUserid(), "", "", "textcard", 1000016, content);
+//					String ret = wxUtil.sendTextMessage(tm, null);
+//					
+//					JSONObject json = JSONObject.parseObject(ret);
+//					Integer iErrCode = (Integer) json.get("errcode");
+//					log.info("消息ID：" + wsr.getRecordId() + " 发送状态：" + iErrCode);
+////					System.out.print("发给：" + us.getWxUserid() + "    iErrCode:" + iErrCode);
+//					if(iErrCode == 0){
+//						WebScSendRecord updateRd = new WebScSendRecord();
+//						updateRd.setRecordId(wsr.getRecordId());
+//						updateRd.setState("1");
+//						sendRecordService.updateSendRecord(updateRd);
+//					}else{
+//						WebScSendRecord updateRd = new WebScSendRecord();
+//						updateRd.setRecordId(wsr.getRecordId());
+//						updateRd.setErrmsg(iErrCode + "");
+//						updateRd.setState("9");
+//						sendRecordService.updateSendRecord(updateRd);
+//					}
+//				}
+//			}
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		log.info("schedule_sendmsg  执行结束");
     }
 }

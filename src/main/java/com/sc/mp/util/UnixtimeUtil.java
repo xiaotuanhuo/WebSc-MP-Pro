@@ -31,8 +31,8 @@ public class UnixtimeUtil {
 //		System.out.println(getUnixDay(date.getTime()));
 		//System.out.println(getUnixDay(System.currentTimeMillis()));
 //		System.out.println(getUnixDay(sdf.parse("2018-10-31").getTime()));
-//		System.out.println(getStringDay(getUnixDay(date.getTime())));
-		System.out.println(getUnixHour(date.getTime()));
+		System.out.println(getStringDay(getUnixDay(date.getTime())));
+//		System.out.println(getUnixHour(date.getTime()));
 	}
 
 }

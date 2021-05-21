@@ -1165,6 +1165,50 @@
     	    order by monthList.leftMonth
     </select>
     
+    <select id="xcxStatsByWeekForOrgan2" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">
+    	SELECT
+    		<if test="orgName != null and orgName != ''">
+    	    	#{orgName,jdbcType=VARCHAR} as name,
+    	    </if>
+    	    dayList.leftWeek as date,
+    	    ifnull(doc.num, 0) as count
+    	FROM 
+    	<choose>
+    		<when test="sunday == '0'">
+    			(
+	    	        SELECT SUBDATE(#{date},DATE_FORMAT(#{date},'%w') + 6) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(#{date},DATE_FORMAT(#{date},'%w') + 6),'%m-%d'),'一') AS leftWeek UNION
+				    SELECT SUBDATE(#{date},DATE_FORMAT(#{date},'%w') + 5) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(#{date},DATE_FORMAT(#{date},'%w') + 5),'%m-%d'),'二') AS leftWeek UNION
+				    SELECT SUBDATE(#{date},DATE_FORMAT(#{date},'%w') + 4) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(#{date},DATE_FORMAT(#{date},'%w') + 4),'%m-%d'),'三') AS leftWeek UNION
+				    SELECT SUBDATE(#{date},DATE_FORMAT(#{date},'%w') + 3) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(#{date},DATE_FORMAT(#{date},'%w') + 3),'%m-%d'),'四') AS leftWeek UNION
+				    SELECT SUBDATE(#{date},DATE_FORMAT(#{date},'%w') + 2) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(#{date},DATE_FORMAT(#{date},'%w') + 2),'%m-%d'),'五') AS leftWeek UNION
+			    	SELECT SUBDATE(#{date},DATE_FORMAT(#{date},'%w') + 1) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(#{date},DATE_FORMAT(#{date},'%w') + 1),'%m-%d'),'六') AS leftWeek UNION
+			    	SELECT SUBDATE(#{date},DATE_FORMAT(#{date},'%w')) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(#{date},DATE_FORMAT(#{date},'%w')),'%m-%d'),'日') AS leftWeek
+	            ) dayList
+    		</when>
+    		<otherwise>
+    			(
+	    	        SELECT SUBDATE(#{date},DATE_FORMAT(#{date},'%w') - 1) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(#{date},DATE_FORMAT(#{date},'%w') - 1),'%m-%d'),'一') AS leftWeek UNION
+			    	SELECT SUBDATE(#{date},DATE_FORMAT(#{date},'%w') - 2) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(#{date},DATE_FORMAT(#{date},'%w') - 2),'%m-%d'),'二') AS leftWeek UNION
+			    	SELECT SUBDATE(#{date},DATE_FORMAT(#{date},'%w') - 3) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(#{date},DATE_FORMAT(#{date},'%w') - 3),'%m-%d'),'三') AS leftWeek UNION
+			    	SELECT SUBDATE(#{date},DATE_FORMAT(#{date},'%w') - 4) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(#{date},DATE_FORMAT(#{date},'%w') - 4),'%m-%d'),'四') AS leftWeek UNION
+			    	SELECT SUBDATE(#{date},DATE_FORMAT(#{date},'%w') - 5) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(#{date},DATE_FORMAT(#{date},'%w') - 5),'%m-%d'),'五') AS leftWeek UNION
+		    		SELECT SUBDATE(#{date},DATE_FORMAT(#{date},'%w') - 6) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(#{date},DATE_FORMAT(#{date},'%w') - 6),'%m-%d'),'六') AS leftWeek UNION
+			    	SELECT SUBDATE(#{date},DATE_FORMAT(#{date},'%w') - 7) AS leftDay, concat_ws('/',DATE_FORMAT(SUBDATE(#{date},DATE_FORMAT(#{date},'%w') - 7),'%m-%d'),'日') AS leftWeek
+	            ) dayList
+    		</otherwise>
+    	</choose>
+        LEFT JOIN
+    	    (
+    	        SELECT
+    	          count(1) as num, MID(operate_start_time, 1, 10) rightDay, org_id
+    	        FROM
+    	          WSC_DOCUMENT
+    	        WHERE org_id = #{orgId,jdbcType=VARCHAR}
+    	        GROUP BY rightDay, org_id) doc
+    	        ON dayList.leftDay = doc.rightDay
+    	        ORDER BY dayList.leftDay
+    </select>
+    
     <select id="xcxStatsByWeekForOrgan" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">
     	SELECT
     		<if test="orgName != null and orgName != ''">
@@ -1207,6 +1251,67 @@
     	        GROUP BY rightDay, org_id) doc
     	        ON dayList.leftDay = doc.rightDay
     	        ORDER BY dayList.leftDay
+    </select>
+    
+    <select id="xcxStatsByMonthForOrgan" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">
+    	SELECT
+    		<if test="orgName != null and orgName != ''">
+    	    	#{orgName,jdbcType=VARCHAR} as name,
+    	    </if>
+    	    MID(dayList.leftDay, 9, 2) as date,
+    	    ifnull(doc.num, 0) as count
+    	FROM 
+    	    (
+    	        SELECT
+                  date_add(CONCAT(YEAR(Date(#{date})),'-0',MONTH(Date(#{date})),'-','01'),
+                  INTERVAL(cast(help_topic_id AS signed INTEGER)) DAY) leftDay
+                FROM
+                  mysql.help_topic
+                WHERE
+                  help_topic_id <![CDATA[ < ]]> day(last_day(#{date}))
+                ORDER BY
+                  help_topic_id
+            ) dayList
+    	LEFT JOIN
+    	    (
+    	        SELECT
+    	          count(1) as num, MID(operate_start_time, 1, 10) rightDay, org_id
+    	        FROM
+    	          WSC_DOCUMENT
+    	        WHERE org_id = #{orgId,jdbcType=VARCHAR}
+    	        GROUP BY rightDay, org_id) doc
+    	        ON dayList.leftDay = doc.rightDay
+    	        ORDER BY dayList.leftDay
+    </select>
+    
+    <select id="xcxStatsByYearForOrgan" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">
+    	select
+    		<if test="orgName != null and orgName != ''">
+    	    	#{orgName,jdbcType=VARCHAR} as name,
+    	    </if>
+    	    MID(monthList.leftMonth, 6, 2) as date,
+    	    ifnull(doc.num, 0) as count
+    	from 
+    	    (
+    	        SELECT CONCAT(YEAR(Date(#{date})),'-01') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(#{date})),'-02') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(#{date})),'-03') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(#{date})),'-04') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(#{date})),'-05') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(#{date})),'-06') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(#{date})),'-07') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(#{date})),'-08') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(#{date})),'-09') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(#{date})),'-10') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(#{date})),'-11') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(#{date})),'-12') AS leftMonth
+    	    ) monthList
+    	left join
+    	    (select count(1) as num, MID(operate_start_time, 1, 7) rightMonth from WSC_DOCUMENT
+    	    WHERE org_id = #{orgId,jdbcType=VARCHAR}
+    	    GROUP BY rightMonth) doc
+    	    on monthList.leftMonth = doc.rightMonth
+    	    order by monthList.leftMonth
     </select>
     
     <select id="statsByWeekForOrgan" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">

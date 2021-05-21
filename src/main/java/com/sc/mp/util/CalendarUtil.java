@@ -13,8 +13,12 @@ public class CalendarUtil {
 		
 //		System.out.println(getYear(new Date()));
 		
-		System.out.println(getFirstDayOfGivenMonth(new Date()));
-		System.out.println(getFirstDayOfNextMonth(new Date(120,11,30)));
+//		System.out.println(getFirstDayOfGivenMonth(new Date()));
+//		System.out.println(getFirstDayOfNextMonth(new Date(120,11,30)));
+		
+//		System.out.println(dateAddDays(new Date(), 1));
+		System.out.println(monthAdds(new Date(), -1));
+		System.out.println(yearAdds(new Date(), -1));
 		
 	}
 	
@@ -80,6 +84,48 @@ public class CalendarUtil {
 		calendar.setTime(date);
 		calendar.set(Calendar.DAY_OF_MONTH,1);
 		calendar.add(Calendar.MONTH, 1);
+		return calendar.getTime();
+	}
+	
+	/**
+	 * 日期加减天数
+	 * @param date
+	 * @param days
+	 * @return
+	 */
+	public static Date dateAddDays(Date date, int days) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.DATE, days);//加days天
+		
+		return calendar.getTime();
+	}
+	
+	/**
+	 * 月份加减
+	 * @param date
+	 * @param days
+	 * @return
+	 */
+	public static Date monthAdds(Date date, int cs) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.MONTH, cs);//加cs天
+		
+		return calendar.getTime();
+	}
+	
+	/**
+	 * 年份加减
+	 * @param date
+	 * @param days
+	 * @return
+	 */
+	public static Date yearAdds(Date date, int cs) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.YEAR, cs);//加cs天
+		
 		return calendar.getTime();
 	}
 

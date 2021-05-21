@@ -36,11 +36,17 @@ import com.sc.mp.mapper.AnestheticMapper;
 import com.sc.mp.mapper.DocMapper;
 import com.sc.mp.mapper.OperativeMapper;
 import com.sc.mp.mapper.UserMapper;
+import com.sc.mp.mapper.WebOrgOperativesMapper;
+import com.sc.mp.mapper.WebScDocOperativeMapper;
 import com.sc.mp.mapper.WebScEvaluateMapper;
 import com.sc.mp.mapper.WebScGzhMediaMapper;
+import com.sc.mp.mapper.WebScLabelMapper;
+import com.sc.mp.model.WebOrgOperatives;
 import com.sc.mp.model.WebScDoc;
+import com.sc.mp.model.WebScDocOperative;
 import com.sc.mp.model.WebScEvaluate;
 import com.sc.mp.model.WebScGzhMedia;
+import com.sc.mp.model.WebScLabel;
 import com.sc.mp.model.WebScOperative;
 import com.sc.mp.model.WebScUser;
 import com.sc.mp.service.SendRecordService;
@@ -72,6 +78,12 @@ public class XcxController {
 	WebScGzhMediaMapper webScGzhMediaMapper;
 	@Autowired
 	WebScEvaluateMapper webScEvaluateMapper;
+	@Autowired
+	WebScLabelMapper webScLabelMapper;
+	@Autowired
+	WebOrgOperativesMapper webOrgOperativesMapper;
+	@Autowired
+	WebScDocOperativeMapper webScDocOperativeMapper;
 	
 	@Value("${operativeName-lucene-path}")
 	private String operativeNameLucenePath;
@@ -131,6 +143,12 @@ public class XcxController {
 			}
 			
 			docMapper.insert(doc);
+			
+			String operatives[] = doc.getOperativeId().split(",");
+			for (int i = 0; i < operatives.length; i++) {
+				WebScDocOperative webScDocOperative = new WebScDocOperative(doc, operatives[i]);
+				webScDocOperativeMapper.insert(webScDocOperative);
+			}
 			
 			//插入通知消息
 			WebScUser user = userMapper.selectByPrimaryKey(doc.getApplyUserId());
@@ -280,9 +298,19 @@ public class XcxController {
 	public ResultBean orderEvaluate(@RequestBody() WebScEvaluate evaluate) {
 		ResultBean resultBean = null;
 		try {
+			WebScDoc doc = docMapper.selectByPrimaryKey(evaluate.getDocumentId());
+			evaluate.setKind("0");
+			evaluate.setOrgId(doc.getOrgId());
+			evaluate.setUserId(doc.getQaUserId());
+			
 			docMapper.updDocById(evaluate.getDocumentId(), evaluate.getRemark(), evaluate.getScore());
+			
 			webScEvaluateMapper.insert(evaluate);
-			resultBean = ResultBean.success("评价成功，谢谢！");
+			
+			List<WebScLabel> labels = webScLabelMapper.selectLabelsByIds(evaluate.getLabelId());
+			evaluate.setLabels(labels);
+			
+			resultBean = ResultBean.success(evaluate);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -301,12 +329,50 @@ public class XcxController {
 		try {
 			WebScEvaluate webScEvaluate = webScEvaluateMapper.selectEvaluate(documentId);
 			
+			List<WebScLabel> labels = webScLabelMapper.selectLabelsByIds(webScEvaluate.getLabelId());
+			webScEvaluate.setLabels(labels);
+			
 			resultBean = ResultBean.success(webScEvaluate);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("获取订单明细失败，"+e.getMessage());
 			resultBean = ResultBean.error("获取订单明细失败，"+e.getMessage());
+		}
+		
+        return resultBean;
+    }
+	
+	@OperationLog("获取评价标签信息")
+    @GetMapping(value = "/getEvaluateLabels")
+    @ResponseBody
+	public ResultBean getEvaluateLabels() {
+		ResultBean resultBean = null;
+		try {
+			List<WebScLabel> labels = webScLabelMapper.selectLabels();
+			List<List<WebScLabel>> rLabelss = new ArrayList<List<WebScLabel>>();
+			List<WebScLabel> hLabels = new ArrayList<WebScLabel>();
+			List<WebScLabel> yLabels = new ArrayList<WebScLabel>();
+			List<WebScLabel> cLabels = new ArrayList<WebScLabel>();
+			for (WebScLabel webScLabel : labels) {
+				if("1".equals(webScLabel.getLabelLevel())) {
+					hLabels.add(webScLabel);
+				}else if("2".equals(webScLabel.getLabelLevel())) {
+					yLabels.add(webScLabel);
+				}else if("3".equals(webScLabel.getLabelLevel())){
+					cLabels.add(webScLabel);
+				}
+			}
+			rLabelss.add(hLabels);
+			rLabelss.add(yLabels);
+			rLabelss.add(cLabels);
+			
+			resultBean = ResultBean.success(rLabelss);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("获取评价标签信息失败，"+e.getMessage());
+			resultBean = ResultBean.error("获取评价标签信息失败，"+e.getMessage());
 		}
 		
         return resultBean;
@@ -429,9 +495,24 @@ public class XcxController {
 	public ResultBean searchOperativeNames(@RequestBody() Map<String, Object> paraMap) {
 		ResultBean resultBean = null;
 		try {
-			resultBean = ResultBean.success(
-					LuceneUtil.searchOperativeNames(
-							operativeNameLucenePath, paraMap.get("key").toString(), 5));
+			List<Map<String, String>> operatives = new ArrayList<Map<String,String>>();
+			if (StringUtil.isEmpty(paraMap.get("key").toString())) {
+				//从数据库中拿取
+				List<WebOrgOperatives> orgOperatives = webOrgOperativesMapper.selectOrgOperatives(
+						paraMap.get("orgId").toString(), 8);
+				for (WebOrgOperatives webOrgOperatives : orgOperatives) {
+					Map<String, String> hitMap = new HashMap<String, String>();
+	                //手术名称
+	                hitMap.put("text", webOrgOperatives.getOperativeName());
+	                hitMap.put("value", webOrgOperatives.getOperativeId());
+	                operatives.add(hitMap);
+				}
+			}else {
+				operatives = LuceneUtil.searchOperativeNames(
+						operativeNameLucenePath, paraMap.get("key").toString(), 5);
+			}
+			
+			resultBean = ResultBean.success(operatives);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("搜索手术名称列表失败，"+e.getMessage());
@@ -469,57 +550,6 @@ public class XcxController {
 			e.printStackTrace();
 			logger.error("搜索手术名称列表失败，"+e.getMessage());
 			resultBean = ResultBean.error("搜索手术名称列表失败，"+e.getMessage());
-		}
-		return resultBean;
-	}
-	
-	@OperationLog("获取当天手术量信息")
-    @GetMapping(value = "/getOperativeCount")
-    @ResponseBody
-	public ResultBean getOperativeCount(@RequestParam("orgId") String orgId) {
-		ResultBean resultBean = null;
-		try {
-			Map<String, Object> sourceMap = new HashMap<String, Object>();
-			long nowDate = UnixtimeUtil.getUnixDay(new Date().getTime());
-			
-			//2、获取当天的手术量
-			int curDayCount = docMapper.selectOperativeCount(
-					orgId,
-					UnixtimeUtil.getStringDay(nowDate), 
-					UnixtimeUtil.getStringDay(nowDate+1));
-			sourceMap.put("curDayCount", curDayCount);
-			//3、获取前一周总手术量
-			int curWeekCount = docMapper.selectOperativeCount(
-					orgId,
-					UnixtimeUtil.getStringDay(nowDate-6), 
-					UnixtimeUtil.getStringDay(nowDate+1));
-			sourceMap.put("curWeekCount", curWeekCount);
-			//4、当月总手术量
-			Date date = new Date();
-			int month = CalendarUtil.getMonth(date);
-			int curMonthCount = docMapper.selectOperativeCount(
-					orgId,
-					CalendarUtil.getYear(date)+"-"+(month<10?("0"+month):month)+"-01", 
-					CalendarUtil.getYear(date)+"-"+(month<10?("0"+month):month)+"-32");
-			sourceMap.put("curMonthCount", curMonthCount);
-			//5、当月平均手术时间
-			Map<String, Object> paraMap = new HashMap<String, Object>();
-			paraMap.put("orgId", orgId);
-			paraMap.put("state", "5");
-			paraMap.put("limit", 30);
-			List<WebScDoc> webScDocs = docMapper.selectWebScDocTmps(paraMap);
-			long sumTime = 0l;
-			for (WebScDoc webScDoc : webScDocs) {
-				sumTime = sumTime + webScDoc.getSssc();
-			}
-			long aveTime = webScDocs.size()==0?0l:sumTime/webScDocs.size();
-			sourceMap.put("averageDuration", aveTime);
-			
-			resultBean = ResultBean.success(sourceMap);
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("获取当天手术量信息失败，"+e.getMessage());
-			resultBean = ResultBean.error("获取当天手术量信息失败，"+e.getMessage());
 		}
 		return resultBean;
 	}
@@ -580,6 +610,10 @@ public class XcxController {
 				weekSsl.add(kv);
 			}
 			resMap.put("weekSsl", weekSsl);
+			String title = CalendarUtil.getYear(curDate)+"-"+wocs.get(0).getDate().split("/")[0]+
+					" 到 "+
+					CalendarUtil.getYear(curDate)+"-"+wocs.get(6).getDate().split("/")[0];
+			resMap.put("weekTitle", title);
 			
 			//月手术量
 			List<OperationCount> mocs = docMapper.statsByMonthForOrgan(orgId, "");
@@ -591,6 +625,7 @@ public class XcxController {
 				monthSsl.add(kv);
 			}
 			resMap.put("monthSsl", monthSsl);
+			resMap.put("monthTitle", CalendarUtil.getMonth(curDate)+"月");
 			
 			//年手术量
 			List<OperationCount> yocs = docMapper.statsByYearForOrgan(orgId, "");
@@ -602,12 +637,86 @@ public class XcxController {
 				yearSsl.add(kv);
 			}
 			resMap.put("yearSsl", yearSsl);
+			resMap.put("yearTitle", CalendarUtil.getYear(curDate)+"年");
 			
 			resultBean = ResultBean.success(resMap);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("获取订单统计信息失败，"+e.getMessage());
 			resultBean = ResultBean.error("获取订单统计信息失败，"+e.getMessage());
+		}
+		return resultBean;
+	}
+	@OperationLog("订单统计上下翻页")
+    @PostMapping(value = "/getOrderStatisticsNextBack")
+    @ResponseBody
+	public ResultBean getOrderStatisticsNextBack(@RequestBody() Map<String, Object> paraMap){
+		ResultBean resultBean = null;
+		try {
+			Date curDate = new Date();
+			Map<String, Object> resMap = new HashMap<String, Object>();
+			switch (paraMap.get("flag").toString()) {
+			case "week":
+				Date date = CalendarUtil.dateAddDays(curDate, (int)paraMap.get("pageNum")*7);
+				String sunday = DateUtils.isSunday(date)?"0":"-1";
+				List<OperationCount> wocs = docMapper.xcxStatsByWeekForOrgan2(
+						paraMap.get("orgId").toString(), "", sunday, DateUtils.parseDateToStr("yyyy-MM-dd", date));
+				
+				List<KeyValue> weekSsl = new ArrayList<KeyValue>();
+				for (OperationCount oc : wocs) {
+					KeyValue kv = new KeyValue();
+					kv.setName(oc.getDate());
+					kv.setValue(oc.getCount());
+					weekSsl.add(kv);
+				}
+				resMap.put("ssl", weekSsl);
+				String title = CalendarUtil.getYear(date)+"-"+wocs.get(0).getDate().split("/")[0]+
+						" 到 "+
+						CalendarUtil.getYear(date)+"-"+wocs.get(6).getDate().split("/")[0];
+				resMap.put("title", title);
+				
+				resultBean = ResultBean.success(resMap);
+				break;
+			case "month":
+				Date date2 = CalendarUtil.monthAdds(curDate, (int)paraMap.get("pageNum"));
+				List<OperationCount> mocs = docMapper.xcxStatsByMonthForOrgan(paraMap.get("orgId").toString(), "", DateUtils.parseDateToStr("yyyy-MM-dd", date2));
+				
+				List<KeyValue> monthSsl = new ArrayList<KeyValue>();
+				for (OperationCount oc : mocs) {
+					KeyValue kv = new KeyValue();
+					kv.setName(oc.getDate());
+					kv.setValue(oc.getCount());
+					monthSsl.add(kv);
+				}
+				resMap.put("ssl", monthSsl);
+				resMap.put("title", CalendarUtil.getMonth(date2)+"月");
+				
+				resultBean = ResultBean.success(resMap);
+				break;
+			case "year":
+				Date date3 = CalendarUtil.yearAdds(curDate, (int)paraMap.get("pageNum"));
+				List<OperationCount> yocs = docMapper.xcxStatsByYearForOrgan(paraMap.get("orgId").toString(), "", DateUtils.parseDateToStr("yyyy-MM-dd", date3));
+				
+				List<KeyValue> yearSsl = new ArrayList<KeyValue>();
+				for (OperationCount oc : yocs) {
+					KeyValue kv = new KeyValue();
+					kv.setName(oc.getDate());
+					kv.setValue(oc.getCount());
+					yearSsl.add(kv);
+				}
+				resMap.put("ssl", yearSsl);
+				resMap.put("title", CalendarUtil.getYear(date3)+"年");
+				
+				resultBean = ResultBean.success(resMap);
+				break;
+			default:
+				break;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("订单统计上下翻页失败，"+e.getMessage());
+			resultBean = ResultBean.error("订单统计上下翻页失败，"+e.getMessage());
 		}
 		return resultBean;
 	}

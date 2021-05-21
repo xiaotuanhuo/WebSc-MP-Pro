@@ -7,11 +7,9 @@ import java.lang.management.ManagementFactory;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -238,5 +236,19 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 		map.put("monday", weekBegin);
 		map.put("sunday", weekEnd);
 		return map;
+	}
+	/**
+	 * 判断是否是周日
+	 * @param date
+	 * @return
+	 */
+	public static boolean isSunday(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		int week = cal.get(Calendar.DAY_OF_WEEK) - 1;
+		if (week == 0) {	// 0代表周日，6代表周六
+			return true;
+		}
+		return false;
 	}
 }
