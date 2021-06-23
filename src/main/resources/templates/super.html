@@ -668,7 +668,7 @@
 		});
 		
 		$(".RadioStyle5").on("click", function() {
-			location.href = "toNurseInfo";
+			return;
 		});
 		
 		$(".box-content").on("click", function() {
@@ -689,10 +689,6 @@
 			} else if (($(this).attr('id') == "year") && !yearRadio) {
 				statsforCity("year");
 			}
-		});
-		
-		$(".radioCheck4").on('click', function() {
-			alert(1234);
 		});
 		
 		function getCheckedValue() {
