@@ -432,4 +432,12 @@
 		where wd.document_id = #{documentId, jdbcType=VARCHAR}
 	)
   </select>
+  
+  <select id="selectDoctors" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  	select 
+  	  user_id,
+  	  user_name
+	from WSC_USER
+	where role_id = '5'
+  </select>
 </mapper>

@@ -1,0 +1,416 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+	<title>机构详情统计</title>
+	
+	<link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}">
+	<!-- Template global css file. Requared all pages -->
+	<link rel="stylesheet" type="text/css" th:href="@{/css/global.style.css}">
+	<link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
+	<link rel="stylesheet" th:href="@{/css/mescroll.min.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/css/jalendar.css}" />
+	<link rel="stylesheet" th:href="@{/css/pickout.css}">
+	
+	<style type="text/css">
+		.select{
+			width:calc(100% - 20px);
+			float:left;
+			padding:10px;
+			font-family:inherit;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="wrapper">
+		<div class="nav-menu">
+			<nav class="menu">
+				<!-- Menu navigation start -->
+				<div class="nav-container menu-container">
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h6 class="text-muted">姓名</h6>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">[[${user.userName}]]</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h6 class="text-muted">性别</h6>
+							</div>
+						</div>
+						<div>
+							<div th:switch="${user.sex}">
+								<div th:case="'0'">
+									<h6 class="text-muted menu-info">女</h6>
+								</div>
+								<div th:case="*">
+									<h6 class="text-muted menu-info">男</h6>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h6 class="text-muted">手机</h6>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">[[${user.phone}]]</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h6 class="text-muted">角色</h6>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">[[${user.roleName}]]</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h6 class="text-muted">机构</h6>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">[[${user.deptName}]]</h6>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-between container-list">
+						<div class="menu-list-flex align-items-center">
+							<div>
+								<h6 class="text-muted">区域</h6>
+							</div>
+						</div>
+						<div>
+							<h6 class="text-muted menu-info">[[${user.districtName}]]</h6>
+						</div>
+					</div>
+					
+					<button class="button circle red block menu-logout">退出</button>
+				</div>
+				<!-- Menu navigation end -->
+			</nav>
+		</div>
+		
+		<div class="wrapper-inline">
+			<!-- Header area start -->
+			<header class="no-background"> <!-- extra class no-background -->
+				<div class="navi-menu-button">
+					<em></em>
+					<em></em>
+					<em></em>
+				</div>
+			</header>
+			<!-- Header area end -->
+			
+			<!-- Page content start -->
+			<main id="mescroll" class="margin mt-0 mescroll">
+				<div class="dash-balance">
+					<div class="dash-content relative">
+						<!-- <h3 class="w-text">SuCheng</h3> -->
+						<img alt="" src="/img/logo.png">
+					</div>
+				</div>
+				
+				<section class="bal-section container">
+					<select name="doctor" id="doctor" class="select doctor pickout" placeholder="选择一个医生"></select>
+				</section>
+				<!-- 统计区域 start -->
+				<section class="section container">
+					
+					<div class="trader-info" style="background-color: #fff;">
+						<ul id="basicInfo" class="subInfo-list list-unstyled">
+							<li>
+								<div class="d-flex align-items-center justify-content-around">
+									<small class="text-muted">手术量</small>
+									<small class="text-muted">入职时间</small>
+									<small class="text-muted">评分</small>
+		                        </div>
+							</li>
+							<li id="wave" class="fold">
+								<div class="sp sp-wave"></div>
+							</li>
+							<li class="noDataRow">
+								<small class="d-block mb-0 txt-default">--暂无数据--</small>
+							</li>
+						</ul>
+						<div class=""></div>
+						<div class="tooth fold">
+							<ul id="subBasicInfo" class="subInfo-list list-unstyled">
+								<li class="slottimeRow">
+									<div class="d-flex align-items-center justify-content-between">
+										<div class="d-flex align-items-center justify-content-between" style="flex: 2">
+											<span class="fm-auto ml-10 txt-left txt-turquoise">
+				                          		<small class="d-block mb-0" data-data="day">日</small>
+											</span>
+											<span class="fm-auto ml-10 txt-left txt-turquoise">
+				                          		<small class="d-block mb-0 disabled" data-data="month">月</small>
+											</span>
+											<span class="fm-auto ml-10 txt-left txt-turquoise">
+				                          		<small class="d-block mb-0" data-data="year">年</small>
+											</span>
+										</div>
+										<div class="txt-turquoise mr-10 txt-right dateCustom" style="flex: 3;">
+			                          		<small class="d-block mb-0 date" data-popup="timePopup">自定义</small>
+										</div>
+			                        </div>
+								</li>
+								<li id="titleRow">
+									<div class="d-flex align-items-center justify-content-between">
+			                          <div class="fm-auto ml-10 txt-left">
+			                            <small class="text-muted">机构名称</small>
+			                          </div>
+			                          <div class="flex-50">
+			                          	<small class="text-muted">手术量</small>
+			                          </div>
+			                          <div class="flex-50">
+			                            <small class="text-muted">占比</small>
+			                          </div>
+			                        </div>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+				<!-- 统计区域 end -->
+				
+				
+				<!-- 医疗机构下拉多选模态框 start -->
+				<div class="popup-overlay-multiselect" id="doctorPopup">
+					<!-- if you dont want overlay add class .no-overlay -->
+					<div class="popup-container">
+						<div class="popup-header" style="display: none;">
+							<span class="popup-close organ-close" data-dismiss="true"><i class="fa fa-times"></i></span>
+						</div>
+						<div class="popup-content">
+							<div class="justify-content-between">
+								<div class="selectPickerWrapper showOrgan">
+									<select class="hidden"></select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- 医疗机构下拉多选模态框 end -->
+				
+				
+				<!-- 自定义日期区间选择popup start -->
+				<div class="popup-overlay-multiselect" id="timePopup">
+					<div class="popup-container">
+						<div class="popup-header" style="display: none;">
+							<span class="popup-close" data-dismiss="true"><i class="fa fa-times"></i></span>
+						</div>
+						<div class="popup-content">
+							<div id="ranegeKit" class="jalendar"></div>
+						</div>
+					</div>
+				</div>
+				<!-- 自定义日期区间选择popup end -->
+			</main>
+			<!-- Page content end -->
+		</div>
+	</div>
+	<!--Page loader DOM Elements. Requared all pages-->
+	<div class="sweet-loader">
+		<div class="box">
+		  	<div class="circle1"></div>
+		  	<div class="circle2"></div>
+		  	<div class="circle3"></div>
+		</div>
+	</div>
+	
+	<script th:src="@{/js/jquery.min.js}"></script>
+	<script th:src="@{/js/global.script.js}"></script>
+	<script th:src="@{/js/jalendar.special.js}" type="text/javascript" charset="utf-8"></script>
+	<script th:src="@{/js/pickout.js}"></script>
+	<script type="text/javascript">
+		var doctorId = '';
+		$(document).ready(function() {
+			initDoctorList();
+		});
+		
+		$('#ranegeKit').jalendar({
+		    color: '#FFFFFF', // Unlimited
+		    color2: '#FFFFFF', // Unlimited
+		    lang: 'CN',
+		    type: 'range',
+		    done: function() {
+		    	var oldRangeDate = $('.date').data('data');
+		    	var newRangeDate = $('#ranegeKit input.data1').val() + '~' + $('#ranegeKit input.data2').val();
+		    	$('.date').attr("data-data", newRangeDate);
+		    	$('.date').text(newRangeDate);
+		    	// 日期范围发生变化时
+		    	if (oldRangeDate == undefined || oldRangeDate != newRangeDate) {
+		    		$('.slottimeRow').find('small').removeClass('disabled');
+					$('.date').addClass('disabled');
+					statSubDoctor(doctorId, newRangeDate);
+		    	}
+		    	$('.popup-close').click();
+		    }
+		});
+		
+		// 初始化医疗机构下拉多选框
+		function initDoctorList() {
+			$.ajax({
+		    	type: "POST",
+		    	dataType: "json",
+		    	url: "allDoctor",
+		    	contentType: "application/json",
+		    	success: function (result) {
+        			var infos = result.data;
+        			var ulDom = document.getElementById("doctor");
+        			for (var i = 0; i < infos.length; i++) {
+						var info = infos[i];
+						var liDom = document.createElement("option");
+						liDom.value = info.userId;
+						liDom.text = info.userName;
+						ulDom.appendChild(liDom);
+					}
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
+		
+		// Preparar o select
+		//pickout.to('.pickout');
+		pickout.to({
+			el:'.doctor',
+			theme: 'clean', 
+			search: true
+		});
+		
+		function testabc(id) {
+			if (doctorId == '') {
+				// 首次选择
+				doctorId = id;
+				statDoctor(id);
+			} else if (doctorId != '' && doctorId != id) {
+				// 非首次选择且所选医生发生变化
+				doctorId = id;
+				statDoctor(id);
+			} else {
+				// 其他情况不查询
+				return;
+			}
+		}
+		
+		// 医生基础信息统计
+		function statDoctor(id) {
+			$('#wave').removeClass('fold');
+			$('.sp-wave').show();
+			setTimeout(function() {
+				var jsonData = JSON.stringify({"id": id});
+				$.ajax({
+			    	type: "POST",
+			    	data: jsonData,
+			    	dataType: "json",
+			    	url: 'statDrBasicInfo',
+			    	contentType: "application/json",
+			    	success: function (result) {
+			    		$('.sp-wave').hide();
+			    		$('#wave').addClass('fold');
+			    		$('#basicInfo').find('.dataRow').remove();
+			    		$('#subBasicInfo').find('.dataRow').remove();
+						var infos = result.data;
+						var len = infos.length;
+						var ulDom = document.getElementById("basicInfo");
+						if (len > 0) {
+							statSubDoctor(id, "month");
+							for (var i = 0; i < len; i++) {
+								var info = infos[i];
+								var _html = '<div class="d-flex align-items-center justify-content-around">';
+								_html += '<small class="text-muted">' + info.count + '</small>';
+								_html += '<small class="text-muted">' + info.date + '</small>';
+								_html += '<small class="text-muted">' + info.score + '</small>';
+								_html += '</div>';
+								var liDom = document.createElement("li");
+								liDom.className = 'dataRow';
+								liDom.innerHTML = _html;
+								ulDom.appendChild(liDom);
+							}
+							$('.noDataRow').addClass('fold');
+							$('.tooth').removeClass('fold');
+						}
+			    	},
+			    	error: function() {
+			    		
+			    	}
+				});
+			}, 200);
+		}
+		
+		// 医生手术量信息统计
+		function statSubDoctor(id, slottime) {
+			var jsonData = JSON.stringify({"id": id, "slottime": slottime});
+			$.ajax({
+		    	type: "POST",
+		    	data: jsonData,
+		    	dataType: "json",
+		    	url: 'statDrSubInfo',
+		    	contentType: "application/json",
+		    	success: function (result) {
+		    		$('#subBasicInfo').find('.dataRow').remove();
+					var infos = result.data;
+					var len = infos.length;
+					var ulDom = document.getElementById("subBasicInfo");
+					if (len > 0) {
+						for (var i = 0; i < len; i++) {
+							var info = infos[i];
+							var _html = '<div class="d-flex align-items-center justify-content-between">';
+							_html += '<div class="fm-auto ml-10 txt-left">';
+							_html += '<small class="text-muted">' + info.orgName + '</small>';
+							_html += '</div>';
+							_html += '<div class="flex-50">';
+							_html += '<small class="d-block mb-0 txt-turquoise">' + info.count + '</small>';
+							_html += '</div>';
+							_html += '<div class="flex-50">';
+							_html += '<small class="d-block mb-0 txt-green">' + info.rate + '%' + '</small>';
+							_html += '</div>';
+							_html += '</div>';
+							var liDom = document.createElement("li");
+							liDom.className = 'dataRow';
+							liDom.innerHTML = _html;
+							ulDom.appendChild(liDom);
+						}
+					} else {
+						var _html = '<small class="d-block mb-0 txt-default">--暂无数据--</small>';
+						var liDom = document.createElement("li");
+						liDom.className = 'dataRow';
+						liDom.innerHTML = _html;
+						ulDom.appendChild(liDom);
+					}
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
+		
+		$('.slottimeRow').find('small').not('.date').on('click', function() {
+			if ($(this).hasClass('disabled')) {
+				return false;
+			} else {
+				$('.slottimeRow').find('small').removeClass('disabled');
+				$(this).addClass('disabled');
+				statSubDoctor(doctorId, $(this).data('data'));
+			}
+		});
+	</script>
+	
+</body>
+
+</html>

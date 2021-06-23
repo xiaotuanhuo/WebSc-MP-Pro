@@ -55,7 +55,6 @@
 		    }
         },
         _getOptionDatas: function() {
-        	console.log(888);
             var result = [];
             if (this.$element.data("init")) {
             	var dataArr = null;

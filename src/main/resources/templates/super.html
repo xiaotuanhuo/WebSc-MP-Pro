@@ -119,28 +119,54 @@
 				</div>
 				
 				<section class="bal-section container">
-					<div class="trader-info">
+					<div class="trader-info" style="background-color: #fff;">
 						<ul class="trader-info-list list-unstyled">
-							<li>
+							<li class="subInfo" data-sub="day">
 								<div class="profile1"></div>
 								<h2>[[${statsYMD.day}]]</h2>
 								<small class="txt-muted">日手术量</small>
 							</li>
-							<li>
+							<li class="subInfo" data-sub="month">
 								<div class="profile2"></div>
 								<h2>[[${statsYMD.month}]]</h2>
 								<small class="txt-muted">月手术量</small>
 							</li>
-							<li>
+							<li class="subInfo" data-sub="year">
 								<div class="profile3"></div>
 								<h2>[[${statsYMD.year}]]</h2>
 								<small class="txt-muted">年手术量</small>
 							</li>
+							<li class="moreSubInfo" style="width: 12%; color: #72a1ec;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></li>
 						</ul>
+						<div id="subDetail" class="fold">
+							<div class="sp sp-wave"></div>
+							<ul id="infoList" class="subInfo-list list-unstyled">
+								<!-- <li>
+									<div class="d-flex align-items-center justify-content-between">
+			                          <div class="fm-auto ml-10 txt-left">
+			                            <small class="text-muted">a08-2402408-2408-2408-44</small>
+			                          </div>
+			                          <div class="flex-50 txt-turquoise">
+			                          	<small class="d-block mb-0">4893</small>
+			                          </div>
+			                          <div class="flex-50">
+			                            <small class="d-block mb-0 txt-green">22.35%</small>
+			                          </div>
+			                        </div>
+								</li>
+								<li>
+									<i>--暂无数据--</i>
+								</li>
+								<li>
+									<i class="fa fa-angle-up"></i>
+								</li> -->
+							</ul>
+						</div>
+						<!-- <ul id="infoList" class="subInfo-list list-unstyled fold"></ul> -->
 					</div>
 				</section>
 
-				<!-- charts start -->
+				<!-- 年度 区域 charts start -->
 				<section class="section container">
 					<div class="chart-body">
 						<div class="align-items-center chart-content">
@@ -151,8 +177,8 @@
 									<div class="slide-menu twoRow">
 										<span id="sortbg"></span>
 										<ul id="sortList">
-											<li data-type="or" data-popup="organPopup">机构</li>
-											<li data-type="s" class="active">总量</li>
+											<li data-type="or" data-popup="organPopup">区域</li>
+											<li data-type="s" class="active">年度</li>
 											<!-- <li data-type="op" data-popup="operationPopup">手术</li> -->
 										</ul>
 									</div>
@@ -181,10 +207,85 @@
 						</div>
 					</div>
 				</section>
-				<!-- charts end -->
+				<!-- 年度 区域 charts end -->
+				
+				<!-- 手术 麻醉 charts start -->
+				<section class="section container">
+					<div class="chart-body">
+						<div class="align-items-center chart-content">
+							<!-- 分类统计start -->
+							<div>
+								<div class="d-flex justify-content-between" style="margin-bottom: 5px;">
+									<div class="slide-menu twoRow">
+										<span id="sortbg2"></span>
+										<ul id="sortList2">
+											<li data-type="anc">麻醉</li>
+											<li data-type="opt" class="active">手术</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+							<!-- 分类统计end -->
+							<div class="col-12">
+								<div class="advertising-wrapper">
+									<canvas id="ancOpt" class="chart-container"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<!-- 手术 麻醉 charts end -->
+				
+				<!-- <section class="section container">
+					<div class="chart-body">
+						<div class="RadioStyle4" style="flex: 0 0 40px;">
+							<label>麻醉</label>
+						</div>
+						<div class="align-items-center chart-content">
+							<div class="col-12">
+								<div class="advertising-wrapper">
+									<canvas id="test2" class="chart-container"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section> -->
+				
+				
+				
+				
+				<section class="section container">
+					<div class="chart-body">
+						<div class="align-items-center chart-content">
+							<div class="col-12">
+								<div class="advertising-wrapper">
+									<canvas id="cityCount" class="chart-container"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section class="section container">
+					<div class="chart-body">
+						<div class="align-items-center chart-content">
+							<div class="col-12">
+								<div class="advertising-wrapper">
+									<div class="RadioStyle4" style="position: absolute; left:-5px; top: 5px;">
+										<label>医生</label>
+									</div>
+									<div class="RadioStyle5" style="position: absolute; right:-5px; top: 5px;">
+										<label>护士</label>
+									</div>
+									<canvas id="workCount" class="chart-container"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+				
 				
 				<!-- pie charts start -->
-				<div class="box">
+				<!-- <div class="box">
 					<div class="box-content front">
 						<section class="section container">
 							<div class="chart-body">
@@ -213,7 +314,7 @@
 							</div>
 						</section>
 					</div>
-				</div>
+				</div> -->
 				<!-- pie charts area end -->
 				
 				<!-- 医疗机构下拉多选模态框 start -->
@@ -225,7 +326,7 @@
 						</div>
 						<div class="popup-content">
 							<div class="justify-content-between">
-								<div class="selectPickerWrapper showOrgan">
+								<div class="selectPickerWrapper showCity">
 									<select class="hidden"></select>
 								</div>
 							</div>
@@ -278,6 +379,10 @@
 		var multiVals = [];
 		// 按总量分类统计按钮
 		var sumRadio = false;
+		// 按手术大类统计
+		var optRadio = false;
+		// 按麻醉类型统计
+		var ancRadio = false;
 		// 周月年单选按钮
 		var weekRadio = false;
 		var monthRadio = false;
@@ -286,10 +391,15 @@
 			id : 'yearCount',
 			pixelRatio : window.devicePixelRatio
 		});
+		var chart4 = new F2.Chart({
+			id: 'ancOpt',
+			pixelRatio: window.devicePixelRatio
+		});
 		
 		$(document).ready(function() {
-			initOrganPopup();
+			initCity();
 			drawMonthCount();
+			initOperativeDoc();
 			drawTopCity();
 			drawDoctorWork();
 		});
@@ -304,36 +414,38 @@
 			}
 		});
 		
-		// 初始化医疗机构下拉多选框
-		function initOrganPopup() {
-			$.ajax({
-		    	type: "POST",
-		    	dataType: "json",
-		    	url: "initOrgansMultiSelect",
-		    	contentType: "application/json",
-		    	success: function (result) {
-        			var map = result.data;
-        			$(".showOrgan").data("init",JSON.stringify(map));
-        			$(".showOrgan").mySelect({
-        				showSearch:true,
-        				multiple:true
-        			});
-        			$(".fa-search").on("click", function() {
-        		    	let checks = getCheckedValue();
-        		    	if (checks.vals.length == 0) {
-        		    		alert("未选择医疗机构");
-        		    		return;
-        		    	}
-        		    	multiVals = checks.vals;
-        		    	statsforOrgan("month");	// 默认统计当月
-        		    	$("#month").prop("checked", true);
-        		    	$('.organ-close').click();
-        			});
-		    	},
-		    	error: function() {
-		    		
-		    	}
-			});
+		new Slideicon($("#sortList2"), {
+			index:1,
+			cover:$("#sortbg2"),
+			callback:function (data) {
+				if (data == "opt" && !optRadio) {
+					statByOperative();
+				} else if (data == "anc" && !ancRadio) {
+					statByAnesthetic();
+				}
+			}
+		});
+		
+		function initCity() {
+			$.getJSON("data/city.json", function (data) {
+				var map = data;
+    			$(".showCity").data("init",JSON.stringify(map));
+    			$(".showCity").mySelect({
+    				showSearch:true,
+    				multiple:true
+    			});
+    			$(".fa-search").on("click", function() {
+    		    	let checks = getCheckedValue();
+    		    	if (checks.vals.length == 0) {
+    		    		alert("未选择城市");
+    		    		return;
+    		    	}
+    		    	multiVals = checks.vals;
+    		    	statsforCity("month");	// 默认统计当月
+    		    	$("#month").prop("checked", true);
+    		    	$('.organ-close').click();
+    			});
+			})
 		}
 		
 		/* 近3年每月手术统计 */
@@ -379,6 +491,45 @@
     		    		chart.render();
         			} else {
         				
+        			}
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
+		
+		function initOperativeDoc() {
+			$.ajax({
+		    	type: "POST",
+		    	dataType: "json",
+		    	url: "statDocOperative",
+		    	contentType: "application/json",
+		    	success: function (result) {
+        			if (result.code == 0) {
+        				optRadio = true;
+        				var data4 = result.data;
+						chart4.source(data4, {
+							count: {
+								tickCount: 5
+							}
+						});
+						chart4.coord({
+							transposed: true
+						});
+						chart4.tooltip({
+							showItemMarker: false,
+							onShow: function onShow(ev) {
+								var items = ev.items;
+								items[0].name = null;
+								items[0].name = items[0].title;
+								items[0].value = items[0].value;
+							}
+						});
+						chart4.interval().position('name*count');
+						chart4.render();
+					} else {
+        					
         			}
 		    	},
 		    	error: function() {
@@ -512,6 +663,14 @@
 			location.href = "toReporting";
 		});
 		
+		$(".RadioStyle4").on("click", function() {
+			location.href = "toDoctorInfo";
+		});
+		
+		$(".RadioStyle5").on("click", function() {
+			location.href = "toNurseInfo";
+		});
+		
 		$(".box-content").on("click", function() {
 			$(".front").addClass("box-temp");
 			$(".box-temp").removeClass("front");
@@ -524,12 +683,16 @@
 		$(".radioCheck").on('click', function() {
 			$(this).prop("checked", true);
 			if (($(this).attr('id') == "week") && !weekRadio) {
-				statsforOrgan("week");
+				statsforCity("week");
 			} else if (($(this).attr('id') == "month") && !monthRadio) {
-				statsforOrgan("month");
+				statsforCity("month");
 			} else if (($(this).attr('id') == "year") && !yearRadio) {
-				statsforOrgan("year");
+				statsforCity("year");
 			}
+		});
+		
+		$(".radioCheck4").on('click', function() {
+			alert(1234);
 		});
 		
 		function getCheckedValue() {
@@ -547,13 +710,13 @@
 			};
 		}
 		
-		function statsforOrgan(timeType) {
+		function statsforCity(timeType) {
 			var jsonData = JSON.stringify({"data": multiVals, "type": timeType});
 			$.ajax({
 		    	type: "POST",
 		    	data: jsonData,
 		    	dataType: "json",
-		    	url: 'statsOrgans',
+		    	url: 'statsAssignCity',
 		    	contentType: "application/json",
 		    	success: function (result) {
 		    		sumRadio = false;
@@ -599,9 +762,118 @@
 			});
 		}
 		
+		function statByOperative() {
+			$.ajax({
+		    	type: "POST",
+		    	dataType: "json",
+		    	url: 'statDocOperative',
+		    	contentType: "application/json",
+		    	success: function (result) {
+		    		optRadio = true;
+		    		ancRadio = false;
+		    		chart4.changeData(result.data);
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
+		
+		function statByAnesthetic() {
+			$.ajax({
+		    	type: "POST",
+		    	dataType: "json",
+		    	url: 'statDocAnesthetic',
+		    	contentType: "application/json",
+		    	success: function (result) {
+		    		console.log(1234);
+		    		ancRadio = true;
+		    		optRadio = false;
+		    		chart4.changeData(result.data);
+		    	},
+		    	error: function() {
+		    		
+		    	}
+			});
+		}
+		
+		$('.subInfo').on('click', function() {
+			if ($(this).hasClass('active')) {
+				return false;
+			}
+			$('.sp-wave').show();
+			var type = $(this).data('sub');
+			$('.subInfo').removeClass('active');
+			$(this).addClass('active');
+			$('#subDetail').removeClass("fold");
+			getSubInfo(type);
+		});
+		
+		$('.fa-angle-up').on('click', function() {
+			$('#subDetail').addClass('fold');
+			$('.subInfo').removeClass('active');
+			$('.sp-wave').show();
+		});
+		
+		function getSubInfo(type) {
+			$('#infoList').empty();
+			setTimeout(function() {
+				$.ajax({
+					url: '/subInfo/' + type,
+					success : function(result) {
+						$('.sp-wave').hide();
+						var infos = result.data;
+						var len = infos.length;
+						var ulDom = document.getElementById("infoList");
+						if (len > 0) {
+							for (var i = 0; i < len; i++) {
+								var info = infos[i];
+								var _html = '<div class="d-flex align-items-center justify-content-between">';
+								_html += '<div class="fm-auto ml-10 txt-left">';
+								_html += '<small class="text-muted">' + info.name + '</small>';
+								_html += '</div>';
+								_html += '<div class="flex-50">';
+								_html += '<small class="d-block mb-0 txt-turquoise">' + info.count + '</small>';
+								_html += '</div>';
+								_html += '<div class="flex-50">';
+								_html += '<small class="d-block mb-0 txt-green">' + info.rate + '%' + '</small>';
+								_html += '</div>';
+								_html += '</div>';
+								var liDom = document.createElement("li");
+								liDom.innerHTML = _html;
+								ulDom.appendChild(liDom);
+							}
+						} else {
+							var nodataliDom = document.createElement("li");
+							nodataliDom.innerHTML = '<small class="d-block mb-0 txt-default">--暂无数据--</small>';
+							ulDom.appendChild(nodataliDom);
+						}
+						var upliDom = document.createElement("li");
+						upliDom.onclick = fold;
+						upliDom.innerHTML = '<i class="fa fa-angle-up"></i>';
+						ulDom.appendChild(upliDom);
+					},
+					error : function() {
+						$('.sp-wave').hide();
+					}
+				});
+			}, 500);
+		}
+		
+		function fold() {
+			$('#subDetail').addClass('fold');
+			$('.subInfo').removeClass('active');
+			$('.sp-wave').show();
+		}
+		
+		$('.moreSubInfo').on('click', function() {
+			location.href = "toOrgInfo";
+		});
+		
 		$(".menu-logout").on("click", function() {
 			location.href = "logout";
 		});
+		
 	</script>
 </body>
 

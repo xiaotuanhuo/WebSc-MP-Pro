@@ -10,9 +10,15 @@ public class OperationCount {
 	private Integer count;
 	private String pieConst = "const";	// 饼状图常量
 	
+	// 评分
+	private int score;		// 评分
+	
 	// 近3年总量统计、机构、手术大类
 	private String name;	// 图例
 	private String date;	// 坐标轴X
+	
+	// 日、月、年手术量详情统计
+	private String rate;	// 手术占比
 	
 	// 按市统计手术量要素
 	private String cityCode;
@@ -25,6 +31,10 @@ public class OperationCount {
 	private String city;
 	private String area;
 	private String wholeDistrict;	// 完整的行政区划名称
+	
+	// 医疗机构统计详情参数
+	private int basicSum;	// 总手数量
+	private int basicYear;	// 年手术量
 	
 	// 医生全职兼职统计要素
 	private int work;
@@ -46,6 +56,14 @@ public class OperationCount {
 		this.pieConst = pieConst;
 	}
 	
+	public int getScore() {
+		return score;
+	}
+	
+	public void setScore(int score) {
+		this.score = score;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -60,6 +78,14 @@ public class OperationCount {
 	
 	public void setDate(String date) {
 		this.date = date;
+	}
+	
+	public String getRate() {
+		return rate;
+	}
+	
+	public void setRate(String rate) {
+		this.rate = rate;
 	}
 	
 	public String getCityCode() {
@@ -125,11 +151,27 @@ public class OperationCount {
 	public void setWholeDistrict(String wholeDistrict) {
 		this.wholeDistrict = wholeDistrict;
 	}
-
+	
+	public int getBasicSum() {
+		return basicSum;
+	}
+	
+	public void setBasicSum(int basicSum) {
+		this.basicSum = basicSum;
+	}
+	
+	public int getBasicYear() {
+		return basicYear;
+	}
+	
+	public void setBasicYear(int basicYear) {
+		this.basicYear = basicYear;
+	}
+	
 	public int getWork() {
 		return work;
 	}
-
+	
 	public void setWork(int work) {
 		this.work = work;
 	}
@@ -141,7 +183,7 @@ public class OperationCount {
 	public void setWorkDesc(String workDesc) {
 		this.workDesc = workDesc;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "OperationCount [count=" + count + ", pieConst=" + pieConst + ", name=" + name + ", date=" + date

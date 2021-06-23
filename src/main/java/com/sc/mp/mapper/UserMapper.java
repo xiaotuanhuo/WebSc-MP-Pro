@@ -100,4 +100,6 @@ public interface UserMapper {
 	 * @return
 	 */
 	List<WebScUser> getDocumentQaUser(String documentId);
+	
+	List<WebScUser> selectDoctors();
 }

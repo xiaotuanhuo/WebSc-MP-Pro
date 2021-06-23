@@ -9,6 +9,7 @@ public class ScConstant {
 	// 用户信息在session存放的属性key
 	public final static String USER_SESSION_KEY = "WEBSCMP_JSESSIONID";
 	// 按机构或者手术大类统计的时段常量
+	public final static String DAY = "day";
 	public final static String WEEK = "week";
     public final static String MONTH = "month";
     public final static String YEAR = "year";
@@ -36,6 +37,10 @@ public class ScConstant {
 	public final static String CQS_NANE = "重庆市";
 	public final static String OTHER_PROVINCE = "86";
 	public final static String OTHER_PROVINCE_TEXT = "其他";
+	
+	// 虚拟的医疗机构id
+	public final static String FICTITIOUS_ORG = "-0000";
+	
 	// 日志及提示信息
 	public final static String USER_ERROR = "用户名或者密码错误";
 	public final static String USERNAME_ERROR = "用户名不存在:";

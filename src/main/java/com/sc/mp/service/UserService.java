@@ -363,7 +363,7 @@ public class UserService {
 					map.put("beginTime", format.format(format.parse(slottime.split("/")[0])));
 					map.put("endTime", format.format(format.parse(slottime.split("/")[1])));
 				} catch (Exception e) {
-					log.error("日期转换错误..");
+					log.error("日期转换错误");
 				}
 				break;
 		}
@@ -523,9 +523,94 @@ public class UserService {
 	}
 	
 	/**
+	 * 按所选城市统计周 月 年手术量
+	 * @param jsonArray
+	 * @param type
+	 * @return
+	 */
+	public List<OperationCount> statsCity(JSONArray jsonArray, String type) {
+		List<OperationCount> operationCounts = new ArrayList<OperationCount>();
+		try {
+			switch (type) {
+				case ScConstant.WEEK:
+					boolean isSunday = DateUtils.isSunday();
+					jsonArray.forEach(object -> {
+						if (object == null) {
+							return;
+						}
+						JSONObject jsonObject = (JSONObject) object;
+						if (jsonObject.getString("id") == null) {
+							return;
+						}
+						List<String> organs = organizationMapper.selectOrgIdsByCity(jsonObject.getString("id"));
+						if (organs.size() == 0) {
+							// 所选城市无医疗机构时 添加虚拟医疗机构  防止sql报错
+							organs.add(ScConstant.FICTITIOUS_ORG);
+						}
+						List<OperationCount> temp = docMapper.statsByWeekForCity(organs, jsonObject.getString("name"), isSunday ? "0" : "-1");
+						operationCounts.addAll(temp);
+					});
+					break;
+				case ScConstant.MONTH:
+					jsonArray.forEach(object -> {
+						if (object == null) {
+							return;
+						}
+						JSONObject jsonObject = (JSONObject) object;
+						if (jsonObject.getString("id") == null) {
+							return;
+						}
+						List<String> organs = organizationMapper.selectOrgIdsByCity(jsonObject.getString("id"));
+						if (organs.size() == 0) {
+							// 所选城市无医疗机构时 添加虚拟医疗机构  避免sql报错
+							organs.add(ScConstant.FICTITIOUS_ORG);
+						}
+						List<OperationCount> temp = docMapper.statsByMonthForCity(organs, jsonObject.getString("name"));
+						operationCounts.addAll(temp);
+					});
+					break;
+				case ScConstant.YEAR:
+					jsonArray.forEach(object -> {
+						if (object == null) {
+							return;
+						}
+						JSONObject jsonObject = (JSONObject) object;
+						if (jsonObject.getString("id") == null) {
+							return;
+						}
+						List<String> organs = organizationMapper.selectOrgIdsByCity(jsonObject.getString("id"));
+						if (organs.size() == 0) {
+							// 所选城市无医疗机构时 添加虚拟医疗机构  防止sql报错
+							organs.add(ScConstant.FICTITIOUS_ORG);
+						}
+						List<OperationCount> temp = docMapper.statsByYearForCity(organs, jsonObject.getString("name"));
+						operationCounts.addAll(temp);
+					});
+					break;
+				default:
+					break;
+			}
+		} catch (Exception e) {
+			log.error("按市区统计失败：" + e.getMessage());
+		}
+		return operationCounts;
+	}
+	
+	/**
 	 * 获取医生有效（备案结束日期未到）备案列表
 	 */
 	public List<WebScRecord> getRecords(String userId) {
 		return recordMapper.selectMyRecords(userId);
+	}
+	
+	/**
+	 * 医疗机构概况统计
+	 */
+	public void statsOrganBasic() {
+		
+	}
+	
+	public List<WebScUser> getAllDoctor() {
+		return userMapper.selectDoctors();
 	}
 }

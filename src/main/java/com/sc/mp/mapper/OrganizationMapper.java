@@ -21,4 +21,10 @@ public interface OrganizationMapper {
 	List<WebScOrganization> selectOrganizations(@Param("province") String province, @Param("city") String city,
 			@Param("area") String area);
     
+	/**
+	 * 查询市所属医疗机构id
+	 * @param city
+	 * @return
+	 */
+	List<String> selectOrgIdsByCity(@Param("city") String city);
 }

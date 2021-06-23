@@ -269,6 +269,31 @@ public interface DocMapper {
 	 */
 	List<OperationCount> statsByYearForOrgan(@Param("orgId") String orgId, @Param("orgName") String orgName);
 	
+	/**
+	 * 统计所选市区所有医疗机构本周每天的手术量
+	 * @param organs
+	 * @param cityName
+	 * @param sunday 0：周日 -1：非周日
+	 * @return
+	 */
+	List<OperationCount> statsByWeekForCity(@Param("organs") List<String> organs, @Param("cityName") String cityName,
+			@Param("sunday") String sunday);
+	
+	/**
+	 * 统计所选市区所有医疗机构当月每天的手术量
+	 * @param organs
+	 * @param cityName
+	 * @return
+	 */
+	List<OperationCount> statsByMonthForCity(@Param("organs") List<String> organs, @Param("cityName") String cityName);
+	
+	/**
+	 * 统计所选市区所有医疗机构当年每月的手术量
+	 * @param organs
+	 * @param cityName
+	 * @return
+	 */
+	List<OperationCount> statsByYearForCity(@Param("organs") List<String> organs, @Param("cityName") String cityName);
 	
 	/**
 	 * 按市统计手术量TopX
@@ -283,4 +308,104 @@ public interface DocMapper {
 	 * @return
 	 */
 	List<OperationCount> selectReporting(@Param("params") Map<String, String> map);
+	
+	/**
+	 * 日手术量详情
+	 * @return
+	 */
+	List<OperationCount> daySubInfo();
+	
+	/**
+	 * 月手术量详情
+	 * @return
+	 */
+	List<OperationCount> monthSubInfo();
+	
+	/**
+	 * 年手术量详情
+	 * @return
+	 */
+	List<OperationCount> yearSubInfo();
+	
+	/**
+	 * 医疗机构基础信息统计
+	 * @param organs
+	 * @return
+	 */
+	List<OperationCount> selectBasicData(@Param("list") List<String> organs);
+	
+	/**
+	 * 医疗机构日手术量统计
+	 * @param organs
+	 * @return
+	 */
+	List<OperationCount> selectOrganDay(@Param("list") List<String> organs);
+	
+	/**
+	 * 医疗机构月手术量统计
+	 * @param organs
+	 * @return
+	 */
+	List<OperationCount> selectOrganMonth(@Param("list") List<String> organs);
+	
+	/**
+	 * 医疗机构年手术量统计
+	 * @param organs
+	 * @return
+	 */
+	List<OperationCount> selectOrganYear(@Param("list") List<String> organs);
+	
+	/**
+	 * 医疗机构自定义日期范围手术量统计
+	 * @param organs
+	 * @return
+	 */
+	List<OperationCount> selectOrganDate(@Param("list") List<String> organs, @Param("startTime") String startTime,
+			@Param("endTime") String endTime);
+	
+	
+	/**
+	 * 医生列表
+	 * @return
+	 */
+	List<OperationCount> statOperativeForDoc();
+	
+	/**
+	 * 医生基础信息统计
+	 * @param id
+	 * @return
+	 */
+	List<OperationCount> statDrBasicData(@Param("id") String id);
+	
+	/**
+	 * 医生日手术量详情统计
+	 * @param organs
+	 * @return
+	 */
+	List<OperationCount> statDrInfoDay(@Param("id") String id);
+	
+	/**
+	 * 医生日手术量详情统计
+	 * @param organs
+	 * @return
+	 */
+	List<OperationCount> statDrInfoMonth(@Param("id") String id);
+	
+	/**
+	 * 医生日手术量详情统计
+	 * @param organs
+	 * @return
+	 */
+	List<OperationCount> statDrInfoYear(@Param("id") String id);
+	
+	/**
+	 * 医生日手术量详情统计
+	 * @param organs
+	 * @return
+	 */
+	List<OperationCount> statDrInfoDate(@Param("id") String id, @Param("startTime") String startTime,
+			@Param("endTime") String endTime);
+	
+	
+	List<OperationCount> statAnestheticForDoc();
 }

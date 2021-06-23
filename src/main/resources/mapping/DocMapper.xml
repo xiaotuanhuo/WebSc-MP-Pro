@@ -1066,21 +1066,21 @@
     	select
            count(1) as count
         from WSC_DOCUMENT
-        where operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(),"%Y-%m-%d"), "%")
+        where document_state != '6' and operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(),"%Y-%m-%d"), "%")
     </select>
     
     <select id="statsMonth" resultType="Integer">
     	select
             count(1) as count
         from WSC_DOCUMENT
-        where operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(),"%Y-%m"), "%")
+        where document_state != '6' and operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(),"%Y-%m"), "%")
     </select>
     
     <select id="statsYear" resultType="Integer">
     	select
             count(1) as count
         from WSC_DOCUMENT
-        where operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(),"%Y"), "%")
+        where document_state != '6' and operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(),"%Y"), "%")
     </select>
     
     <select id="statsTodayForDc" parameterType="java.lang.String" resultType="Integer">
@@ -1419,6 +1419,114 @@
     	    order by monthList.leftMonth
     </select>
     
+    <select id="statsByWeekForCity" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">
+    	SELECT
+    		#{cityName} as name,
+    	    dayList.leftWeek as date,
+    	    ifnull(doc.num, 0) as count
+    	FROM 
+    	<choose>
+    		<when test='sunday == "0"'>
+    			(
+	    	        SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 6) AS leftDay, '一' AS leftWeek UNION
+				    SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 5) AS leftDay, '二' AS leftWeek UNION
+				    SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 4) AS leftDay, '三' AS leftWeek UNION
+				    SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 3) AS leftDay, '四' AS leftWeek UNION
+				    SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 2) AS leftDay, '五' AS leftWeek UNION
+			    	SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') + 1) AS leftDay, '六' AS leftWeek UNION
+			    	SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w')) AS leftDay, '日' AS leftWeek
+	            ) dayList
+    		</when>
+    		<otherwise>
+    			(
+	    	        SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 1) AS leftDay, '一' AS leftWeek UNION
+			    	SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 2) AS leftDay, '二' AS leftWeek UNION
+			    	SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 3) AS leftDay, '三' AS leftWeek UNION
+			    	SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 4) AS leftDay, '四' AS leftWeek UNION
+			    	SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 5) AS leftDay, '五' AS leftWeek UNION
+		    		SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 6) AS leftDay, '六' AS leftWeek UNION
+			    	SELECT SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w') - 7) AS leftDay, '日' AS leftWeek
+	            ) dayList
+    		</otherwise>
+    	</choose>
+        LEFT JOIN
+    	    (
+    	        SELECT
+    	          count(1) as num, MID(operate_start_time, 1, 10) rightDay
+    	        FROM
+    	          WSC_DOCUMENT
+    	        WHERE document_state != '6' and org_id in
+    	        	<foreach collection="organs" item="id" index="index" open="(" close=")" separator=",">
+		  				#{id}
+					</foreach>
+    	        GROUP BY rightDay) doc
+    	        ON dayList.leftDay = doc.rightDay
+    	        ORDER BY dayList.leftDay
+    </select>
+    
+    <select id="statsByMonthForCity" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">
+    	SELECT
+    		#{cityName} as name,
+    	    MID(dayList.leftDay, 9, 2) as date,
+    	    ifnull(doc.num, 0) as count
+    	FROM 
+    	    (
+    	        SELECT
+                  date_add(CONCAT(YEAR(Date(curdate())),'-0',MONTH(Date(curdate())),'-','01'),
+                  INTERVAL(cast(help_topic_id AS signed INTEGER)) DAY) leftDay
+                FROM
+                  mysql.help_topic
+                WHERE
+                  help_topic_id <![CDATA[ < ]]> day(last_day(curdate()))
+                ORDER BY
+                  help_topic_id
+            ) dayList
+    	LEFT JOIN
+    	    (
+    	        SELECT
+    	          count(1) as num, MID(operate_start_time, 1, 10) rightDay
+    	        FROM
+    	          WSC_DOCUMENT
+    	        WHERE document_state != '6' and org_id in
+	    	        <foreach collection="organs" item="id" index="index" open="(" close=")" separator=",">
+		  				#{id}
+					</foreach>
+    	        GROUP BY rightDay) doc
+    	        ON dayList.leftDay = doc.rightDay
+    	        ORDER BY dayList.leftDay
+    </select>
+    
+    <select id="statsByYearForCity" parameterType="java.lang.String" resultType="com.sc.mp.bean.OperationCount">
+    	select
+    		#{cityName} as name,
+    	    MID(monthList.leftMonth, 6, 2) as date,
+    	    ifnull(doc.num, 0) as count
+    	from 
+    	    (
+    	        SELECT CONCAT(YEAR(Date(curdate())),'-01') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(curdate())),'-02') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(curdate())),'-03') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(curdate())),'-04') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(curdate())),'-05') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(curdate())),'-06') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(curdate())),'-07') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(curdate())),'-08') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(curdate())),'-09') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(curdate())),'-10') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(curdate())),'-11') AS leftMonth UNION
+    	        SELECT CONCAT(YEAR(Date(curdate())),'-12') AS leftMonth
+    	    ) monthList
+    	left join
+    	    (select count(1) as num, MID(operate_start_time, 1, 7) rightMonth from WSC_DOCUMENT
+    	    WHERE document_state != '6' and org_id in
+    	    	<foreach collection="organs" item="id" index="index" open="(" close=")" separator=",">
+		  			#{id}
+				</foreach>
+    	    GROUP BY rightMonth) doc
+    	    on monthList.leftMonth = doc.rightMonth
+    	    order by monthList.leftMonth
+    </select>
+    
     <select id="statsByCity" parameterType="java.lang.Integer" resultType="com.sc.mp.bean.OperationCount">
         (SELECT COUNT(1) as count, wo.city as cityCode
         FROM
@@ -1490,4 +1598,346 @@
 		order by leftTable.count desc, leftTable.orgId desc
     </select>
     
+    <select id="daySubInfo" resultType="com.sc.mp.bean.OperationCount">
+    	SELECT a.org_id as orgId, b.org_name as name, count(a.document_id) as count,
+    	round(count(a.document_id)/(select count(*) from `WSC_DOCUMENT` WHERE document_state != '6' AND operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(),"%Y-%m-%d"), "%"))*100,2) as rate
+    	FROM `WSC_DOCUMENT` a LEFT JOIN WSC_ORGANIZATION b on a.org_id = b.org_id WHERE a.document_state != '6' AND a.operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(),"%Y-%m-%d"), "%")
+    	group by orgId order by rate desc limit 10;
+    </select>
+    <select id="monthSubInfo" resultType="com.sc.mp.bean.OperationCount">
+    	SELECT a.org_id as orgId, b.org_name as name, count(a.document_id) as count,
+    	round(count(a.document_id)/(select count(*) from `WSC_DOCUMENT` WHERE document_state != '6' AND operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(),"%Y-%m"), "%"))*100,2) as rate
+    	FROM `WSC_DOCUMENT` a LEFT JOIN WSC_ORGANIZATION b on a.org_id = b.org_id WHERE a.document_state != '6' AND a.operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(),"%Y-%m"), "%")
+    	group by orgId order by rate desc limit 10;
+    </select>
+    <select id="yearSubInfo" resultType="com.sc.mp.bean.OperationCount">
+    	SELECT a.org_id as orgId, b.org_name as name, count(a.document_id) as count,
+    	round(count(a.document_id)/(select count(*) from `WSC_DOCUMENT` WHERE document_state != '6' AND operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(),"%Y"), "%"))*100,2) as rate
+    	FROM `WSC_DOCUMENT` a LEFT JOIN WSC_ORGANIZATION b on a.org_id = b.org_id WHERE a.document_state != '6' AND a.operate_start_time LIKE CONCAT(DATE_FORMAT(NOW(),"%Y"), "%")
+    	group by orgId order by rate desc limit 10;
+    </select>
+    
+    <!-- 机构基础数据量统计 总手数量 年手术量 评分 -->
+    <!-- <select id="selectBasicData" resultType="com.sc.mp.bean.OperationCount">
+		SELECT
+			lt.org_id as orgId,
+			rt.org_name as orgName,
+			COUNT(lt.org_id) AS basicSum,
+			SUM(CASE WHEN lt.operate_start_time like CONCAT((DATE_FORMAT(CURDATE(),'%Y')), '%') THEN 1 ELSE 0 END) AS basicYear,
+			90 AS score
+		FROM `WSC_DOCUMENT` lt LEFT JOIN WSC_ORGANIZATION rt ON lt.org_id = rt.org_id 
+		WHERE lt.org_id IN
+			<foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+	  			#{id}
+			</foreach>
+		and lt.document_state != '6'
+		GROUP BY lt.org_id ORDER BY basicSum DESC
+	</select> -->
+	
+	<!-- 机构基础数据量统计 总手数量 年手术量 评分 -->
+    <select id="selectBasicData" resultType="com.sc.mp.bean.OperationCount">
+    	select 
+    		ltb.org_id as orgId,
+    		ltb.org_name as orgName,
+    		count(rtb.document_id) as basicSum,
+    		SUM(CASE WHEN rtb.operate_start_time like CONCAT((DATE_FORMAT(CURDATE(),'%Y')), '%') THEN 1 ELSE 0 END) AS basicYear,
+			90 AS score
+    	from (select org_id, org_name from WSC_ORGANIZATION where org_id in 
+    			<foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+	  				#{id}
+				</foreach>
+    		) ltb left join WSC_DOCUMENT rtb on ltb.org_id = rtb.org_id and rtb.document_state != '6'
+    	group by orgId order by basicSum desc
+	</select>
+	
+	<!-- 机构日 月 年 自定义日期 手术量 start -->
+	<select id="selectOrganDay" resultType="com.sc.mp.bean.OperationCount">
+		select 
+			ltb.org_id as orgId,
+			ltb.org_name as orgName,
+			count(rtb.document_id) as count,
+			case count(rtb.document_id) when 0 then 0 else round(count(rtb.document_id)/ctb.zs*100, 2) end as rate
+		from 
+			(select count(*) as zs from WSC_DOCUMENT where org_id in 
+    			<foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+	  				#{id}
+				</foreach>
+				and document_state != '6' 
+    			and operate_start_time like CONCAT(DATE_FORMAT(NOW(),"%Y-%m-%d"), "%")
+    		) ctb,
+    		(select org_id, org_name from WSC_ORGANIZATION where org_id in 
+    			<foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+	  				#{id}
+				</foreach>
+    		) ltb left join WSC_DOCUMENT rtb on ltb.org_id = rtb.org_id and rtb.document_state != '6' 
+    		and rtb.operate_start_time like CONCAT(DATE_FORMAT(NOW(),"%Y-%m-%d"), "%")
+    	group by orgId order by count desc
+    </select>
+    <select id="selectOrganMonth" resultType="com.sc.mp.bean.OperationCount">
+    	select 
+			ltb.org_id as orgId,
+			ltb.org_name as orgName,
+			count(rtb.document_id) as count,
+			case count(rtb.document_id) when 0 then 0 else round(count(rtb.document_id)/ctb.zs*100, 2) end as rate
+		from 
+			(select count(*) as zs from WSC_DOCUMENT where org_id in 
+    			<foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+	  				#{id}
+				</foreach>
+				and document_state != '6' 
+    			and operate_start_time like CONCAT(DATE_FORMAT(NOW(),"%Y-%m"), "%")
+    		) ctb,
+    		(select org_id, org_name from WSC_ORGANIZATION where org_id in 
+    			<foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+	  				#{id}
+				</foreach>
+    		) ltb left join WSC_DOCUMENT rtb on ltb.org_id = rtb.org_id and rtb.document_state != '6' 
+    		and rtb.operate_start_time like CONCAT(DATE_FORMAT(NOW(),"%Y-%m"), "%")
+    	group by orgId order by count desc
+    </select>
+    <select id="selectOrganYear" resultType="com.sc.mp.bean.OperationCount">
+    	select 
+			ltb.org_id as orgId,
+			ltb.org_name as orgName,
+			count(rtb.document_id) as count,
+			case count(rtb.document_id) when 0 then 0 else round(count(rtb.document_id)/ctb.zs*100, 2) end as rate
+		from 
+			(select count(*) as zs from WSC_DOCUMENT where org_id in 
+    			<foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+	  				#{id}
+				</foreach>
+				and document_state != '6' 
+    			and operate_start_time like CONCAT(DATE_FORMAT(NOW(),"%Y"), "%")
+    		) ctb,
+    		(select org_id, org_name from WSC_ORGANIZATION where org_id in 
+    			<foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+	  				#{id}
+				</foreach>
+    		) ltb left join WSC_DOCUMENT rtb on ltb.org_id = rtb.org_id and rtb.document_state != '6' 
+    		and rtb.operate_start_time like CONCAT(DATE_FORMAT(NOW(),"%Y"), "%")
+    	group by orgId order by count desc
+    </select>
+    <!-- 自定义日期范围 -->
+    <select id="selectOrganDate" resultType="com.sc.mp.bean.OperationCount">
+    	select 
+			ltb.org_id as orgId,
+			ltb.org_name as orgName,
+			count(rtb.document_id) as count,
+			case count(rtb.document_id) when 0 then 0 else round(count(rtb.document_id)/ctb.zs*100, 2) end as rate
+		from 
+			(select count(*) as zs from WSC_DOCUMENT where org_id in 
+    			<foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+	  				#{id}
+				</foreach>
+				and document_state != '6' 
+    			and operate_start_time &gt;= CONCAT('','${startTime}',' 00:00:00') 
+    			and operate_start_time &lt;= CONCAT('','${endTime}',' 23:59:59')
+    		) ctb,
+    		(select org_id, org_name from WSC_ORGANIZATION where org_id in 
+    			<foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+	  				#{id}
+				</foreach>
+    		) ltb left join WSC_DOCUMENT rtb on ltb.org_id = rtb.org_id and rtb.document_state != '6' 
+    		and rtb.operate_start_time &gt;= CONCAT('','${startTime}',' 00:00:00') 
+    		and rtb.operate_start_time &lt;= CONCAT('','${endTime}',' 23:59:59')
+    	group by orgId order by count desc
+    </select>
+    <!-- 机构日 月 年 自定义日期 手术量 end -->
+    
+    <!-- 根据麻醉类型统计手术量 start-->
+    <select id="statAnestheticForDoc" resultType="com.sc.mp.bean.OperationCount">
+    	SELECT
+    		ltb.anesthetic_name AS name,
+    		IFNULL(rtb.count, 0) AS count
+    	FROM
+    		WSC_ANESTHETIC ltb LEFT JOIN
+    			(
+    				SELECT
+    					COUNT(document_id) AS count,
+    					anesthetic_id
+    				FROM
+    					WSC_DOCUMENT
+    				WHERE
+    					document_state != '6'
+    				GROUP BY anesthetic_id
+    			) rtb
+    		ON ltb.anesthetic_id = rtb.anesthetic_id
+    </select>
+    <!-- 根据麻醉类型统计手术量 end -->
+    
+    <!-- 根据手术类型统计手术量 start-->
+    <select id="statOperativeForDoc" resultType="com.sc.mp.bean.OperationCount">
+    	SELECT
+    		COUNT(ltb.document_id) AS count,
+    		rtb.type_name AS name
+    	FROM
+    		(
+    			SELECT
+    				document_id,
+    				SUBSTRING_INDEX(operative_id, ',', 1) AS operativeId
+    			FROM
+    				WSC_DOCUMENT
+    			WHERE
+    				document_state != '6'
+    		) ltb
+    	LEFT JOIN
+    		(
+    			SELECT
+    				wo.operative_id,
+    				wot.id AS pid,
+    				wot.type_name
+    			FROM
+    				WSC_OPERATIVE wo
+    			LEFT JOIN
+    				WSC_OPERATIVE_TYPE wot
+    			ON wo.pid = wot.id
+    		) rtb
+    	ON ltb.operativeId = rtb.operative_id
+    	GROUP BY rtb.pid
+    </select>
+    <!-- 根据手术类型统计手术量 end -->
+    
+    <!-- 医生基础信息统计 -->
+    <select id="statDrBasicData" resultType="com.sc.mp.bean.OperationCount">
+    	SELECT
+		  COUNT(a.document_id) AS count,
+		  DATE_FORMAT(b.create_time, '%Y-%m-%d') as date,
+		  90 AS score
+		FROM (
+			SELECT
+			  document_id,
+			  qa_user_id AS user_id
+			FROM
+			  WSC_DOCUMENT
+			WHERE
+			  qa_user_id = #{id} AND document_state != '6' AND document_state != '9' AND operative_id != '1879'
+			UNION
+			SELECT
+			  wd.document_id,
+			  wq.user_id
+			FROM WSC_DOCUMENT wd,
+			  (SELECT team_id, user_id FROM WSC_QATEAM WHERE user_id = #{id}) wq
+			WHERE wd.qa_team_id = wq.team_id AND wd.document_state != '6' AND wd.document_state != '9' AND wd.operative_id != '1879'
+		) a LEFT JOIN WSC_USER b ON a.user_id = b.user_id order by count desc
+	</select>
+	
+	<!-- 医生日 月 年 自定义日期 手术量详情统计 start -->
+	<select id="statDrInfoDay" resultType="com.sc.mp.bean.OperationCount">
+		SELECT
+		  COUNT(a.document_id) AS count,
+		  wo.org_name AS orgName,
+		  case COUNT(a.document_id) when 0 then 0 else round(COUNT(a.document_id)/s.sum*100, 2) end as rate
+		FROM
+          (SELECT COUNT(d.document_id) AS sum
+            FROM (
+              SELECT document_id, org_id, qa_user_id AS user_id FROM `WSC_DOCUMENT`
+              WHERE qa_user_id = #{id} AND document_state != '6' AND document_state != '9'
+                AND operative_id != '1879' AND operate_start_time like CONCAT(DATE_FORMAT(NOW(),"%Y-%m-%d"), "%")
+			  UNION
+			  SELECT wd.document_id, wd.org_id, wq.user_id FROM WSC_DOCUMENT wd,
+			    (SELECT team_id, user_id FROM WSC_QATEAM WHERE user_id = #{id}) wq
+			  WHERE wd.qa_team_id = wq.team_id AND wd.document_state != '6' AND wd.document_state != '9'
+			    AND wd.operative_id != '1879' AND wd.operate_start_time like CONCAT(DATE_FORMAT(NOW(),"%Y-%m-%d"), "%")) d
+            ) s,
+          (
+			SELECT document_id, org_id, qa_user_id AS user_id FROM `WSC_DOCUMENT`
+              WHERE qa_user_id = #{id} AND document_state != '6' AND document_state != '9'
+                AND operative_id != '1879' AND operate_start_time like CONCAT(DATE_FORMAT(NOW(),"%Y-%m-%d"), "%")
+			  UNION
+			  SELECT wd.document_id, wd.org_id, wq.user_id FROM WSC_DOCUMENT wd,
+			    (SELECT team_id, user_id FROM WSC_QATEAM WHERE user_id = #{id}) wq
+			  WHERE wd.qa_team_id = wq.team_id AND wd.document_state != '6' AND wd.document_state != '9'
+			    AND wd.operative_id != '1879' AND wd.operate_start_time like CONCAT(DATE_FORMAT(NOW(),"%Y-%m-%d"), "%")
+		  ) a LEFT JOIN WSC_USER b ON a.user_id = b.user_id LEFT JOIN WSC_ORGANIZATION wo on a.org_id = wo.org_id GROUP BY a.org_id order by count desc
+    </select>
+    <select id="statDrInfoMonth" resultType="com.sc.mp.bean.OperationCount">
+    	SELECT
+		  COUNT(a.document_id) AS count,
+		  wo.org_name AS orgName,
+		  case COUNT(a.document_id) when 0 then 0 else round(COUNT(a.document_id)/s.sum*100, 2) end as rate
+		FROM
+          (SELECT COUNT(d.document_id) AS sum
+            FROM (
+              SELECT document_id, org_id, qa_user_id AS user_id FROM `WSC_DOCUMENT`
+              WHERE qa_user_id = #{id} AND document_state != '6' AND document_state != '9'
+                AND operative_id != '1879' AND operate_start_time like CONCAT(DATE_FORMAT(NOW(),"%Y-%m"), "%")
+			  UNION
+			  SELECT wd.document_id, wd.org_id, wq.user_id FROM WSC_DOCUMENT wd,
+			    (SELECT team_id, user_id FROM WSC_QATEAM WHERE user_id = #{id}) wq
+			  WHERE wd.qa_team_id = wq.team_id AND wd.document_state != '6' AND wd.document_state != '9'
+			    AND wd.operative_id != '1879' AND wd.operate_start_time like CONCAT(DATE_FORMAT(NOW(),"%Y-%m"), "%")) d
+            ) s,
+          (
+			SELECT document_id, org_id, qa_user_id AS user_id FROM `WSC_DOCUMENT`
+              WHERE qa_user_id = #{id} AND document_state != '6' AND document_state != '9'
+                AND operative_id != '1879' AND operate_start_time like CONCAT(DATE_FORMAT(NOW(),"%Y-%m"), "%")
+			  UNION
+			  SELECT wd.document_id, wd.org_id, wq.user_id FROM WSC_DOCUMENT wd,
+			    (SELECT team_id, user_id FROM WSC_QATEAM WHERE user_id = #{id}) wq
+			  WHERE wd.qa_team_id = wq.team_id AND wd.document_state != '6' AND wd.document_state != '9'
+			    AND wd.operative_id != '1879' AND wd.operate_start_time like CONCAT(DATE_FORMAT(NOW(),"%Y-%m"), "%")
+		  ) a LEFT JOIN WSC_USER b ON a.user_id = b.user_id LEFT JOIN WSC_ORGANIZATION wo on a.org_id = wo.org_id GROUP BY a.org_id order by count desc
+    </select>
+    <select id="statDrInfoYear" resultType="com.sc.mp.bean.OperationCount">
+    	SELECT
+		  COUNT(a.document_id) AS count,
+		  wo.org_name AS orgName,
+		  case COUNT(a.document_id) when 0 then 0 else round(COUNT(a.document_id)/s.sum*100, 2) end as rate
+		FROM
+          (SELECT COUNT(d.document_id) AS sum
+            FROM (
+              SELECT document_id, org_id, qa_user_id AS user_id FROM `WSC_DOCUMENT`
+              WHERE qa_user_id = #{id} AND document_state != '6' AND document_state != '9'
+                AND operative_id != '1879' AND operate_start_time like CONCAT(DATE_FORMAT(NOW(),"%Y"), "%")
+			  UNION
+			  SELECT wd.document_id, wd.org_id, wq.user_id FROM WSC_DOCUMENT wd,
+			    (SELECT team_id, user_id FROM WSC_QATEAM WHERE user_id = #{id}) wq
+			  WHERE wd.qa_team_id = wq.team_id AND wd.document_state != '6' AND wd.document_state != '9'
+			    AND wd.operative_id != '1879' AND wd.operate_start_time like CONCAT(DATE_FORMAT(NOW(),"%Y"), "%")) d
+            ) s,
+          (
+			SELECT document_id, org_id, qa_user_id AS user_id FROM `WSC_DOCUMENT`
+              WHERE qa_user_id = #{id} AND document_state != '6' AND document_state != '9'
+                AND operative_id != '1879' AND operate_start_time like CONCAT(DATE_FORMAT(NOW(),"%Y"), "%")
+			  UNION
+			  SELECT wd.document_id, wd.org_id, wq.user_id FROM WSC_DOCUMENT wd,
+			    (SELECT team_id, user_id FROM WSC_QATEAM WHERE user_id = #{id}) wq
+			  WHERE wd.qa_team_id = wq.team_id AND wd.document_state != '6' AND wd.document_state != '9'
+			    AND wd.operative_id != '1879' AND wd.operate_start_time like CONCAT(DATE_FORMAT(NOW(),"%Y"), "%")
+		  ) a LEFT JOIN WSC_USER b ON a.user_id = b.user_id LEFT JOIN WSC_ORGANIZATION wo on a.org_id = wo.org_id GROUP BY a.org_id order by count desc
+    </select>
+    <!-- 自定义日期范围 -->
+    <select id="statDrInfoDate" resultType="com.sc.mp.bean.OperationCount">
+    	SELECT
+		  COUNT(a.document_id) AS count,
+		  wo.org_name AS orgName,
+		  case COUNT(a.document_id) when 0 then 0 else round(COUNT(a.document_id)/s.sum*100, 2) end as rate
+		FROM
+          (SELECT COUNT(d.document_id) AS sum
+            FROM (
+              SELECT document_id, org_id, qa_user_id AS user_id FROM `WSC_DOCUMENT`
+              WHERE qa_user_id = #{id} AND document_state != '6' AND document_state != '9'
+                AND operative_id != '1879' and operate_start_time &gt;= CONCAT('','${startTime}',' 00:00:00') 
+    		    and operate_start_time &lt;= CONCAT('','${endTime}',' 23:59:59')
+			  UNION
+			  SELECT wd.document_id, wd.org_id, wq.user_id FROM WSC_DOCUMENT wd,
+			    (SELECT team_id, user_id FROM WSC_QATEAM WHERE user_id = #{id}) wq
+			  WHERE wd.qa_team_id = wq.team_id AND wd.document_state != '6' AND wd.document_state != '9'
+			    AND wd.operative_id != '1879' and wd.operate_start_time &gt;= CONCAT('','${startTime}',' 00:00:00') 
+    		and wd.operate_start_time &lt;= CONCAT('','${endTime}',' 23:59:59')) d
+            ) s,
+          (
+			SELECT document_id, org_id, qa_user_id AS user_id FROM `WSC_DOCUMENT`
+              WHERE qa_user_id = #{id} AND document_state != '6' AND document_state != '9'
+                AND operative_id != '1879' and operate_start_time &gt;= CONCAT('','${startTime}',' 00:00:00') 
+    		    and operate_start_time &lt;= CONCAT('','${endTime}',' 23:59:59')
+			  UNION
+			  SELECT wd.document_id, wd.org_id, wq.user_id FROM WSC_DOCUMENT wd,
+			    (SELECT team_id, user_id FROM WSC_QATEAM WHERE user_id = #{id}) wq
+			  WHERE wd.qa_team_id = wq.team_id AND wd.document_state != '6' AND wd.document_state != '9'
+			    AND wd.operative_id != '1879' and wd.operate_start_time &gt;= CONCAT('','${startTime}',' 00:00:00') 
+    		    and wd.operate_start_time &lt;= CONCAT('','${endTime}',' 23:59:59')
+		  ) a LEFT JOIN WSC_USER b ON a.user_id = b.user_id LEFT JOIN WSC_ORGANIZATION wo on a.org_id = wo.org_id GROUP BY a.org_id order by count desc
+    </select>
+    <!-- 医生日 月 年 自定义日期 手术量详情统计 end -->
 </mapper>

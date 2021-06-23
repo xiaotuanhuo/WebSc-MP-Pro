@@ -27,7 +27,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.sc.mp.annotation.OperationLog;
-import com.sc.mp.bean.DayCalendars;
 import com.sc.mp.bean.OperationCount;
 import com.sc.mp.bean.PageResultBean;
 import com.sc.mp.bean.ResultBean;
@@ -37,6 +36,7 @@ import com.sc.mp.model.WebScCalendar;
 import com.sc.mp.model.WebScOrganization;
 import com.sc.mp.model.WebScRecord;
 import com.sc.mp.model.WebScUser;
+import com.sc.mp.service.StatService;
 import com.sc.mp.service.UserService;
 import com.sc.mp.util.ScConstant;
 import com.sc.mp.util.WxUtil;
@@ -47,6 +47,8 @@ public class IndexController {
 	
 	@Resource
 	private UserService userService;
+	@Resource
+	private StatService statService;
 	@Resource
 	private WxUtil wxUtil;
 	
@@ -120,6 +122,28 @@ public class IndexController {
 	 */
 	@RequestMapping("/toReporting")
 	public String toReporting(HttpServletRequest request, Model model) {
+		WebScUser user = (WebScUser) request.getSession().getAttribute(ScConstant.USER_SESSION_KEY);
+		model.addAttribute("user", user);
+		return "reporting";
+	}
+	
+	/**
+	 * 统计报表页面跳转
+	 * @return
+	 */
+	@RequestMapping("/toDoctorInfo")
+	public String doctorInfo(HttpServletRequest request, Model model) {
+		WebScUser user = (WebScUser) request.getSession().getAttribute(ScConstant.USER_SESSION_KEY);
+		model.addAttribute("user", user);
+		return "doctorInfo";
+	}
+	
+	/**
+	 * 统计报表页面跳转
+	 * @return
+	 */
+	@RequestMapping("/toNurseInfo")
+	public String nurseInfo(HttpServletRequest request, Model model) {
 		WebScUser user = (WebScUser) request.getSession().getAttribute(ScConstant.USER_SESSION_KEY);
 		model.addAttribute("user", user);
 		return "reporting";
@@ -453,6 +477,15 @@ public class IndexController {
 		return ResultBean.success(operationCounts);
 	}
 	
+	@PostMapping("/statsAssignCity")
+	@ResponseBody
+	public ResultBean getSMDC(@RequestBody String data) {
+		JSONObject params = JSONObject.parseObject(data);
+		JSONArray datas = JSONArray.parseArray(params.getString("data"));
+		List<OperationCount> operationCounts = userService.statsCity(datas, params.getString("type"));
+		return ResultBean.success(operationCounts);
+	}
+	
 	@RequestMapping("/toTest")
 	public String toTest(HttpServletRequest request, Model model) {
 		WebScUser user = (WebScUser) request.getSession().getAttribute(ScConstant.USER_SESSION_KEY);
@@ -467,5 +500,99 @@ public class IndexController {
 		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
 		List<WebScRecord> records = userService.getRecords(user.getUserId());
 		return ResultBean.success(records);
+	}
+	
+	/**
+	 * 日、月、年手术量详情
+	 * @param data
+	 * @return
+	 */
+	@GetMapping("/subInfo/{type}")
+	@ResponseBody
+	public ResultBean subInfo(@PathVariable("type") String type) {
+		List<OperationCount> infos = statService.subInfo(type);
+		return ResultBean.success(infos);
+	}
+	
+	/**
+	 * 医疗机构详情查看
+	 * @return
+	 */
+	@RequestMapping("/toOrgInfo")
+	public String toOrgInfo(HttpServletRequest request, Model model) {
+		WebScUser user = (WebScUser) request.getSession().getAttribute(ScConstant.USER_SESSION_KEY);
+		model.addAttribute("user", user);
+		return "organization";
+	}
+	
+	/**
+	 * 医疗机构详情统计-基础统计
+	 * @param data
+	 * @return
+	 */
+	@PostMapping("/statBasic")
+	@ResponseBody
+	public ResultBean statBasic(@RequestBody String data) {
+		JSONObject params = JSONObject.parseObject(data);
+		JSONArray jsonData = JSONArray.parseArray(params.getString("data"));
+		List<OperationCount> operationCounts = statService.statBasicData(jsonData);
+		return ResultBean.success(operationCounts);
+	}
+	
+	@PostMapping("/statSubBasic")
+	@ResponseBody
+	public ResultBean statSubBasic(@RequestBody String data) {
+		JSONObject params = JSONObject.parseObject(data);
+		JSONArray jsonData = JSONArray.parseArray(params.getString("data"));
+		List<OperationCount> operationCounts = statService.statSubBasicData(jsonData, params.getString("slottime"));
+		return ResultBean.success(operationCounts);
+	}
+	
+	/**
+	 * 根据麻醉类型统计手术量
+	 * @param data
+	 * @return
+	 */
+	@PostMapping("/statDocOperative")
+	@ResponseBody
+	public ResultBean statDocOperative() {
+		List<OperationCount> operationCounts = statService.statDocOperative();
+		return ResultBean.success(operationCounts);
+	}
+	
+	@PostMapping("/statDocAnesthetic")
+	@ResponseBody
+	public ResultBean statDocAnesthetic() {
+		List<OperationCount> operationCounts = statService.statDocAnesthetic();
+		return ResultBean.success(operationCounts);
+	}
+	
+	@PostMapping("/allDoctor")
+	@ResponseBody
+	public ResultBean getAllDoctor() {
+		List<WebScUser> users = userService.getAllDoctor();
+		return ResultBean.success(users);
+	}
+	
+	/**
+	 * 医疗机构详情统计-基础统计
+	 * @param data
+	 * @return
+	 */
+	@PostMapping("/statDrBasicInfo")
+	@ResponseBody
+	public ResultBean statDrBasicInfo(@RequestBody String data) {
+		JSONObject params = JSONObject.parseObject(data);
+		List<OperationCount> operationCounts = statService.statDoctorBasic(params.getString("id"));
+		return ResultBean.success(operationCounts);
+	}
+	
+	@PostMapping("/statDrSubInfo")
+	@ResponseBody
+	public ResultBean statDrSubInfo(@RequestBody String data) {
+		JSONObject params = JSONObject.parseObject(data);
+		List<OperationCount> operationCounts = statService.statDoctorSubInfo(params.getString("id"),
+				params.getString("slottime"));
+		return ResultBean.success(operationCounts);
 	}
 }

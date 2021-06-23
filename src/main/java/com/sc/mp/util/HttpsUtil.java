@@ -39,7 +39,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
-import org.apache.ibatis.javassist.compiler.ast.NewExpr;
 
 /**
  * HTTP和HTTPS请求工具类

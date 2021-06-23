@@ -58,6 +58,14 @@
     	AND leaf = 1
     </where>
   </select>
+  
+  <select id="selectOrgIdsByCity" resultType="java.lang.String" parameterType="java.lang.String" >
+    select 
+      org_id
+    from WSC_ORGANIZATION
+    Where city = #{city,jdbcType=VARCHAR} AND leaf = 1
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from WSC_ORGANIZATION
     where org_id = #{orgId,jdbcType=VARCHAR}
