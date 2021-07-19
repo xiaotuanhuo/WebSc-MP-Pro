@@ -334,6 +334,7 @@
 		function showReportList(slottime, province, city, area, orgId, userId) {
 			var jsonData = JSON.stringify({'slottime': slottime, 'province': province, 'city': city, 'area': area, 'orgId': orgId, 'userId': userId});
 			$('#basicInfo').find('.dataRow').remove();
+			$('.noDataRow').addClass('fold');
 			setTimeout(function() {
 				$.ajax({
 			    	type: "POST",
