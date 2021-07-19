@@ -131,7 +131,6 @@
 			<!-- 顶部分类筛选 end -->
 			
 			<main class="margin mt-0" style="padding-top: 1rem;">
-			
 				<section class="wallets-list container">
 					<div class="d-flex" id="distpicker11">
 						<div class="form-group" style="flex: 0 0 33%;">
@@ -148,21 +147,40 @@
 						</div>
 					</div>
 					<div class="d-flex">
-						<div class="form-group" style="flex: 0 0 66%;">
-							<input type="text" id="username" class="form-field" style="border-radius: 6px;" placeholder="医生或护士">
-						</div>
 						<div style="flex: 1; margin-left: 4px;">
 							<a id="reportingBtn" class="button circle block" style="background: #abc5bf; color: #fff;">查询</a>
 						</div>
 					</div>
 				</section>
-				<div class="container">
-					<div class="sp sp-wave"></div>
-					<div class="statsBox">
-						<ul id="chart" class="statsList"></ul>
+				<!-- 医疗机构手术量统计 start -->
+				<div class="container" style="margin-top: 10px;">
+					<div class="trader-info" style="background-color: #fff;">
+						<ul id="basicInfo" class="subInfo-list list-unstyled">
+							<li>
+								<div class="d-flex align-items-center justify-content-between">
+									<div class="flex_2 ml-10 txt-left" data-popup="organPopup">
+										<small class="text-muted exchange">机构名称</small>
+									</div>
+									<div class="d-flex flex_1">
+										<div class="flex_2">
+											<small class="text-muted">手术量</small>
+										</div>
+										<div class="flex_1">
+											<small class="text-muted">占比</small>
+										</div>
+									</div>
+		                        </div>
+							</li>
+							<li id="wave">
+								<div class="sp sp-wave"></div>
+							</li>
+							<li class="noDataRow fold">
+								<small class="d-block mb-0 txt-default">--暂无数据--</small>
+							</li>
+						</ul>
 					</div>
 				</div>
-
+				<!-- 医疗机构手术量统计 end -->
 				<!-- 自定义日期区间选择popup start -->
 				<div class="popup-overlay-multiselect" id="timePopup">
 					<div class="popup-container">
@@ -270,14 +288,8 @@
 		});
 		
 		$('#reportingBtn').on("click", function() {
-			$("#chart").empty();
+			$('#wave').removeClass('fold');
 			$(".sp-wave").show();
-			if (csslen > 0) {
-				for (var i = 0; i < csslen * 2; i++) {
-					// 清除之前写入的动画样式
-					newStyle.deleteRule(0);
-				}
-			}
 			if ($("#username").val() == "") {
 				$("#username").removeAttr("data-id");
 			}
@@ -321,6 +333,7 @@
 		
 		function showReportList(slottime, province, city, area, orgId, userId) {
 			var jsonData = JSON.stringify({'slottime': slottime, 'province': province, 'city': city, 'area': area, 'orgId': orgId, 'userId': userId});
+			$('#basicInfo').find('.dataRow').remove();
 			setTimeout(function() {
 				$.ajax({
 			    	type: "POST",
@@ -330,58 +343,55 @@
 			    	contentType: "application/json",
 			    	success: function (result) {
 			    		$('.sp-wave').hide();
-			    		if (result.code == 0) {
-			    			var listdata = result.data;
-							var _html = '';
-							var len = listdata.length;
-							if (len > 0) {
-								csslen = len - 1;
-								for(var i = 1; i < len; i++) {
-									// 利用css3动画动态渲染多条数据
-									// 第一步构建动态thml
-									_html += '<li>';
-									_html += '<em>' + listdata[i]['orgName'] + '</em>';
-									_html += '<div class="expand-box"><span class="expand animations' + (i - 1) + ' fill_' + ((i - 1) % 10) + '"></span></div>';
-									_html += '<em>' + listdata[i]['count'] + '/' + listdata[0]['count'] + '</em>';
-									_html += '</li>';
-									// 第二步构建动态css
-									// 写入样式
-									Math.round(listdata[i]['count'] / listdata[0]['count'] * 10000) / 100.00
-									newStyle.insertRule(
-										".animations" + (i - 1) + " { " +
-										"width: " + (Math.round(listdata[i]['count'] / listdata[0]['count'] * 10000) / 100.00) + "%;" +
-										"-moz-animation:animations" + (i - i) + " 0.5s ease-out;" +
-										"-webkit-animation:animations" + (i - i) + " 0.5s ease-out;" +
-										"}", 0);
-									newStyle.insertRule(
-										"@keyframes animations" + (i - 1) + "{ " +
-										"0% { width: 0; } " +
-										"100% { width:" + (Math.round(listdata[i]['count'] / listdata[0]['count'] * 10000) / 100.00) + " % }" +
-										"}", 0);
-									$('#chart').html(_html);
-								}
-							} else {
-								$('#chart').attr('style', 'text-align: center; font-size: 14px;');
-								$('#chart').html('--暂无数据--');
+			    		$('#wave').addClass('fold');
+						var infos = result.data;
+						var len = infos.length;
+						var ulDom = document.getElementById("basicInfo");
+						if (len > 0) {
+							for (var i = 1; i < len; i++) {
+								var info = infos[i];
+								var _html = '<div class="d-flex align-items-center justify-content-between">';
+								_html += '<div class="flex_2 ml-10 txt-left">';
+								_html += '<small class="text-muted">' + info.orgName + '</small>';
+								_html += '</div>';
+								_html += '<div class="d-flex flex_1">';
+								_html += '<div class="flex_2">';
+								_html += '<small class="d-block mb-0 txt-turquoise">' + info.count + '</small>';
+								_html += '</div>';
+								_html += '<div class="flex_1">';
+								_html += '<small class="d-block mb-0 txt-green">' + getPercent(info.count, infos[0].count) + '</small>';
+								_html += '</div>';
+								_html += '</div>';
+								_html += '</div>';
+								var liDom = document.createElement("li");
+								liDom.className = 'dataRow';
+								liDom.innerHTML = _html;
+								ulDom.appendChild(liDom);
 							}
-			    		} else if (result.code == 9) {
-			    			Dialog.info(result.msg).okNotClose().ok(function (okBtn) {
-			    				okBtn.querySelector( "span" ).textContent = "即将跳转至登录页面...";
-			    				okBtn.classList.add( "mini-dialog-ok-disabled" );
-			    				window.setTimeout(function () {
-			    					Dialog.close();
-			    					window.location.href = result.data;
-			    				}, 1000);
-			    			});
-			    		} else {
-			    			alert(result.msg);
-			    		}
+							$('.noDataRow').addClass('fold');
+						} else {
+							$('.noDataRow').removeClass('fold');
+						}
 			    	},
 			    	error: function() {
 			    		$('.sp-wave').hide();
 			    	}
 				});
 			}, 300);
+		}
+		
+		function getPercent(num, total) {
+			// <summary>
+			// 求百分比
+			// </summary>
+			// <param name="num">当前数</param>
+			// <param name="total">总数</param>
+			num = parseFloat(num);
+			total = parseFloat(total);
+			if (isNaN(num) || isNaN(total)) {
+		        return "-";
+			}
+			return total <= 0 ? "0%" : (Math.round(num / total * 10000) / 100.00) + "%";
 		}
 		
 		$(".menu-logout").on("click", function() {
