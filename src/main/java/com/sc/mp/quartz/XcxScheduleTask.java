@@ -55,7 +55,7 @@ public class XcxScheduleTask {
 			for (String operativeId : operativeIds) {
 				WebScOperative operative = operativeMapper.selectOperativeById(operativeId);
 				
-				if(StringUtil.isNotNull(operative)) {
+				if(StringUtil.isNull(operative)) {
 					WebOrgOperatives webOrgOperative = new WebOrgOperatives();
 					webOrgOperative.setOrgId(webScOrganization.getOrgId());
 					webOrgOperative.setOperativeId(operativeId);
