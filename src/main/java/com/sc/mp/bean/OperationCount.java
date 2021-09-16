@@ -11,7 +11,7 @@ public class OperationCount {
 	private String pieConst = "const";	// 饼状图常量
 	
 	// 评分
-	private int score;		// 评分
+	private String score;		// 评分
 	
 	// 近3年总量统计、机构、手术大类
 	private String name;	// 图例
@@ -56,11 +56,11 @@ public class OperationCount {
 		this.pieConst = pieConst;
 	}
 	
-	public int getScore() {
+	public String getScore() {
 		return score;
 	}
 	
-	public void setScore(int score) {
+	public void setScore(String score) {
 		this.score = score;
 	}
 	

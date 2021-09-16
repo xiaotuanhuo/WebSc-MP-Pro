@@ -1641,8 +1641,8 @@
     		ltb.org_name as orgName,
     		count(rtb.document_id) as basicSum,
     		SUM(CASE WHEN rtb.operate_start_time like CONCAT((DATE_FORMAT(CURDATE(),'%Y')), '%') THEN 1 ELSE 0 END) AS basicYear,
-			90 AS score
-    	from (select org_id, org_name from WSC_ORGANIZATION where org_id in 
+			case ltb.avg_evaluate when 0 then '-' else ltb.avg_evaluate end as score
+    	from (select org_id, org_name, avg_evaluate from WSC_ORGANIZATION where org_id in 
     			<foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
 	  				#{id}
 				</foreach>
@@ -1802,7 +1802,7 @@
     	SELECT
 		  COUNT(a.document_id) AS count,
 		  DATE_FORMAT(b.create_time, '%Y-%m-%d') as date,
-		  90 AS score
+		  case b.avg_evaluate when 0 then '-' else b.avg_evaluate end as score
 		FROM (
 			SELECT
 			  document_id,
