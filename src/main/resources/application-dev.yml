@@ -28,6 +28,11 @@ spring:
 redis:
     host: 106.14.164.162
     port: 36380
+
+#企业微信配置项
+wx:
+    corpid: ww0a5757d175c0cfc6
+    corpsecret: tnRFaSEmGEXg1mWMpox527dQFhBQgWE2JBLRhZ7xyew
     
 # 微信小程序所需配置
 operativeName-lucene-path: D:\\lucene\\lucene-db\\sc\\operativeName

@@ -34,6 +34,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
@@ -48,12 +49,18 @@ import com.sc.mp.service.AccessTokenService;
 public class WxUtil {
 	private static final Logger log = LoggerFactory.getLogger(WxUtil.class);
 	
-	public static String sCorpid = "ww0a5757d175c0cfc6";
+	@Value("${wx.corpid}")
+	public String sCorpid;
 	
-	// 测试
-	public static String sCorpsecret = "tnRFaSEmGEXg1mWMpox527dQFhBQgWE2JBLRhZ7xyew";
-	// 生产
-//	public static String sCorpsecret = "NQv48aM5kv3gpr95nwpvk_7P1CElNGBHRKCRcLS-2wY";
+	@Value("${wx.corpsecret}")
+	public String sCorpsecret;
+	
+//	public static String sCorpid = "ww0a5757d175c0cfc6";
+//	
+//	// 测试
+//	public static String sCorpsecret = "tnRFaSEmGEXg1mWMpox527dQFhBQgWE2JBLRhZ7xyew";
+//	// 生产
+////	public static String sCorpsecret = "NQv48aM5kv3gpr95nwpvk_7P1CElNGBHRKCRcLS-2wY";
 	
 	private Map<String, Date> AccessTokenMap = new HashMap<String, Date>();
 	private String qAccessToken;
