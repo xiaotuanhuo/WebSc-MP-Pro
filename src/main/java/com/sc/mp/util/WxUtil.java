@@ -50,10 +50,10 @@ public class WxUtil {
 	private static final Logger log = LoggerFactory.getLogger(WxUtil.class);
 	
 	@Value("${wx.corpid}")
-	public String sCorpid;
+	public static String sCorpid;
 	
 	@Value("${wx.corpsecret}")
-	public String sCorpsecret;
+	public static String sCorpsecret;
 	
 //	public static String sCorpid = "ww0a5757d175c0cfc6";
 //	
