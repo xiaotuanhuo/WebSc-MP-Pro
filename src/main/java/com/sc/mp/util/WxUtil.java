@@ -49,25 +49,25 @@ import com.sc.mp.service.AccessTokenService;
 public class WxUtil {
 	private static final Logger log = LoggerFactory.getLogger(WxUtil.class);
 	
-	public static String sCorpid;
-	public static String sCorpsecret;
-	
-	// 静态变量赋值
-	@Value("${wx.corpid}")
-	public static void setsCorpid(String sCorpid) {
-		WxUtil.sCorpid = sCorpid;
-	}
-	@Value("${wx.corpsecret}")
-	public static void setsCorpsecret(String sCorpsecret) {
-		WxUtil.sCorpsecret = sCorpsecret;
-	}
-	
-//	public static String sCorpid = "ww0a5757d175c0cfc6";
+//	public static String sCorpid;
+//	public static String sCorpsecret;
 //	
-//	// 测试
-//	public static String sCorpsecret = "tnRFaSEmGEXg1mWMpox527dQFhBQgWE2JBLRhZ7xyew";
-//	// 生产
-////	public static String sCorpsecret = "NQv48aM5kv3gpr95nwpvk_7P1CElNGBHRKCRcLS-2wY";
+//	// 静态变量赋值
+//	@Value("${wx.corpid}")
+//	public static void setsCorpid(String sCorpid) {
+//		WxUtil.sCorpid = sCorpid;
+//	}
+//	@Value("${wx.corpsecret}")
+//	public static void setsCorpsecret(String sCorpsecret) {
+//		WxUtil.sCorpsecret = sCorpsecret;
+//	}
+	
+	public static String sCorpid = "ww0a5757d175c0cfc6";
+	
+	// 测试
+	public static String sCorpsecret = "tnRFaSEmGEXg1mWMpox527dQFhBQgWE2JBLRhZ7xyew";
+	// 生产
+//	public static String sCorpsecret = "NQv48aM5kv3gpr95nwpvk_7P1CElNGBHRKCRcLS-2wY";
 	
 	private Map<String, Date> AccessTokenMap = new HashMap<String, Date>();
 	private String qAccessToken;
