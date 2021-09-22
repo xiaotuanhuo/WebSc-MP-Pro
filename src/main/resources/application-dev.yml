@@ -1,6 +1,7 @@
 spring:
     datasource:
         name: mysql
+        #url: jdbc:mysql://47.100.162.75:3310/SAJT_SC_NEW?characterEncoding=UTF-8
         url: jdbc:mysql://47.100.162.75:3310/MYSQL-SC?characterEncoding=UTF-8
         username: root
         password: Root@1234

@@ -14,6 +14,7 @@ public class WebScUser_Distribution {
 	private String patient_type;
 	private String isOperation;	
 	private String operation_type;
+	private float fAvgEvaluate;
 	
 	private int distributionScore;
 	
@@ -100,5 +101,11 @@ public class WebScUser_Distribution {
 	}
 	public void setDistributionScore(int distributionScore) {
 		this.distributionScore = distributionScore;
+	}
+	public float getfAvgEvaluate() {
+		return fAvgEvaluate;
+	}
+	public void setfAvgEvaluate(float fAvgEvaluate) {
+		this.fAvgEvaluate = fAvgEvaluate;
 	}
 }

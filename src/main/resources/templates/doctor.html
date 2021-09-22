@@ -128,14 +128,16 @@
 					            <div class="content-col" onclick="goDocList(0)">
 					                <img src="/img/pending.png" alt="">
 					                <span>待处理</span>
+					                <span style="color: red;">([[${scount_wait}]])</span>
 					            </div>
 					            <div class="content-col" onclick="goDocList(1)">
 					                <img src="/img/history.png" alt="">
 					                <span>历史订单</span>
 					            </div>
-					            <div class="content-col" onclick="goDocList(2)">
+					            <div class="content-col" onclick="goDocList(3)">
 					                <img src="/img/grade.png" alt="">
 					                <span>待评分</span>
+					                <span style="color: red;">([[${scount_de}]])</span>
 					            </div>
 					            <div class="content-col myrest">
 					                <img src="/img/rest_record.png">
@@ -257,6 +259,16 @@
 		$(".menu-logout").on("click", function() {
 			location.href = "logout";
 		});
+		
+		window.onclose = function () {
+			console.log("1");
+			alert(1);
+		}
+		
+		window.onbeforeunload = function () {
+			console.log("123");
+			alert(2);
+		}
 	</script>
 </body>
 

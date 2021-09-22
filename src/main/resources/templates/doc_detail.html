@@ -9,6 +9,8 @@
     <link th:href="@{/css/datePlugin/mobiscroll.css}" rel="stylesheet">
     <link th:href="@{/css/datePlugin/mobiscroll_003.css}" rel="stylesheet">
 	<link th:href="@{/css/star.css}" rel="stylesheet">
+	<link rel="stylesheet" th:href="@{/css/viewer.min.css}">
+	<link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}">
 	
     <style type="text/css">
     	body::-webkit-scrollbar{
@@ -29,16 +31,16 @@
 		/*医生界面提交用*/
 		.drwd_row{
 			font-size: .7rem;
-		    font-weight: 700;
+/* 		    font-weight: 700; */
 		    padding: 0 15 0 15;
 		}
 		.drwd_input{
 			width:auto;
-			height: 28px;
-			min-height:28px;
+			height: 26px;
+			min-height:26px;
 			flex:auto;
 			padding:0 5 0 5;
-			font-weight: 700;
+/* 			font-weight: 700; */
 		}
 		.checkbox>input+label{
 		    padding-left: 1.5rem;
@@ -68,8 +70,8 @@
 		}
 		
 		.addBox {
-			width:100%;
-		    height: 150px;
+			width:310px;
+		    height: 120px;
 		    background-color:white;
 		    border: 1px dashed #aaa;
 		    border-radius: 4px;
@@ -122,7 +124,7 @@
 					<div class="pull-right label red-pale text-tint" th:if="${user.roleId=='4' && doc.documentState=='2'}">已匹配</div>
 					<div class="pull-right label red-pale text-tint" th:if="${user.roleId=='5' && doc.documentState=='2'}">待接单</div>
 					<div class="pull-right label red-pale text-tint" th:if="${doc.documentState=='3' && doc.oldDocumentState != '4'}">待手术</div>
-					<div class="pull-right label red-pale text-tint" th:if="${doc.documentState=='3' && doc.oldDocumentState == '4'}">退回待修改</div>
+					<div class="pull-right label red-pale text-tint" th:if="${doc.documentState=='3' && doc.oldDocumentState == '4'}">退回修改</div>
 					<div class="pull-right label red-pale text-tint" th:if="${doc.documentState=='4'}">待完成</div>
 					<div class="pull-right label green-pale text-tint" th:if="${doc.documentState=='5'}">已完成</div>
 					<div class="pull-right label red-pale text-tint" th:if="${doc.documentState=='9'}">待取消</div>
@@ -160,10 +162,10 @@
       					<th class="title">手术助手：</th>
       					<th class="patient_val"><span th:text="${doc.operateQide}"></span></th>
     				</tr>
-    				<tr th:if="${doc.documentState > '2'}">
-      					<th class="title">麻醉医生：</th>
-      					<th class="patient_val"><span th:text="${doc.qaUserName}"></span></th>
-    				</tr>
+<!--     				<tr th:if="${doc.documentState > '2'}"> -->
+<!--       					<th class="title">麻醉医生：</th> -->
+<!--       					<th class="patient_val"><span th:text="${doc.qaUserName}"></span></th> -->
+<!--     				</tr> -->
     				<tr>
       					<th class="title">麻醉方法：</th>
       					<th class="patient_val"><span th:text="${doc.anestheticName}"></span></th>
@@ -189,10 +191,10 @@
 		</div>
 		
 		<div class="heading"  th:if="${doc.documentState > '2'}">
-			<div class="title"><strong>手术医生</strong></div>
+			<div class="title"><strong>麻醉医生</strong></div>
 	  	</div>
 	  	<div class="list section rounded-lg" th:if="${doc.documentState > '2'}" style="margin-bottom: 0px;">
-			<div class="row" style="padding: 10px 20px 10px 20px;">
+			<div class="row" style="padding: 10px 20px 0px 20px;">
 				<table class="patient_table">
 					<tr>
       					<th class="title">医生姓名：</th>
@@ -209,7 +211,7 @@
 	  	<div class="list section rounded-lg" th:if="${doc.documentState > '2'}" style="margin-bottom: 0px;">
 			<div class="row" style="padding: 10px 20px 10px 20px;">
  				<span style="width:80px;padding:5;vertical-align: top;font-size: .7rem;font-weight: bold;">手术团队：</span>
- 				<span id="divTeam" style="padding:5; vertical-align:top;">
+ 				<span id="divTeam" style="padding:5px 10px 0px 10px; vertical-align:top;">
 	 				<span th:if="${doc.qaTeamId!=null && doc.qaTeamId!=''}" style="font-size: .7rem;"><a style="cursor: pointer;color: blue;" onclick="openTeamView()">团队信息</a></span>
 					<span th:if="${doc.qaTeamId==null || doc.qaTeamId==''}" style="font-size: .7rem;">无团队</span>
 					<span th:if="${user.roleId=='5' && doc.documentState == '3' && (doc.qaTeamId==null || doc.qaTeamId=='')}" style="font-size: .7rem;">
@@ -266,7 +268,7 @@
 	  				</tr>
 	  				<tr>
 	   					<th class="title">时长：</th>
-	   					<th class="patient_mainval"><span th:text="${doc.sssc}"></span></th>
+	   					<th class="patient_mainval"><span th:text="${doc.ssscVal}"></span></th>
 	  				</tr>
 	  				<tr>
 	   					<th class="title">局麻技术：</th>
@@ -289,7 +291,13 @@
 				<table class="patient_table">
 					<tr>
 	   					<th class="title">呼吸系统：</th>
-	   					<th class="patient_val"><span th:text="${doc.ywsjHxxtVal}"></span></th>
+	   					<th>
+	   						<table>
+		   						<tr class="patient_val" th:each="hxxtVal : ${#strings.listSplit(doc.ywsjHxxtVal, ';')}">
+	    							<td style="padding: 2; vertical-align: top; font-size: .7rem; font-weight: normal;"><span th:text="${hxxtVal}"></span></td>
+								</tr>
+	   						</table>
+	   					</th>	
 	  				</tr>
 	    			<tr>
 	   					<th class="title" >呼吸其它：</th>
@@ -297,8 +305,13 @@
 	  				</tr>
 	  				<tr>
 	   					<th class="title">循环系统：</th>
-	   					<th class="patient_val"><span th:text="${doc.ywsjXhxtVal}"></span></th>
-	  				</tr>
+	   					<th>
+	   						<table>
+		   						<tr class="patient_val" th:each="xhxtVal : ${#strings.listSplit(doc.ywsjXhxtVal, ';')}">
+	    							<td style="padding: 2; vertical-align: top; font-size: .7rem; font-weight: normal;"><span th:text="${xhxtVal}"></span></td>
+								</tr>
+	   						</table>
+	   					</th>	
 	  				<tr>
 	   					<th  class="title">循环其它：</th>
 	   					<th class="patient_val"><span th:text="${doc.ywsjXhxtQt}"></span></th>
@@ -324,10 +337,10 @@
 					<tr>
 	   					<th class="title">不良反应：</th>
 	   					<th class="patient_val">
-							<span th:if="${doc.shblZw}=='1'">谵妄&nbsp;&nbsp;</span>
-							<span th:if="${doc.shblHbtt}=='1'">喉部疼痛&nbsp;&nbsp;</span>
-							<span th:if="${doc.shblXy}=='1'">眩晕&nbsp;&nbsp;</span>
-							<span th:if="${doc.shblOt}=='1'">呕吐</span>
+							<span style="padding-bottom: 5px;" th:if="${doc.shblZw}=='1'">谵妄<br/></span>
+							<span style="padding-bottom: 5px;" th:if="${doc.shblHbtt}=='1'">喉部疼痛<br/></span>
+							<span style="padding-bottom: 5px;" th:if="${doc.shblXy}=='1'">眩晕<br/></span>
+							<span style="padding-bottom: 5px;" th:if="${doc.shblOt}=='1'">呕吐</span>
 						</th>
 	  				</tr>
 	    			<tr>
@@ -338,7 +351,7 @@
 							<span th:if="${doc.shttzl}=='2'">静脉推注</span>
 							<span th:if="${doc.shttzl}=='3'">静脉镇痛泵</span>
 							<span th:if="${doc.shttzl}=='4'">椎管内镇痛泵</span>
-							<span th:if="${doc.shttzl}=='5'">无镇痛</span>
+							<span th:if="${doc.shttzl}=='5'">无</span>
 						</th>
 	  				</tr>
     			</table>
@@ -365,8 +378,8 @@
 	  	</div>
 	  	<div class="list section rounded-lg" th:if="${doc.documentState=='5'}" style="margin-bottom: 50px;">
 	  		<div class="row" style="padding: 0 20px 0 20px;" th:if="${user.roleId=='4'}">
-	  			<div class="cell-3" style="font-size: .7rem;font-weight: 700;padding-top: 8px;">机构评分:</div>
-				<div class="cell-9">
+	  			<div class="cell-3" style="font-size: .7rem;font-weight: 700;padding-top: 15px;">机构评分:</div>
+				<div class="cell-9" style="padding-top: 15px;">
 					<input id="hospitalEvaluate" type="hidden" th:value="${doc.hospitalEvaluate}"></input>
 					<ul class="star_ul fl" style="margin:0;">
 						<li><a id="jg-star-1" class="one-star" title="很差"></a></li>
@@ -382,8 +395,8 @@
 				<div class="cell-9"><span th:text="${doc.hospitalEvaluateMemo}"></span></div>
 			</div>
 	  		<div class="row" style="padding: 0 20px 0 20px;" th:if="${user.roleId=='5' || user.roleId=='4'}">
-	  			<div class="cell-3" style="font-size: .7rem;font-weight: 700;padding-top: 8px;">医生评分:</div>
-				<div class="cell-9">
+	  			<div class="cell-3" style="font-size: .7rem;font-weight: 700;padding-top: 15px;">医生评分:</div>
+				<div class="cell-9" style="padding-top: 15px;">
 					<input id="doctorEvaluate" type="hidden" th:value="${doc.doctorEvaluate}"></input>
 					<ul class="star_ul fl" style="margin:0;">
 						<li><a id="dr-star-1" class="one-star" title="很差"></a></li>
@@ -394,7 +407,7 @@
 					</ul>
 				</div>
 	  		</div>
-	  		<div class="row" style="padding: 0 20px 0 20px;" th:if="${user.roleId=='5' || user.roleId=='4'}">
+	  		<div class="row" style="padding: 0 20px 10px 20px;" th:if="${user.roleId=='5' || user.roleId=='4'}">
 				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">医生评价:</div>
 				<div class="cell-9"><span th:text="${doc.doctorEvaluateMemo}"></span></div>
 			</div>
@@ -421,7 +434,7 @@
 		<button id="btnQxJj" type="button" class="btn danger" style="border-radius: .3rem 0 0 .3rem;" th:if="${user.roleId=='4' && doc.documentState=='9'}" onclick="btnQxJjClick()">拒绝撤销</button>	
 		<button id="btnQxTy" type="button" class="btn primary" style="border-radius: 0 .3rem .3rem 0;" th:if="${user.roleId=='4' && doc.documentState=='9'}" onclick="btnQxTyClick()">同意撤销</button>
 		
-		<button id="btnDocDf" type="button" class="btn primary" style="border-radius: .3rem;" th:if="${user.roleId=='5' && doc.documentState=='5' && (doc.doctorEvaluate==null || doc.doctorEvaluate==-1)}" onclick="btnDocDfClick()">评价打分</button>
+		<button id="btnDocDf" type="button" class="btn primary" style="border-radius: .3rem;" th:if="${user.roleId=='5' && doc.documentState=='5' && (doc.doctorEvaluate==null || doc.doctorEvaluate==0 ||doc.doctorEvaluate==-1)}" onclick="btnDocDfClick()">评价打分</button>
 	</nav>
 	
 	<!-- 分配 -->
@@ -430,15 +443,16 @@
 			<div class="control flex">
 	      		<label for="fp_searchVal" style="width:100px;padding:5 5 5 10;vertical-align: top;font-weight: 700;text-align: right;">医生姓名：</label>
 	      		<input class="text" name="fp_searchVal" id="fp_searchVal" value=""/>
-	      		<button id="btnSearch" type="button" class="btn btn-small primary hover-solid" style="padding:0;height: 26px;margin-left: 5px;"><i class="icon icon-search"></i></button>
+	      		<button name="btnSearch" type="button" class="btn btn-small primary hover-solid" style="padding:0;height: 26px;margin-left: 5px;"><i class="icon icon-search"></i></button>
 	   		</div>
 	   		
 	   		<div class="row" style="padding: 0 10px 0 10px;">
 				<table id="fp_table" class="table compact striped" style="font-size: .7rem;text-align: center;">
 					<thead>
 				    	<tr>
-				      		<th style="text-align: center;">推荐</th>
 				      		<th style="text-align: center;">姓名</th>
+				      		<th style="text-align: center;">备案</th>
+				      		<th style="text-align: center;">评价</th>
 				      		<th style="text-align: center;">操作</th>
 			    		</tr>
 					</thead>
@@ -528,15 +542,16 @@
 					</div>
 					<div class="control flex drwd_row">
 						<label class="addon" style="color: red;">开始时间</label>
-						<input id="sskssj" name="sskssj" type="text" class="input form-datetime drwd_input" placeholder="手术开始时间" th:value="${doc.sskssj}">
+						<input id="sskssj" name="sskssj" type="text" class="input form-datetime drwd_input" placeholder="麻醉开始时间" th:value="${doc.sskssj}">
 					</div>
 					<div class="control flex drwd_row">
 						<label class="addon" style="color: red;">结束时间</label>
-						<input id="ssjssj" name="ssjssj" type="text" class="input form-datetime drwd_input" placeholder="手术结束时间" th:value="${doc.ssjssj}">
+						<input id="ssjssj" name="ssjssj" type="text" class="input form-datetime drwd_input" placeholder="麻醉结束时间" th:value="${doc.ssjssj}">
 					</div>
 					<div class="control flex drwd_row">
 						<label class="addon">时长</label>
-						<input id="sssc" name="sssc" type="text" class="input drwd_input" placeholder="时长（分）" th:value="${doc.sssc}" disabled="disabled">
+						<input id="sssc" name="sssc" type="hidden" class="input drwd_input" placeholder="时长（分）" th:value="${doc.sssc}" disabled="disabled">
+						<input id="ssscVal" name="ssscVal" type="text" class="input drwd_input" placeholder="时长" th:value="${doc.ssscVal}" disabled="disabled">
 					</div>
 					<div class="control flex drwd_row" style="padding-bottom: 15px;">
 						<label class="addon">局麻技术</label>
@@ -550,79 +565,115 @@
 				</div>
 				
 				<div class='heading'>
-					<div class='title'><strong>意外事件</strong></div>
+					<div class='title'><strong>意外事件 - 呼吸系统</strong></div>
 			  	</div>
 				<div class="list section rounded-lg" style="margin-bottom: 0px;">
 					<!-- 呼吸系统    -->
-					<div class="control flex drwd_row" style="padding-top:15px;margin-bottom: 0;">
-						<label class="addon" style="width: -webkit-fill-available;">呼吸系统</label>
-					</div>	
+<!-- 					<div class="control flex drwd_row" style="padding-top:15px;margin-bottom: 0;"> -->
+<!-- 						<label class="addon" style="width: -webkit-fill-available;">呼吸系统</label> -->
+<!-- 					</div>	 -->
 					<div class="control flex drwd_row">
 						<div class="checkbox" style="width: -webkit-fill-available;">
 					        <input type="checkbox" id="ywsjHxxt_0" name="ywsjHxxt" value="0">
 					        <label for="ywsjHxxt">频繁舌后坠（≥3次）</label>
 					   	</div>
+					</div>
+					<div class="control flex drwd_row">
 						<div class="checkbox" style="width: -webkit-fill-available;">
 					        <input type="checkbox" id="ywsjHxxt_1" name="ywsjHxxt" value="1">
 					        <label for="ywsjHxxt">喉痉挛</label>
 					   	</div>
+					</div>
+					<div class="control flex drwd_row">
 					   	<div class="checkbox" style="width: -webkit-fill-available;">
 					        <input type="checkbox" id="ywsjHxxt_2" name="ywsjHxxt" value="2">
 					        <label for="ywsjHxxt">返流</label>
 					   	</div>
+					</div>
+					<div class="control flex drwd_row">
 					   	<div class="checkbox" style="width: -webkit-fill-available;">
 					        <input type="checkbox" id="ywsjHxxt_3" name="ywsjHxxt" value="3">
 					        <label for="ywsjHxxt">误吸</label>
 					   	</div>
+					</div>
+					<div class="control flex drwd_row">
 					   	<div class="checkbox" style="width: -webkit-fill-available;">
 					        <input type="checkbox" id="ywsjHxxt_4" name="ywsjHxxt" value="4">
 					        <label for="ywsjHxxt">支气管痉挛</label>
 					   	</div>
+					</div>
+					<div class="control flex drwd_row">
 					   	<div class="checkbox" style="width: -webkit-fill-available;">
 					        <input type="checkbox" id="ywsjHxxt_5" name="ywsjHxxt" value="5">
 					        <label for="ywsjHxxt">计划外插管</label>
 					   	</div>
+					</div>
+					<div class="control flex drwd_row">
 					   	<div class="checkbox" style="width: -webkit-fill-available;">
 					        <input type="checkbox" id="ywsjHxxt_6" name="ywsjHxxt" value="6">
 					        <label for="ywsjHxxt">其他</label>
 					   	</div>
-					   	<input id="ywsjHxxtQt" name="ywsjHxxtQt" type="text" class="input drwd_input" placeholder="呼吸系统(其它)" disabled="disabled" />
 					</div>
-					
+					<div class="control flex drwd_row" style="padding-bottom: 10px;">
+						<input id="ywsjHxxtQt" name="ywsjHxxtQt" type="text" class="input drwd_input" placeholder="呼吸系统(其它)" disabled="disabled" />
+					</div>
+				</div>
+				
+				<div class='heading'>
+					<div class='title'><strong>意外事件 - 循环系统</strong></div>
+			  	</div>
+				<div class="list section rounded-lg" style="margin-bottom: 0px;">	
 					<!-- 循环系统    -->
-					<div class="control flex drwd_row" style="margin-bottom: 0;">
-						<label class="addon" style="width: -webkit-fill-available;">循环系统</label>
-					</div>	
+<!-- 					<div class="control flex drwd_row" style="margin-bottom: 0;"> -->
+<!-- 						<label class="addon" style="width: -webkit-fill-available;">循环系统</label> -->
+<!-- 					</div>	 -->
 					<div class="control flex drwd_row">
 						<div class="checkbox" style="width: -webkit-fill-available;">
 					        <input type="checkbox" id="ywsjXhxt_0" name="ywsjXhxt" value="0">
 					        <label for="ywsjXhxt">需纠正的低血压</label>
 					   	</div>
+					</div>
+					<div class="control flex drwd_row"> 
 						<div class="checkbox" style="width: -webkit-fill-available;">
 					        <input type="checkbox" id="ywsjXhxt_1" name="ywsjXhxt" value="1">
 					        <label for="ywsjXhxt">需纠正的高血压</label>
 					   	</div>
+					</div>
+					<div class="control flex drwd_row">
 					   	<div class="checkbox" style="width: -webkit-fill-available;">
 					        <input type="checkbox" id="ywsjXhxt_2" name="ywsjXhxt" value="2">
 					        <label for="ywsjXhxt">肺动脉栓塞</label>
 					   	</div>
+					</div>
+					<div class="control flex drwd_row">
 					   	<div class="checkbox" style="width: -webkit-fill-available;">
 					        <input type="checkbox" id="ywsjXhxt_3" name="ywsjXhxt" value="3">
 					        <label for="ywsjXhxt">心梗</label>
 					   	</div>
+					</div>
+					<div class="control flex drwd_row">
 					   	<div class="checkbox" style="width: -webkit-fill-available;">
 					        <input type="checkbox" id="ywsjXhxt_4" name="ywsjXhxt" value="4">
 					        <label for="ywsjXhxt">脑梗</label>
 					   	</div>
+					</div>
+					<div class="control flex drwd_row">
 					   	<div class="checkbox" style="width: -webkit-fill-available;">
 					        <input type="checkbox" id="ywsjXhxt_5" name="ywsjXhxt" value="5">
 					        <label for="ywsjXhxt">其他</label>
 					   	</div>
+					</div>
+					<div class="control flex drwd_row" style="padding-bottom: 10px;">
 					   	<input id="ywsjXhxtQt" name="ywsjXhxtQt" type="text" class="input drwd_input" placeholder="循环系统(其它)" disabled="disabled" />
 					</div>
-					
+				</div>
+				
+				<div class='heading'>
+					<div class='title'><strong>意外事件 - 过敏原</strong></div>
+			  	</div>
+				<div class="list section rounded-lg" style="margin-bottom: 0px;">	
 					<!-- 过敏原    -->
-					<div class="control flex drwd_row">
+					<div class="control flex drwd_row" style="padding-top: 10px;">
 						<label class="addon">是否过敏</label>
 						<select name="ywsjGm" id="ywsjGm" class="drwd_input">
 							<option value="-1"></option>
@@ -650,25 +701,33 @@
 							<input id="shblZw" type="checkbox" name="shblZw">
 							<label for="shblZw"> 谵妄</label>
 						</div>
+					</div>
+					<div class="control flex drwd_row">
 						<div class="checkbox" style="width: -webkit-fill-available;">
 							<input id="shblHbtt" type="checkbox" name="shblHbtt">
 							<label for="shblHbtt"> 喉部疼痛</label>
 						</div>
+					</div>
+					<div class="control flex drwd_row">
 						<div class="checkbox" style="width: -webkit-fill-available;">
 							<input id="shblEx" type="checkbox" name="shblEx">
 							<label for="shblEx"> 恶心</label>
 						</div>
+					</div>
+					<div class="control flex drwd_row">
 						<div class="checkbox" style="width: -webkit-fill-available;">
 							<input id="shblXy" type="checkbox" name="shblXy">
 							<label for="shblXy"> 眩晕</label>
 						</div>
+					</div>
+					<div class="control flex drwd_row">
 						<div class="checkbox" style="width: -webkit-fill-available;">
 							<input id="shblOt" type="checkbox" name="shblOt">
 							<label for="shblOt"> 呕吐</label>
 						</div>
 					</div>
-					<div class="control flex drwd_row">
-						<label class="addon">疼痛治疗</label>
+					<div class="control flex drwd_row" style="padding-bottom: 10px;">
+						<label class="addon" style="color: red;">疼痛治疗</label>
 						<select name="shttzl" id="shttzl" class="drwd_input">
 							<option value="-1"></option>
 							<option value="1">口服药</option>
@@ -678,10 +737,18 @@
 							<option value="5">无镇痛</option>
 						</select>
 					</div>
-					<div class="control flex drwd_row" style="margin-bottom: 0;">
-						<label class="addon" style="width: -webkit-fill-available;">医生备注</label>
-					</div>
-					<div class="control flex drwd_row" style="padding-bottom: 15px;">
+					
+				</div>
+				
+				<!-- 备注    -->
+				<div class='heading'>
+					<div class='title'><strong>备注</strong></div>
+			  	</div>
+				<div class="list section rounded-lg" style="margin-bottom: 0px;padding-top: 10px;">
+<!-- 					<div class="control flex drwd_row" style="margin-bottom: 10;"> -->
+<!-- 						<label class="addon" style="width: -webkit-fill-available;">医生备注</label> -->
+<!-- 					</div> -->
+					<div class="control flex drwd_row" style="padding-bottom: 10px;">
 						<textarea class="textarea" name="doctorMemo" id="doctorMemo" rows="5" placeholder="麻醉医生备注"  style="width: -webkit-fill-available;"></textarea>
 					</div>
 				</div>
@@ -692,14 +759,11 @@
 			  	</div>
 				<div class="list section rounded-lg" style="margin-bottom: 0px;">
 					<input id="doc_photo" type="hidden" name="photo" class="input" th:value="${doc?.photo}">
-					<button id="btnUpload" type="button" class="btn btn-info"  style="width:-webkit-fill-available;height:30px;background-color:#FFFFFF;border:1px solid #CECECE">
+					<button id="btnUpload" type="button" class="btn btn-info"  style="width: -moz-available;width: -webkit-fill-available;height:30px;background-color:#FFFFFF;border:1px solid #CECECE">
 						<i class="icon icon-plus"></i> 选择文件
 					</button>
 									
-					<div class="layui-upload-list" id="photo_list" style="height: 200px;width:-webkit-fill-available;">
-<!-- 						<img src="" id="pic1" class="imglist" style="height:200px;width: 149px;float: left;"> -->
-<!-- 						<img src="" id="pic2" class="imglist" style="height:200px;width: 149px;float: left;"> -->
-					</div>				
+					<div class="layui-upload-list" id="photo_list" style="height: 200px;width:-webkit-fill-available;"></div>				
 				</div>	
 			</form>
 			<div>
@@ -721,7 +785,7 @@
 	    	</div>
     	
 	    	<div id="fm_add" class="row" style="margin-top: 8px;text-align: center;padding: 0 10px 0 10px;">
-				<button class="btn inverse outline addBox" onclick="btnFmUserAdd()">
+				<button class="btn inverse outline addBox" onclick="btnFmUserAdd()" style="margin: 10 auto;">
 					<i class="icon icon-plus" style="font-size: 50px;color: #aaa;"></i>
 				</button>
 	    	</div>
@@ -732,7 +796,7 @@
 				
 	    	</div>
 	    	<div id="hs_add" class="row" style="margin-top: 8px;text-align: center;padding: 0 10px 0 10px;">
-	    		<button class="btn inverse outline addBox" onclick="btnHsUserAdd()">
+	    		<button class="btn inverse outline addBox" onclick="btnHsUserAdd()" style="margin: 10 auto;">
 					<i class="icon icon-plus" style="font-size: 50px;color: #aaa;"></i>
 				</button>
 	    	</div>
@@ -743,7 +807,7 @@
 			<div class="control flex">
 	      		<label for="fp_searchVal" style="width:100px;padding:5 5 5 10;vertical-align: top;font-weight: 700;text-align: right;">姓名：</label>
 	      		<input class="text" name="team_searchVal" id="team_searchVal" value=""/>
-	      		<button id="btnSearch" type="button" class="btn btn-small primary hover-solid" style="padding:0;height: 26px;margin-left: 5px;"><i class="icon icon-search"></i></button>
+	      		<button name="btnSearch" type="button" class="btn btn-small primary hover-solid" style="padding:0;height: 26px;margin-left: 5px;"><i class="icon icon-search"></i></button>
 	   		</div>
 	   		
 	   		<div class="row" style="padding: 0 10px 0 10px;">
@@ -822,25 +886,43 @@
 	<!-- 评价 -->
 	<div id="pnlDocDrDf" class="panel" style="display: none;">
 		<div class="panel-body" style="margin-top: -10px;">
-			<div class="row" style="padding: 0 20px 0 20px;">
-	  			<div class="cell-3" style="font-size: .7rem;font-weight: 700;padding-top: 8px;">医生评分:</div>
-				<div class="cell-9">
-					<input type="hidden" id="df_de" value="-1">
-					<ul class="star_ul fl" style="margin:0;">
-						<li><a id="df-dr-star-1" class="one-star" title="很差" onclick="changeStar(1)"></a></li>
-						<li><a id="df-dr-star-2" class="two-star" title="差" onclick="changeStar(2)"></a></li>
-						<li><a id="df-dr-star-3" class="three-star" title="还行" onclick="changeStar(3)"></a></li>
-						<li><a id="df-dr-star-4" class="four-star" title="好" onclick="changeStar(4)"></a></li>
-						<li><a id="df-dr-star-5" class="five-star" title="很好" onclick="changeStar(5)"></a></li>
-					</ul>
+			<fieldset class="layui-elem-field layui-field-title" style="margin: 30px 30px 0 30px;">
+				<legend style="font-size: 14px;margin: 0 auto;">匿名评价机构</legend>
+			</fieldset>
+			<div class="layui-row" style="margin: 0 20px 0 20px;">
+				<div class="layui-row" style="margin-top: 8px;text-align: center;">
+					<div class="layui-input-block" style="margin-left: 0px;">
+						<div id="dr_star"></div>
+						<input type="hidden" id="df_de">
+					</div>
 				</div>
-	  		</div>
-	  		<div class="row" style="padding: 0 20px 0 20px;">
-				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">医生评价:</div>
-				<div class="cell-9">
-					<textarea class="textarea" id="df_dem" rows="3"></textarea>
-				</div>
+				
+				<div class="layui-row" style="margin-top: 10px;">
+		     		<div class="layui-input-block" style="margin-left: 0px;">
+		          		<textarea placeholder="如果有其他意见和建议，请放心填写" class="layui-textarea" id="df_dem" style="width: -moz-available;"></textarea>
+		       		</div>
+		     	</div>
 			</div>
+			
+<!-- 			<div class="row"> -->
+<!-- 	  			<div class="cell-3" style="font-size: .7rem;font-weight: 700;padding-top: 8px;">医生评分:</div> -->
+<!-- 				<div class="cell-9"> -->
+<!-- 					<input type="hidden" id="df_de" value="-1"> -->
+<!-- 					<ul class="star_ul fl" style="margin:0;"> -->
+<!-- 						<li><a id="df-dr-star-1" class="one-star" title="很差" onclick="changeStar(1)"></a></li> -->
+<!-- 						<li><a id="df-dr-star-2" class="two-star" title="差" onclick="changeStar(2)"></a></li> -->
+<!-- 						<li><a id="df-dr-star-3" class="three-star" title="还行" onclick="changeStar(3)"></a></li> -->
+<!-- 						<li><a id="df-dr-star-4" class="four-star" title="好" onclick="changeStar(4)"></a></li> -->
+<!-- 						<li><a id="df-dr-star-5" class="five-star" title="很好" onclick="changeStar(5)"></a></li> -->
+<!-- 					</ul> -->
+<!-- 				</div> -->
+<!-- 	  		</div> -->
+<!-- 	  		<div class="row" style="padding: 0 20px 0 20px;"> -->
+<!-- 				<div class="cell-3" style="font-size: .7rem;font-weight: 700;">医生评价:</div> -->
+<!-- 				<div class="cell-9"> -->
+<!-- 					<textarea class="textarea" id="df_dem" rows="3"></textarea> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
 			<nav class="nav nav-auto affix dock-bottom justified">
 				<button id="btnClose" type="button" class="btn info outline">返回</button>
 				<button id="btnDrDf" type="button" class="btn primary">保存</button>
@@ -853,6 +935,7 @@
 <script th:src="@{/js/wxImage.js}"></script>
 <script th:src="@{/js/layer.js}"></script>
 <script th:src="@{/js/mzui.min.js}"></script>
+<script th:src="@{/lib/layui/layui.js}"></script>
 
 <script th:src="@{/js/jquery.serializejson.min.js}"></script>
 <script th:src="@{/js/datePlugin/mobiscroll_002.js}"></script>
@@ -860,21 +943,20 @@
 <script th:src="@{/js/datePlugin/mobiscroll.js}"></script>
 <script th:src="@{/js/datePlugin/mobiscroll_003.js}"></script>
 <script th:src="@{/js/datePlugin/mobiscroll_005.js}"></script>
-
+<script th:src="@{/js/viewer.min.js}"></script>
 
 <!-- <script th:src="@{js/bootstrap-datetimepicker.min.js}"></script>
 <script th:src="@{js/bootstrap-datetimepicker.zh-CN.js}"></script> -->
 <script  th:inline="javascript">
 	//console.log(location.href.split('#')[0])
 	var doc = [[${doc}]];
+	var u = [[${user}]];
 	var state = [[${state}]];
 	
 	var appId = [[${aid}]];//公众号的唯一标识
 	var timestamp = [[${ts}]];//生成签名的时间戳
 	var nonceStr = [[${ns}]];//生成签名的随机串
 	var signature = [[${sg}]];//签名 
-	
-	console.info(signature);
 	
 	wx.config({
 	   debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
@@ -887,7 +969,7 @@
 	               'previewImage',
 	               'uploadImage',
 	               'downloadImage'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
-	});	
+	});
 	
 	var docId = $("#docId").val();
 	
@@ -954,7 +1036,7 @@
          		var html = '<div id="photo_' + photoIdx + '" name="'+ photols[i] +'" class="file-iteme" style="width: 149px; height: 180px; float: left;"">';
          		if(doc.status == '0')
          			html += '<div style="float: left;position: absolute;" id="delPhotoBtn' + photoIdx + '" onclick="deletePhoto(' + photoIdx + ')"><i class="icon-2x icon-times"></i></div>';
-    			html += '<img style="width: 150px;height: 180px;" src="/getPhotoByFileName?id=' + doc.documentId + '&FileName='+ photols[i] +'">';
+    			html += '<img style="width: 150px;height: 180px;" src="/getPhotoByFileName?id=' + doc.documentId + '&FileName='+ photols[i] +'" onclick="previewImg(this)">';
     			html += '</div>';
          			
     			$('#main_photo_list').append(html);
@@ -1007,7 +1089,7 @@
 				var obj = body.find("#fp_table tbody");
 				
 				//按钮事件
-				body.on('click', '#btnSearch', function() {
+				body.on("click", "[name='btnSearch']", function() {
 					var searchVal = body.find("#fp_searchVal").val();
 					searchFp(obj, searchVal);
 				});
@@ -1054,15 +1136,27 @@
 						var u = list[i];
 						result += "<tr>";
 						
-						if(u.distributionScore > 4 && u.distributionScore < 8){
-							result +="<td class='font_color_blue'>推荐</td>";
-						}else if(u.distributionScore > 8){
-							result +="<td class='font_color_green'>强推</td>";
-						}else{
-							result +="<td class='font_color_red'>不推荐</td>";
-						}
+// 						if(u.distributionScore > 4 && u.distributionScore < 8){
+// 							result +="<td class='font_color_blue'>推荐</td>";
+// 						}else if(u.distributionScore > 8){
+// 							result +="<td class='font_color_green'>强推</td>";
+// 						}else{
+// 							result +="<td class='font_color_red'></td>";
+// 						}
 						
 				        result +="<td>" + u.userName + "</td>";
+				        if(u.isrecord == '1'){
+				        	result +="<td style='color:blue'>✔</td>";
+				        }else{
+				     		result +="<td style='color:red'>✖</td>";
+				        }
+				        
+						if(u.fAvgEvaluate > 0){	
+				        	result +="<td>" + u.fAvgEvaluate + "</td>";
+						}else{
+							result +="<td>-</td>";
+						}
+				        
 				        result +="<td><button name='fpbtn' id='fpbtn_" + u.userId + "_" + u.userName + "' type='button' class='btn btn-sm'><i class='icon icon-cog'></i></button></td>";
 				        result +="</tr>";
 					}
@@ -1342,7 +1436,7 @@
 	
 	//------------------------------------------------    接单结束           --------------------------------------------------------------//
 	
-	//------------------------------------------------    手术开始         --------------------------------------------------------------//
+	//------------------------------------------------    麻醉开始         --------------------------------------------------------------//
 	var tmpBody;
 	function btnDrQrInfo(){
 		layer.open({
@@ -1366,11 +1460,12 @@
 							content: "保存",
 						   	btn: ['提交订单','保存草稿'],
 						    yes: function(index){
-						    	
 						    	commitDoc(objForm, true, index);
+						    	layer.close(index);
 						    },
 						    no: function(index){
 						    	commitDoc(objForm, false, index);
+						    	layer.close(index);
 						    }
 						});
 					});
@@ -1414,10 +1509,10 @@
             }
 		};
 		var optDateTime = $.extend(opt['datetime'], opt['default']);
-		//手术开始时间
+		//麻醉开始时间
 		obj.find("#sskssj").css({"background-color":'white'});
         obj.find("#sskssj").mobiscroll(optDateTime).datetime(optDateTime);
-        //手术结束时间
+        //麻醉结束时间
         obj.find("#ssjssj").css({"background-color":'white'});
         obj.find("#ssjssj").mobiscroll(optDateTime).datetime(optDateTime);
         
@@ -1492,7 +1587,7 @@
 	         		var html = '<div id="photo_' + photoIdx + '" name="'+ photols[i] +'" class="file-iteme" style="width: 149px; height: 180px; float: left;"">';
 	         		if(doc.status == '0')
 	         			html += '<div style="float: left;position: absolute;" id="delPhotoBtn' + photoIdx + '" onclick="deletePhoto(' + photoIdx + ')"><i class="icon-2x icon-times"></i></div>';
-        			html += '<img style="width: 150px;height: 180px;" src="/getPhotoByFileName?id=' + doc.documentId + '&FileName='+ photols[i] +'">';
+        			html += '<img style="width: 150px;height: 180px;" src="/getPhotoByFileName?id=' + doc.documentId + '&FileName='+ photols[i] +'" onclick="previewImg(this)">';
         			html += '</div>';
 	         			
         			obj.find('#photo_list').append(html);
@@ -1515,16 +1610,19 @@
 //      	alert(doc_sskssj_val + "   " + doc_ssjssj_val);
      
 		if(doc_sskssj_val != '' && doc_ssjssj_val != ''){
-			if(doc_ssjssj_val <= doc_sskssj_val){
+			if(doc_ssjssj_val < doc_sskssj_val){
 				alert("手术【结束时间】应在【开始时间】之后");
-// 				obj.find("#ssjssj").value("");
 				return;
 			}else{
 				var sskssj = new Date(doc_sskssj_val);
- 			var ssjssj = new Date(doc_ssjssj_val);
+ 				var ssjssj = new Date(doc_ssjssj_val);
  			
- 			var minu = Math.round(Math.abs(ssjssj.getTime() - sskssj.getTime())/1000/60);
- 			obj.find("#sssc").val(minu);
+ 				var min = Math.round(Math.abs(ssjssj.getTime() - sskssj.getTime())/1000/60);
+ 				obj.find("#sssc").val(min);
+ 				
+ 				let m = min%60;
+    			if(m < 10) m = "0" + m;
+    			obj.find("#ssscVal").val(Math.floor(min/60) + ":" + m);
 			}
 		}
 	}
@@ -1535,20 +1633,24 @@
 // 		console.info(data);
 
 		//数据监测
-		if(data.height == ""){
+		if(data.height == undefined || data.height == ""){
 			alert("身高不能为空！");
 			return;
 		}
-		if(data.weight == ""){
+		if(data.weight == undefined || data.weight == ""){
 			alert("体重不能为空！");
 			return;
 		}
-		if(data.sskssj == ""){
-			alert("手术开始时间不能为空！");
+		if(data.sskssj == undefined || data.sskssj == ""){
+			alert("麻醉开始时间不能为空！");
 			return;
 		}
-		if(data.ssjssj == ""){
-			alert("手术结束时间不能为空！");
+		if(data.ssjssj == undefined || data.ssjssj == ""){
+			alert("麻醉结束时间不能为空！");
+			return;
+		}
+		if(data.shttzl == undefined || data.shttzl == ""){
+			alert("疼痛治疗不能为空！");
 			return;
 		}
 		
@@ -1774,7 +1876,7 @@
 		    }
 		});
     }
-	//------------------------------------------------    手术结束         ---------------------------------------------------------------//
+	//------------------------------------------------    麻醉结束         ---------------------------------------------------------------//
 	
 	//------------------------------------------------    订单完成开始         ------------------------------------------------------------//
 	function btnQrWcClick(){
@@ -1884,6 +1986,39 @@
 				//全局参数
 				var body = $("#" + elem.id);
 				
+				layui.use(['rate'], function () {
+			  		var rate = layui.rate;
+					rate.render({
+			      		elem: body.find('#dr_star')
+			      		, text: true
+			      		, value: doc.doctorEvaluate
+			      		, setText: function(value){ //自定义文本的回调
+			      			 var arrs = {
+			      			        '1': '极差'
+			      			        ,'2': '差'
+			      			        ,'3': '一般'
+			      			        ,'4': '好'
+			      			        ,'5': '极好'
+			      			  		,'0': '无评价'
+			      			    	,'-1': '无评价'
+			      			};
+				      		if(value <= 0){
+				      			this.span.text("无评价");
+				      		}else if(value == 1){
+				      			this.span.text("差");
+				      		}else if(value == 2 || value == 3){
+				      			this.span.text("一般");
+				      		}else if(value == 4 || value == 5){
+				      			this.span.text("满意");
+				      		}
+			      		}
+				      	, choose: function (value) {
+			            	body.find("#df_de").val(value);
+			        	}
+			      	})
+				});
+		      	body.find("#df_dem").val(doc.doctorEvaluateMemo);
+				
 				//按钮事件
 				body.on('click', '#btnClose', function() {
 					layer.closeAll();
@@ -1897,13 +2032,10 @@
 						content: "保存评价",
 					   	btn: ['保存','取消'],
 					    yes: function(index){
-					    	var dataJson = "{'type':'df', 'id':'" + doc.documentId + "', 'de':'" + de + "','dem':'" + dem + "'}";
-
 					    	$.ajax({
 				    			type: "POST",
-				    	 		url: "/updateDocInfo",
-				    	 		data: "jsondata=" + dataJson,
-				    			dataType: "json",
+				    	 		url: "/save_evaluation",
+				    	 		data: {'id': doc.documentId, 'oid': doc.orgId , 'qid' : doc.qaUserId , 'evaluate':de, 'memo': dem , 'lid' : '', 'type':'1'},
 				    			success: function(data){
 				    				if(data.code == 1){
 				    					alert("评分成功!");
@@ -2135,7 +2267,7 @@
 						if(userls != null){
 			          		for(var i = 0; i < userls.length; i++){
 			          			var user = userls[i];
-			          			console.info(i + " " +user.roleId);
+// 			          			console.info(i + " " +user.roleId);
 			          			if(user.roleId == '5'){
 			                		//医生
 			               			var html = appendUserInfo(body, user, '5');
@@ -2154,6 +2286,11 @@
 			                	}
 			          		}
 			          	}
+						
+						if(u.roleId < 5){
+							body.find("#fm_add").css("display", "none");
+							body.find("#hs_add").css("display", "none");
+						}
 			       	},
 			     	error: function () {
 				   		alert("网络异常,请重试!");
@@ -2196,7 +2333,7 @@
     			   "			</table>" +
     			   "		</td>" +
     			   "	</tr>";
-    			   if(doc.documentState == '3'){
+    			   if(doc.documentState == '3' && u.roleId > 4){
     				   html += "<tr>" + 
     				   		   "	<td colspan='2' >" +
     				   		   "		<button id='btnUserDel_" + user.userId + "' class='btn inverse outline addBox' style='width:100%;height:20px;padding:0 0 5px 0;' onclick='btnUserDel(\"" + user.userName + "\", " + user.userId + ", " + type + ")' >" +
@@ -2418,6 +2555,14 @@
 		});
 	}
 	//------------------------------------------------    取消订单结束        -----------------------------------------------------------//
+	
+	function previewImg(obj) {
+       	const viewer = new Viewer(obj, {
+       		viewed() {
+       		    viewer.zoomTo(1);
+       		},
+       	});  
+ 	}
 </script>
 </body>
 </html>

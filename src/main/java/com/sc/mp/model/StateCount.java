@@ -9,6 +9,8 @@ public class StateCount {
 	private int iCount_9;
 	private int iCount_123;
 	
+	private int iCount_de;
+	
 	public StateCount(){
 		iCount_0 = 0;
 		iCount_1 = 0;
@@ -17,6 +19,7 @@ public class StateCount {
 		iCount_4 = 0;
 		iCount_9 = 0;
 		iCount_123 = 0;
+		iCount_de = 0;
 	}
 	
 	public int getiCount_0() {
@@ -60,5 +63,13 @@ public class StateCount {
 	}
 	public void setiCount_123(int iCount_123) {
 		this.iCount_123 = iCount_123;
+	}
+
+	public int getiCount_de() {
+		return iCount_de;
+	}
+
+	public void setiCount_de(int iCount_de) {
+		this.iCount_de = iCount_de;
 	}
 }

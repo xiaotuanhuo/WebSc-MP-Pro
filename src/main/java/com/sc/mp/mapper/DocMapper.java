@@ -11,6 +11,7 @@ import org.apache.ibatis.annotations.Update;
 import com.sc.mp.bean.KeyValue;
 import com.sc.mp.bean.OperationCount;
 import com.sc.mp.model.WebScDoc;
+import com.sc.mp.model.WebScEvaluate;
 import com.sc.mp.model.WebScOrganization;
 import com.sc.mp.model.WebScUser;
 import com.sc.mp.model.WebScUser_Distribution;
@@ -408,4 +409,6 @@ public interface DocMapper {
 	
 	
 	List<OperationCount> statAnestheticForDoc();
+	
+	int insertWscEvaluate(WebScEvaluate wse);
 }

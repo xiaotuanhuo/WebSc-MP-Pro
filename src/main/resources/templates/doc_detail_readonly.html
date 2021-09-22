@@ -1,0 +1,588 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1.0, maximum-scale=1.0,user-scalable=no" />
+    <title></title>
+	<link rel="stylesheet" th:href="@{/css/mzui.min.css}">
+    <link th:href="@{/css/common.css}" rel="stylesheet">
+    <link th:href="@{/css/datePlugin/mobiscroll_002.css}" rel="stylesheet">
+    <link th:href="@{/css/datePlugin/mobiscroll.css}" rel="stylesheet">
+    <link th:href="@{/css/datePlugin/mobiscroll_003.css}" rel="stylesheet">
+	<link th:href="@{/css/star.css}" rel="stylesheet">
+	<link rel="stylesheet" th:href="@{/css/viewer.min.css}">
+	
+    <style type="text/css">
+    	body::-webkit-scrollbar{
+        	display: none;
+    	}
+    	
+    	.layui-m-layer *::-webkit-scrollbar{
+        	display: none;
+    	}
+    	
+    	.scroll-wrapper {  
+		    -webkit-overflow-scrolling: touch;  
+		    overflow-y: scroll;  
+		}
+		.row {
+			margin: 0; 
+		}
+		/*医生界面提交用*/
+		.drwd_row{
+			font-size: .7rem;
+		    font-weight: 700;
+		    padding: 0 15 0 15;
+		}
+		.drwd_input{
+			width:auto;
+			height: 28px;
+			min-height:28px;
+			flex:auto;
+			padding:0 5 0 5;
+			font-weight: 700;
+		}
+		.checkbox>input+label{
+		    padding-left: 1.5rem;
+		}
+		@keyframes fade {
+		    from {
+		        opacity: 1.0;
+		    }
+		    50% {
+		        opacity: 0.4;
+		    }
+		    to {
+		        opacity: 1.0;
+		    }
+		}
+		
+		@-webkit-keyframes fade {
+		    from {
+		        opacity: 1.0;
+		    }
+		    50% {
+		        opacity: 0.4;
+		    }
+		    to {
+		        opacity: 1.0;
+		    }
+		}
+		
+		.addBox {
+			width:100%;
+		    height: 150px;
+		    background-color:white;
+		    border: 1px dashed #aaa;
+		    border-radius: 4px;
+		    text-align: center;
+		    padding: 25px 0 25px 0;
+		    cursor: pointer;
+		}
+		
+		.addBox:hover{
+			animation: fade 600ms infinite;
+		    -webkit-animation: fade 600ms infinite;
+		}
+		.myradio {
+ 			box-sizing:inherit
+		}
+</style>
+</head>
+<body class="bodgray" >
+	<div class="heading">
+		<nav class="nav" style="width: 100%;padding-right: 10px;background-image: linear-gradient(-12deg,#8470FF 0,#6495ED 100%) !important; color:white;padding-top: 4px;">
+			<div class="cell">
+				<span style="padding: 0 10px;height: 40px;line-height: 40px;font-size: 16px;font-weight: 400;border-radius: 5px 5px 0 0;text-align: center;color: white;">
+					订单详情
+				</span>
+			</div>
+		</nav>
+	</div>
+	
+	<div id="navDoc" class="container display fade in" data-display-name="navs">
+		<input id="docId" type="hidden" th:value="${doc.documentId}"></input>
+		<input id="documentState" type="hidden" th:value="${doc.documentState}"></input>
+		<input id="oldDocumentState" type="hidden" th:value="${doc.oldDocumentState}"></input>
+		
+		<input id="photoCount" type="hidden" name="photo" />
+		<input id="photoIdx" type="hidden" name="photo" />
+		<!-- 患者信息   -->
+		<div class='heading'>
+			<div class='title'><strong>患者信息</strong></div>
+	  	</div>
+		<div class="list section rounded-lg" style="margin-bottom: 0px;">
+			<div class="row" style="padding: 20px 20px 0 20px;">
+				<div class="row" style="padding: 0 20px 0 20px;">
+					<div class="cell-9"><h2><span th:text="${doc.patientName}"></span></h2></div>
+				</div>
+				<div id="tag_state" class="cell-3 row-reverse" style="text-align: right;">
+					<div class="pull-right label red-pale text-tint" th:if="${doc.documentState=='0'}">待审核</div>
+					<div class="pull-right label red-pale text-tint" th:if="${doc.documentState=='1'}">待分配</div>
+					<div class="pull-right label red-pale text-tint" th:if="${doc.documentState=='2'}">待接单</div>
+					<div class="pull-right label red-pale text-tint" th:if="${doc.documentState=='3' && doc.oldDocumentState != '4'}">待手术</div>
+					<div class="pull-right label red-pale text-tint" th:if="${doc.documentState=='3' && doc.oldDocumentState == '4'}">退回待修改</div>
+					<div class="pull-right label red-pale text-tint" th:if="${doc.documentState=='4'}">待完成</div>
+					<div class="pull-right label green-pale text-tint" th:if="${doc.documentState=='5'}">已完成</div>
+					<div class="pull-right label red-pale text-tint" th:if="${doc.documentState=='9'}">待取消</div>
+				</div>
+			</div>
+			<div class="row" style="padding: 0 0 0 25px;">
+				<span class="small text-green" th:text="${doc.operateStartTime}" style="margin-right: 20px;"></span>
+				<input id="title_applyUserId" type="hidden" th:value="${doc.applyUserId}">
+				<span class="small" th:text="${doc.applyUserName}"></span>
+			</div>
+			<hr>
+			<div class="row" style="padding: 0 20px 0 20px;">
+				<table class="patient_table">
+					<tr>
+      					<th class="title">手术名称：</th>
+      					<th class="patient_mainval"><span th:text="${doc.operativeName}"></span></th>
+    				</tr>
+    				<tr>
+      					<th class="title">性别：</th>
+      					<th class="patient_val"><span th:text="${doc.patientSex == '0'? '女':'男'}"></span></th>
+    				</tr>
+    				<tr>
+      					<th class="title">年龄：</th>
+      					<th class="patient_val"><span th:text="${doc.patientAge}"></span></th>
+    				</tr>
+    				<tr>
+      					<th class="title">诊断：</th>
+      					<th class="patient_val"><span th:text="${doc.documentTitle}"></span></th>
+    				</tr>
+    				<tr>
+      					<th class="title">手术医生：</th>
+      					<th class="patient_val"><span th:text="${doc.operateUser}"></span></th>
+    				</tr>
+    				<tr>
+      					<th class="title">手术助手：</th>
+      					<th class="patient_val"><span th:text="${doc.operateQide}"></span></th>
+    				</tr>
+<!--     				<tr th:if="${doc.documentState > '2'}"> -->
+<!--       					<th class="title">麻醉医生：</th> -->
+<!--       					<th class="patient_val"><span th:text="${doc.qaUserName}"></span></th> -->
+<!--     				</tr> -->
+    				<tr>
+      					<th class="title">麻醉方法：</th>
+      					<th class="patient_val"><span th:text="${doc.anestheticName}"></span></th>
+    				</tr>
+    				<tr>
+      					<th class="title">备注：</th>
+      					<th class="patient_val"><span th:text="${doc.memo}"></span></th>
+    				</tr>
+    				<tr th:if="${doc.documentState > '2'}">
+      					<th class="title">医生备注：</th>
+      					<th class="patient_val"><span th:text="${doc.qaMemo}"></span></th>
+    				</tr>
+    				<tr th:if="${doc.documentState == '3' && doc.oldDocumentState == '4'}">
+      					<th class="title" style="color: red;">修改备注：</th>
+      					<th class="patient_val"><span th:text="${doc.adminMemo}"></span></th>
+    				</tr>
+    				<tr th:if="${doc.documentState == '9'}">
+      					<th class="title" style="color: red;">取消原因：</th>
+      					<th class="patient_val"><span th:text="${doc.memo}"></span></th>
+    				</tr>
+    			</table>
+			</div>
+		</div>
+		
+		<div class="heading"  th:if="${doc.documentState > '2'}">
+			<div class="title"><strong>麻醉医生</strong></div>
+	  	</div>
+	  	<div class="list section rounded-lg" th:if="${doc.documentState > '2'}" style="margin-bottom: 0px;">
+			<div class="row" style="padding: 10px 20px 10px 20px;">
+				<table class="patient_table">
+					<tr>
+      					<th class="title">医生姓名：</th>
+      					<th class="patient_mainval"><span th:text="${doc.qaUserName}"></span></th>
+    				</tr>
+    			</table>
+			</div>
+    	</div>
+    	
+		<!-- 团队   -->
+		<div class="heading"  th:if="${doc.documentState > '2'}">
+			<div class="title"><strong>团队</strong></div>
+	  	</div>
+	  	<div class="list section rounded-lg" th:if="${doc.documentState > '2'}" style="margin-bottom: 0px;">
+			<div class="row" style="padding: 10px 20px 10px 20px;">
+ 				<span style="width:80px;padding:5;vertical-align: top;font-size: .7rem;font-weight: bold;">手术团队：</span>
+ 				<span id="divTeam" style="padding:5; vertical-align:top;">
+	 				<span th:if="${doc.qaTeamId!=null && doc.qaTeamId!=''}" style="font-size: .7rem;"><a style="cursor: pointer;color: blue;" onclick="openTeamView()">团队信息</a></span>
+					<span th:if="${doc.qaTeamId==null || doc.qaTeamId==''}" style="font-size: .7rem;">无团队</span>
+				</span>
+   			</div>
+    	</div>	
+    	
+		<!-- 手术详情   -->
+		<div class="heading"  th:if="${doc.documentState>='4'}">
+			<div class="title"><strong>手术详情</strong></div>
+	  	</div>
+		<div class="list section rounded-lg" th:if="${doc.documentState>='4'}" style="margin-bottom: 0px;">
+			<div class="row" style="padding: 10px 20px 0 20px;">
+				<table class="patient_table">
+					<tr>
+	   					<th class="title">身高：</th>
+	   					<th class="patient_val"><span th:text="${doc.height}"></span></th>
+	  				</tr>
+	    			<tr>
+	   					<th class="title">体重：</th>
+	   					<th class="patient_val"><span th:text="${doc.weight}"></span></th>
+	  				</tr>
+	  				<tr>
+	   					<th class="title">ASA：</th>
+	   					<th class="patient_val">
+							<span th:if="${doc.asa=='0'}">I 级</span>
+							<span th:if="${doc.asa=='1'}">II 级</span>
+							<span th:if="${doc.asa=='2'}">III 级</span>
+							<span th:if="${doc.asa=='3'}">IV 级</span>
+							<span th:if="${doc.asa=='4'}">V 级</span>
+							<span th:if="${doc.asa=='5'}">E 级</span>
+						</th>
+	  				</tr>
+	  				<tr>
+	   					<th class="title">系统病史：</th>
+	   					<th class="patient_val"><span th:text="${doc.xtbs}"></span></th>
+	  				</tr>
+	  				<tr>
+	   					<th class="title">手术史：</th>
+	   					<th class="patient_val">
+							<span th:if="${doc.shs=='1'}" th:text="${doc.shcs}"></span>
+							<span th:if="${doc.shs=='0'}">无</span>
+						</th>
+	  				</tr>
+	  				<tr>
+	   					<th class="title">麻醉开始：</th>
+	   					<th class="patient_mainval"><span th:text="${doc.sskssj}"></span></th>
+	  				</tr>
+	  				<tr>
+	   					<th class="title">麻醉结束：</th>
+	   					<th class="patient_mainval"><span th:text="${doc.ssjssj}"></span></th>
+	  				</tr>
+	  				<tr>
+	   					<th class="title">时长：</th>
+	   					<th class="patient_mainval"><span th:text="${doc.ssscVal}"></span></th>
+	  				</tr>
+	  				<tr>
+	   					<th class="title">局麻技术：</th>
+	   					<th class="patient_val">
+							<span th:if="${doc.jmjs=='0'}">好</span>
+							<span th:if="${doc.jmjs=='1'}">一般</span>
+							<span th:if="${doc.jmjs=='2'}">差</span>
+							<span th:if="${doc.jmjs=='3'}">拒绝实施局麻</span>
+						</th>
+	  				</tr>
+    			</table>
+			</div>
+		</div>
+		<!-- 意外事件   -->
+		<div class="heading"  th:if="${doc.documentState>='4'}">
+			<div class="title"><strong>意外事件</strong></div>
+	  	</div>
+		<div class="list section rounded-lg" th:if="${doc.documentState>='4'}" style="margin-bottom: 0px;">
+			<div class="row" style="padding: 10px 20px 0 20px;">
+				<table class="patient_table">
+					<tr>
+	   					<th class="title">呼吸系统：</th>
+	   					<th class="patient_val"><span th:text="${doc.ywsjHxxtVal}"></span></th>
+	  				</tr>
+	    			<tr>
+	   					<th class="title" >呼吸其它：</th>
+	   					<th class="patient_val"><span th:text="${doc.ywsjHxxtQt}"></span></th>
+	  				</tr>
+	  				<tr>
+	   					<th class="title">循环系统：</th>
+	   					<th class="patient_val"><span th:text="${doc.ywsjXhxtVal}"></span></th>
+	  				</tr>
+	  				<tr>
+	   					<th  class="title">循环其它：</th>
+	   					<th class="patient_val"><span th:text="${doc.ywsjXhxtQt}"></span></th>
+	  				</tr>
+	  				<tr>
+	   					<th class="title">过敏原：</th>
+	   					<th class="patient_val"><span th:text="${doc.ywsjGmAocre}"></span></th>
+	  				</tr>
+	  				<tr>
+	   					<th class="title">其它：</th>
+	   					<th class="patient_val"><span th:text="${doc.ywsjQt}"></span></th>
+	  				</tr>
+    			</table>
+			</div>
+		</div>
+		<!-- 术后反应   -->
+		<div class="heading"  th:if="${doc.documentState>='4'}">
+			<div class="title"><strong>术后反应</strong></div>
+	  	</div>
+		<div class="list section rounded-lg" th:if="${doc.documentState>='4'}" style="margin-bottom: 0px;">
+			<div class="row" style="padding: 10px 20px 0 20px;">
+				<table class="patient_table">
+					<tr>
+	   					<th class="title">不良反应：</th>
+	   					<th class="patient_val">
+							<span th:if="${doc.shblZw}=='1'">谵妄&nbsp;&nbsp;</span>
+							<span th:if="${doc.shblHbtt}=='1'">喉部疼痛&nbsp;&nbsp;</span>
+							<span th:if="${doc.shblXy}=='1'">眩晕&nbsp;&nbsp;</span>
+							<span th:if="${doc.shblOt}=='1'">呕吐</span>
+						</th>
+	  				</tr>
+	    			<tr>
+	   					<th class="title" >疼痛治疗：</th>
+	   					<th class="patient_val">
+							<span th:if="${doc.shttzl}=='0'"></span>
+							<span th:if="${doc.shttzl}=='1'">口服药</span>
+							<span th:if="${doc.shttzl}=='2'">静脉推注</span>
+							<span th:if="${doc.shttzl}=='3'">静脉镇痛泵</span>
+							<span th:if="${doc.shttzl}=='4'">椎管内镇痛泵</span>
+							<span th:if="${doc.shttzl}=='5'">无镇痛</span>
+						</th>
+	  				</tr>
+    			</table>
+			</div>
+		</div>
+		
+		<div class="heading"  th:if="${doc.documentState>='4'}">
+			<div class="title"><strong>图片</strong></div>
+	  	</div>
+		<div class="list section rounded-lg" th:if="${doc.documentState>='4'}" style="margin-bottom: 0px;">
+			<table class="patient_table">
+  				<tr>
+  					<th class="patient_val" >
+	  					<div class="layui-upload-list" id="main_photo_list" style="height: 200px;width:-webkit-fill-available;">
+	  					</div>
+  					</th>
+  				</tr>
+  			</table>
+		</div>	
+	  				
+	</div>
+	
+
+	<!-- 团队分配 -->
+	<div id="pnlTeamFp" class="panel" style="display: none;">
+		<div class="panel-body" style="margin-top: -10px;">
+			<input id="TeamCount" type="hidden" value="0"></input>
+			<div class="heading" >
+				<div class="title" style="text-align: center;"><strong>副麻</strong></div>
+	  		</div>
+	    	<div id="fm_main" class="row" style="width:100%;">
+				
+	    	</div>
+    	
+	    	<div id="fm_add" class="row" style="margin-top: 8px;text-align: center;padding: 0 10px 0 10px;">
+				<button class="btn inverse outline addBox" onclick="btnFmUserAdd()">
+					<i class="icon icon-plus" style="font-size: 50px;color: #aaa;"></i>
+				</button>
+	    	</div>
+	    	<div class="heading" >
+				<div class="title" style="text-align: center;"><strong>护士</strong></div>
+	  		</div>
+	  		<div id="hs_main" class="row" style="width:100%;">
+				
+	    	</div>
+	    	<div id="hs_add" class="row" style="margin-top: 8px;text-align: center;padding: 0 10px 0 10px;">
+	    		<button class="btn inverse outline addBox" onclick="btnHsUserAdd()">
+					<i class="icon icon-plus" style="font-size: 50px;color: #aaa;"></i>
+				</button>
+	    	</div>
+		</div>
+	</div>
+	<div id="pnlTeamUserList" class="panel" style="display: none;">
+		<div class="panel-body">
+			<div class="control flex">
+	      		<label for="fp_searchVal" style="width:100px;padding:5 5 5 10;vertical-align: top;font-weight: 700;text-align: right;">姓名：</label>
+	      		<input class="text" name="team_searchVal" id="team_searchVal" value=""/>
+	      		<button id="btnSearch" type="button" class="btn btn-small primary hover-solid" style="padding:0;height: 26px;margin-left: 5px;"><i class="icon icon-search"></i></button>
+	   		</div>
+	   		
+	   		<div class="row" style="padding: 0 10px 0 10px;">
+				<table id="team_table" class="table compact striped" style="font-size: .7rem;text-align: center;">
+					<thead>
+				    	<tr>
+				      		<th style="text-align: center;">姓名</th>
+				      		<th style="text-align: center;">年龄</th>
+				      		<th style="text-align: center;">性别</th>
+				      		<th style="text-align: center;">操作</th>
+			    		</tr>
+					</thead>
+					<tbody></tbody>
+	  			</table>
+	  		</div>
+   		</div>
+	</div>
+<!-- <script th:src="@{/js/datePlugin/jquery-1.10.0.min.js}"></script> -->
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/jweixin-1.6.0.js}"></script>
+<script th:src="@{/js/wxImage.js}"></script>
+<script th:src="@{/js/layer.js}"></script>
+<script th:src="@{/js/mzui.min.js}"></script>
+
+<script th:src="@{/js/jquery.serializejson.min.js}"></script>
+<script th:src="@{/js/datePlugin/mobiscroll_002.js}"></script>
+<script th:src="@{/js/datePlugin/mobiscroll_004.js}"></script>
+<script th:src="@{/js/datePlugin/mobiscroll.js}"></script>
+<script th:src="@{/js/datePlugin/mobiscroll_003.js}"></script>
+<script th:src="@{/js/datePlugin/mobiscroll_005.js}"></script>
+<script th:src="@{/js/viewer.min.js}"></script>
+
+<!-- <script th:src="@{js/bootstrap-datetimepicker.min.js}"></script>
+<script th:src="@{js/bootstrap-datetimepicker.zh-CN.js}"></script> -->
+<script  th:inline="javascript">
+	//console.log(location.href.split('#')[0])
+	var doc = [[${doc}]];
+	
+	var docId = $("#docId").val();
+	
+	$(document).ready(function(){ 
+		//评价
+		var de = $("#doctorEvaluate").val();
+		if(de > 0 && de <= 1)
+			$("#dr-star-1").addClass("active-star");
+		else if(de > 1 && de <= 2)
+			$("#dr-star-2").addClass("active-star");
+		else if(de > 2 && de <= 3)
+			$("#dr-star-3").addClass("active-star");
+		else if(de > 3 && de <= 4)
+			$("#dr-star-4").addClass("active-star");
+		else if(de > 4 && de <= 5)
+			$("#dr-star-5").addClass("active-star");
+		
+		var he = $("#hospitalEvaluate").val();
+		if(he > 0 && he <= 1)
+			$("#jg-star-1").addClass("active-star");
+		else if(he > 1 && he <= 2)
+			$("#jg-star-2").addClass("active-star");
+		else if(he > 2 && he <= 3)
+			$("#jg-star-3").addClass("active-star");
+		else if(he > 3 && he <= 4)
+			$("#jg-star-4").addClass("active-star");
+		else if(he > 4 && he <= 5)
+			$("#jg-star-5").addClass("active-star");
+	}); 
+	
+	if(doc.photo != null && doc.photo != ''){
+     	var photols = doc.photo.split(",");
+     	for(var i = 0; i < photols.length; i++){
+     		if(photols[i] != ''){
+         		var html = '<div id="photo_' + photoIdx + '" name="'+ photols[i] +'" class="file-iteme" style="width: 149px; height: 180px; float: left;"">';
+         		if(doc.status == '0')
+         			html += '<div style="float: left;position: absolute;" id="delPhotoBtn' + photoIdx + '" onclick="deletePhoto(' + photoIdx + ')"><i class="icon-2x icon-times"></i></div>';
+    			html += '<img style="width: 150px;height: 180px;" src="/getPhotoByFileName?id=' + doc.documentId + '&FileName='+ photols[i] +'" onclick="previewImg(this)">';
+    			html += '</div>';
+         			
+    			$('#main_photo_list').append(html);
+     		}
+     	}
+	}
+	
+	//------------------------------------------------    团队开始        --------------------------------------------------------------//
+	var teambody;
+	
+	function openTeamView(){
+		layer.open({
+			type: 1,
+			title: ['<span style=\"float: left;\">团队信息</span><button id=\"btnLayClose\" type=\"button\" class=\"btn btn-sm\" style=\"float: right;padding: 7 0;\"><i class=\"icon icon-times\"></i></button>', 'background-image:linear-gradient(-12deg,#8470FF 0,#6495ED 100%) !important; color:white;'],
+		  	content: $("#pnlTeamFp").html(),
+		  	anim: 'scale',
+		  	style: 'position:fixed; left:0; top:0;-webkit-overflow-scrolling: touch;overflow-y: scroll; width:100%; height:100%; border: none; -webkit-animation-duration: .5s; animation-duration: .5s;',
+	  		success: function(elem){
+				//全局参数
+				var body = $("#" + elem.id);
+				teambody = body;
+				
+				$.ajax({
+					type: "POST",
+			 		url: "/showTeam",
+			 		data: "id=" + doc.documentId,
+					dataType: "json",
+					success: function(data){
+						var userls = data.list;
+						
+						if(userls != null){
+			          		for(var i = 0; i < userls.length; i++){
+			          			var user = userls[i];
+			          			console.info(i + " " +user.roleId);
+			          			if(user.roleId == '5'){
+			                		//医生
+			               			var html = appendUserInfo(body, user, '5');
+			               			body.find("#fm_main").append(html);
+			               			body.find("#fm_main").css("display", "");
+			               			body.find("#fm_add").css("display", "none");
+			                	}else{
+			                		//护士
+			               			var html = appendUserInfo(body, user, '6');
+			               			body.find("#hs_main").append(html);
+			               			body.find("#hs_main").css("display", "");
+			               			
+			               			if(doc.documentState != 3){
+			               				body.find("#hs_add").css("display", "none");
+			               			}
+			                	}
+			          		}
+			          	}
+			       	},
+			     	error: function () {
+				   		alert("网络异常,请重试!");
+				 	}
+				});
+				
+				body.on('click', '#btnLayClose', function() {
+					layer.closeAll();
+				});
+				
+			}
+		});
+	}
+	
+	function appendUserInfo(body, user, type){
+		var icount = body.find("#TeamCount").val();
+		icount++
+		body.find("#TeamCount").val(icount);
+    	var html = "<div class='list section rounded-lg'  style='margin: 10 auto;'>" +
+    			   "<div class='row' id='UserInfo_" + user.userId + "' style='padding: 10px 10px 0 10px;'>" +
+    			   "<table style='width:300px'>" + 
+    			   "	<tr>" +
+    			   "		<td>" +	
+    			   "			<img style='width: 150px;height: 180px;' />" +	
+    			   "		</td>" +	
+    			   "		<td style='vertical-align: top;padding-left:10px;'>" +
+    			   "			<table style='vertical-align: middle;border-collapse: separate;border-spacing: 10;'>" +
+    			   "				<tr>" +
+    			   "					<td>姓名：</td>" +
+    			   "					<td>" + user.userName + "</td>" +
+    			   "				</tr>" +
+    			   "				<tr>" +
+    			   "					<td>年龄：</td>" +
+    			   "					<td>" + user.age + "</td>" +
+    			   "				</tr>" +
+    			   "				<tr>" +
+    			   "					<td>性别：</td>" +
+    			   "					<td>" + (user.sex == 1 ? '男':'女') + "</td>" +
+    			   "				</tr>" +
+    			   "			</table>" +
+    			   "		</td>" +
+    			   "	</tr>";
+    			   if(doc.documentState == '3'){
+    				   html += "<tr>" + 
+    				   		   "	<td colspan='2' >" +
+    				   		   "		<button id='btnUserDel_" + user.userId + "' class='btn inverse outline addBox' style='width:100%;height:20px;padding:0 0 5px 0;' onclick='btnUserDel(\"" + user.userName + "\", " + user.userId + ", " + type + ")' >" +
+   		 				   	   "			<i class='icon icon-minus' style='font-size: 20px;color: #aaa;' ></i>" +
+   		 				   	   "		</button>" +
+							   "	</td>" +
+    				   		   "</tr>";
+    			   }
+	    html += "</table>" + 
+	    		"</div>" +
+	   		    "</div>";
+		return html;
+    }
+	
+	function previewImg(obj) {
+       	const viewer = new Viewer(obj, {
+       		viewed() {
+       		    viewer.zoomTo(1);
+       		},
+       	});  
+ 	}
+</script>
+</body>
+</html>

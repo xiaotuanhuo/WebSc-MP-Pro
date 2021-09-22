@@ -29,6 +29,6 @@ public class ScConfigurer implements WebMvcConfigurer {
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(loginInterceptor).addPathPatterns("/**").excludePathPatterns("/login", "/toLogin",
 				"/logout", "/tip", "/WW_verify_TrbNaicGXoiHwdkl.txt", "/css/**", "/js/**", "/img/**", "/fonts/**",
-				"/data/**", "/xcx/**", "/updateUserIndex", "/toDocDetail");
+				"/data/**", "/xcx/**", "/updateUserIndex", "/toDocDetailReadOnly/**");
 	}
 }

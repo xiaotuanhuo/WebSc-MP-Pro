@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,8 +35,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
+import com.sc.mp.model.StateCount;
 import com.sc.mp.model.WebScAnesthetic;
 import com.sc.mp.model.WebScDoc;
+import com.sc.mp.model.WebScEvaluate;
 import com.sc.mp.model.WebScUser;
 import com.sc.mp.model.WebScUser_Distribution;
 import com.sc.mp.service.DocService;
@@ -100,7 +103,8 @@ public class DocController {
 	@ResponseBody
     public JSONObject DocListInit(HttpServletRequest request, 
     					  		  HttpServletResponse response,
-    					  		  @RequestParam(value = "ds") String sState){
+    					  		  @RequestParam(value = "ds") String sState,
+    					  		  @RequestParam(value = "dst") String sStateTemp){
 		JSONObject returnMap = new JSONObject();
 		
 		//获取用户信息
@@ -119,17 +123,24 @@ public class DocController {
 				String roleId = user.getRoleId();
 				//查询条件
 				WebScDoc docQuery = new WebScDoc();	
+				WebScDoc docCountQuery = new WebScDoc();	
 				docQuery.setRoleId(roleId);
 				//更具不同角色,查询内容不同
 				if(roleId.equals("1")){
 					//系统管理员, 查询所有单据
-				}else if(roleId.equals("2")){
+				}else if(roleId.equals("2") || roleId.equals("9")){
 					//医疗机构人员，查询本机构发布订单
 					docQuery.setApplyUserId(String.valueOf(user.getUserId()));
 					//省，市，区   查询范围
 					docQuery.setProvince(user.getProvince());
 					docQuery.setCity(user.getCity());
 					docQuery.setArea(user.getArea());
+				}else if(roleId.equals("8")){
+					//区域订单录入员,查询本人发布订单
+					docQuery.setApplyUserId(String.valueOf(user.getUserId()));
+					//省，市，区   查询范围
+					docQuery.setProvince(user.getProvince());
+					docQuery.setCity(user.getCity());
 				}else if(roleId.equals("3")){
 					//卫监局人员
 					//省，市，区   查询范围
@@ -149,10 +160,15 @@ public class DocController {
 					}else if(sState.equals("1")){
 						//已完成
 						docQuery.setDocumentState("'5'");
+						docQuery.setIsHistroy("1");
 					}else if(sState.equals("2")){
 						//待取消
 						docQuery.setDocumentState("'6'");
 					}
+					
+					docCountQuery.setProvince(user.getProvince());
+					docCountQuery.setCity(user.getCity());
+					docCountQuery.setArea(user.getArea());
 				}else if(roleId.equals("5")){
 					//医生，查询主治医生
 					docQuery.setQaUserId(String.valueOf(user.getUserId()));
@@ -166,14 +182,33 @@ public class DocController {
 					}else if(sState.equals("1")){
 						//已完成
 						docQuery.setDocumentState("'5'");
+						docQuery.setIsHistroy("1");
 					}else if(sState.equals("3")){
 						//未评分订单
 						docQuery.setDocumentState("'5'");
 						docQuery.setDoctorEvaluate(-1);
 					}
+					
+					docCountQuery.setQaUserId(String.valueOf(user.getUserId()));
+					docCountQuery.setProvince(user.getProvince());
+					docCountQuery.setCity(user.getCity());
+					
+				}else if(roleId.equals("6")){
+					//护士
+					//省，市，区   查询范围
+					docQuery.setProvince(user.getProvince());
+					docQuery.setCity(user.getCity());
+					docQuery.setDocumentState("'5'");
+					docQuery.setIsHistroy("1");
+				}
+				
+				log.info("State:" + sState + "	StateTemp:" + sStateTemp);
+				if(sStateTemp != null && !sStateTemp.equals("") && !sStateTemp.equals("10")){
+					docQuery.setDocumentState(sStateTemp);
 				}
 				
 				List<WebScDoc> docList = docService.selectWebScDocList(docQuery);
+				List<WebScDoc> tmpdocList = new ArrayList<WebScDoc>();
 				for(WebScDoc d : docList){
 		    		if(d.getStatus() != null && !d.getStatus().equals("")){
 		    			if(d.getTmpPatientName() != null && !d.getTmpPatientName().equals(""))
@@ -244,11 +279,23 @@ public class DocController {
 		    			if(!photo.equals(""))	photo = photo.substring(0, photo.length() - 1);
 		    			d.setPhoto(photo);
 		    		}
+		    		tmpdocList.add(d);
 		    	}
+				
+				
 				
 				returnMap.put("code", 1);
 				returnMap.put("msg", "");
-				returnMap.put("list", docList);
+				returnMap.put("list", tmpdocList);
+				
+				
+				StateCount statecount = docService.getStateCount(docCountQuery);
+				if(roleId.equals("4")){
+					returnMap.put("scount_wait", statecount.getiCount_0() + statecount.getiCount_1() + statecount.getiCount_2() + statecount.getiCount_4() + statecount.getiCount_9());
+				}else if(roleId.equals("5")){
+					returnMap.put("scount_wait", statecount.getiCount_2() + statecount.getiCount_3());
+				}
+				returnMap.put("scount_de", statecount.getiCount_de());
 				returnMap.put("role", user.getRoleId());
 			}else{
 				returnMap.put("code", 0);
@@ -287,7 +334,138 @@ public class DocController {
 			
 			WebScDoc searchDoc = new WebScDoc();
 			searchDoc.setDocumentId(sDocId);
+			searchDoc.setIsHistroy("1");
 			WebScDoc doc = docService.selectWebScDoc(searchDoc);
+			
+			if(doc.getSskssj() != null && doc.getSsjssj() != null){
+				long min = getDistanceMin(doc.getSskssj(), doc.getSsjssj());
+				doc.setSssc((int)min);
+			}else{
+				doc.setSssc(0);
+			}
+			
+			if(doc.getStatus() != null && !doc.getStatus().equals("")){
+				if(doc.getTmpPatientName() != null && !doc.getTmpPatientName().equals(""))
+    				doc.setPatientName(doc.getTmpPatientName());
+    			if(doc.getTmpPatientAge() != null && !doc.getTmpPatientAge().equals(""))
+    				doc.setPatientAge(doc.getTmpPatientAge());
+    			if(doc.getTmpPatientSex() != null && !doc.getTmpPatientSex().equals(""))
+    				doc.setPatientSex(doc.getTmpPatientSex());
+    			if(doc.getTmpOperativeId() != null && !doc.getTmpOperativeId().equals(""))
+    				doc.setOperativeId(doc.getTmpOperativeId());
+    			if(doc.getTmpOperativeName() != null && !doc.getTmpOperativeName().equals(""))
+    				doc.setOperativeName(doc.getTmpOperativeName());
+    			if(doc.getTmpAnestheticId() != null && !doc.getTmpAnestheticId().equals(""))
+    				doc.setAnestheticId(doc.getTmpAnestheticId());
+    			if(doc.getTmpAnestheticName() != null && !doc.getTmpAnestheticName().equals(""))
+    				doc.setAnestheticName(doc.getTmpAnestheticName());
+
+    			//呼吸系统
+    			if(doc.getYwsjHxxt() != null){
+    				String[] hxxts = doc.getYwsjHxxt().split(",");
+    				doc.setYwsjHxxtVal("");
+    				for(int i = 0; i < hxxts.length; i++){
+    					if(hxxts[i].equals("0")){
+    						doc.setYwsjHxxtVal(doc.getYwsjHxxtVal() + "频繁舌后坠（≥3次） ;");
+    					}else if(hxxts[i].equals("1")){
+    						doc.setYwsjHxxtVal(doc.getYwsjHxxtVal() + "喉痉挛;");
+    					}else if(hxxts[i].equals("2")){
+    						doc.setYwsjHxxtVal(doc.getYwsjHxxtVal() + "返流 ;");
+    					}else if(hxxts[i].equals("3")){
+    						doc.setYwsjHxxtVal(doc.getYwsjHxxtVal() + "误吸;");
+    					}else if(hxxts[i].equals("4")){
+    						doc.setYwsjHxxtVal(doc.getYwsjHxxtVal() + "支气管痉挛;");
+    					}else if(hxxts[i].equals("5")){
+    						doc.setYwsjHxxtVal(doc.getYwsjHxxtVal() + "计划外插管 ;");
+    					}
+    				}
+    			}
+    			
+    			//循环系统
+    			if(doc.getYwsjXhxt() != null){
+    				String[] xhxts = doc.getYwsjXhxt().split(",");
+    				doc.setYwsjXhxtVal("");
+    				for(int i = 0; i < xhxts.length; i++){
+    					if(xhxts[i].equals("0")){
+    						doc.setYwsjXhxtVal(doc.getYwsjXhxtVal() + "需纠正的低血压;");
+    					}else if(xhxts[i].equals("1")){
+    						doc.setYwsjXhxtVal(doc.getYwsjXhxtVal() + "需纠正的高血压;");
+    					}else if(xhxts[i].equals("2")){
+    						doc.setYwsjXhxtVal(doc.getYwsjXhxtVal() + "肺动脉栓塞;");
+    					}else if(xhxts[i].equals("3")){
+    						doc.setYwsjXhxtVal(doc.getYwsjXhxtVal() + "心梗;");
+    					}else if(xhxts[i].equals("4")){
+    						doc.setYwsjXhxtVal(doc.getYwsjXhxtVal() + "脑梗;");
+    					}
+    				}
+    			}
+    			
+    			String photo = "";
+    			if(doc.getPhoto_1() != null && !doc.getPhoto_1().trim().equals("")){
+    				photo = photo + doc.getPhoto_1() + ",";
+    			}
+    			if(doc.getPhoto_2() != null && !doc.getPhoto_2().trim().equals("")){
+    				photo = photo + doc.getPhoto_2() + ",";
+    			}
+    			if(doc.getPhoto_3() != null && !doc.getPhoto_3().trim().equals("")){
+    				photo = photo + doc.getPhoto_3() + ",";
+    			}
+    			if(!photo.equals(""))	photo = photo.substring(0, photo.length() - 1);
+    			doc.setPhoto(photo);
+    		}
+			
+			model.addAttribute("doc", doc);
+			model.addAttribute("user", user);
+			
+			//微信网页jsdk，初始化参数生成
+			String nonceStr = wxUtil.getNonceStr();
+			String timestamp = wxUtil.getTimestamp();
+			String appId = WxUtil.sCorpid;
+			String signature = wxUtil.getSignature("http://" + projectDomainName + "/toDocDetail?id=" + doc.getDocumentId() + "&state=" + sState, nonceStr, timestamp, request.getSession());
+			
+			System.out.println("签名：" + signature);
+			
+			model.addAttribute("ns", nonceStr);
+			model.addAttribute("ts",timestamp);
+			model.addAttribute("aid", appId);
+			model.addAttribute("sg",signature);
+			
+			model.addAttribute("state",sState);
+			
+			//数据缓存
+			//获取麻醉方法
+			List<WebScAnesthetic> anestheticls = data.getWebScAnestheticList();
+			model.addAttribute("anestheticls", anestheticls);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "doc_detail";
+	}
+	
+	/**
+	* 	@Title: toDocDetailReadOnly
+	*  	@Description: 订单列表跳转
+	*/ 
+	@RequestMapping("/toDocDetailReadOnly")	
+    public String toDocDetailReadOnly(HttpServletRequest request, 
+    					 	  HttpServletResponse response, 
+    					  	  Model model,
+    					  	  @RequestParam(value = "id") String sDocId,
+    					  	  @RequestParam(value = "state") String sState) {
+		try{
+			WebScDoc searchDoc = new WebScDoc();
+			searchDoc.setDocumentId(sDocId);
+			searchDoc.setIsHistroy("1");
+			WebScDoc doc = docService.selectWebScDoc(searchDoc);
+			
+			if(doc.getSskssj() != null && doc.getSsjssj() != null){
+				long min = getDistanceMin(doc.getSskssj(), doc.getSsjssj());
+				doc.setSssc((int)min);
+			}else{
+				doc.setSssc(0);
+			}
 			
 			if(doc.getStatus() != null && !doc.getStatus().equals("")){
 				if(doc.getTmpPatientName() != null && !doc.getTmpPatientName().equals(""))
@@ -360,22 +538,6 @@ public class DocController {
     		}
 			
 			model.addAttribute("doc", doc);
-			model.addAttribute("user", user);
-			
-			//微信网页jsdk，初始化参数生成
-			String nonceStr = wxUtil.getNonceStr();
-			String timestamp = wxUtil.getTimestamp();
-			String appId = WxUtil.sCorpid;
-			String signature = wxUtil.getSignature("http://" + projectDomainName + "/toDocDetail?id=" + doc.getDocumentId() + "&state=" + sState, nonceStr, timestamp, request.getSession());
-			
-			System.out.println("签名：" + signature);
-			
-			model.addAttribute("ns", nonceStr);
-			model.addAttribute("ts",timestamp);
-			model.addAttribute("aid", appId);
-			model.addAttribute("sg",signature);
-			
-			model.addAttribute("state",sState);
 			
 			//数据缓存
 			//获取麻醉方法
@@ -386,7 +548,7 @@ public class DocController {
 			e.printStackTrace();
 		}
 		
-		return "doc_detail";
+		return "doc_detail_readonly";
 	}
 
 	/**
@@ -554,13 +716,13 @@ public class DocController {
 				}
 				
 				log.info("id:" + id + " sskssj:" + tmpUpdateMap.get("sskssj") + " ssjssj:" + tmpUpdateMap.get("ssjssj") + " sssc:" + tmpUpdateMap.get("sssc"));
-				if(tmpUpdateMap.get("sssc") == null || tmpUpdateMap.get("sssc").toString().equals("NaN")){
+//				if(tmpUpdateMap.get("sssc") == null || tmpUpdateMap.get("sssc").toString().equals("NaN")){
+				if(tmpUpdateMap.get("sskssj") != null && tmpUpdateMap.get("ssjssj") != null){
 					String sskssj = tmpUpdateMap.get("sskssj").toString();
 					String ssjssj = tmpUpdateMap.get("ssjssj").toString();
 					long min = getDistanceMin(sskssj, ssjssj);
 					tmpUpdateMap.put("sssc", min);
-				}
-				if(tmpUpdateMap.get("sssc").toString().equals("")){
+				}else{
 					tmpUpdateMap.put("sssc", 0);
 				}
 				
@@ -583,6 +745,12 @@ public class DocController {
 							}
 						}
 					}
+				}
+				
+				if(jo.get("shcs") == null || jo.get("shcs").toString().trim().equals("")){
+					tmpUpdateMap.put("shcs", 0);
+				}else{
+					tmpUpdateMap.put("shcs", Integer.parseInt(jo.get("shcs").toString()));
 				}
 				
 				if(ods.equals("3") && ds.equals("4")){
@@ -865,7 +1033,7 @@ public class DocController {
 						List<WebScUser> ls = qaTeamService.getQaTeamInfo(doc.getQaTeamId());
 						for(WebScUser u : ls){
 							for(WebScUser tu : userls){
-								if(tu.getUserId() == u.getUserId()){
+								if(tu.getUserId().equals(u.getUserId())){
 									userls.remove(tu);
 									break;
 								}
@@ -1062,6 +1230,41 @@ public class DocController {
 		
 		return returnMap;
 	}
+	
+    @PostMapping("/save_evaluation")
+    @ResponseBody
+    public JSONObject save_evaluation(@RequestParam(value = "id") String documentId,
+    								  @RequestParam(value = "oid") String orgId,
+    								  @RequestParam(value = "qid") String qaUserId,
+    						  		  @RequestParam(value = "evaluate") Float evaluate,
+    						  		  @RequestParam(value = "memo") String memo,
+    						  		  @RequestParam(value = "lid") String labelId,
+    						  		  @RequestParam(value = "type") String type) {
+    	JSONObject returnMap = new JSONObject();
+		try {
+			WebScEvaluate wse = new WebScEvaluate();
+			wse.setDocumentId(documentId);
+			wse.setOrgId(orgId);
+			wse.setUserId(qaUserId);
+			wse.setScore(evaluate);
+			wse.setRemark(memo);
+			if(type.equals("0")){
+				wse.setKind("0");
+				wse.setLabelId(labelId);
+			}else{
+				wse.setKind("1");
+			}
+			
+			docService.insertWscEvaluate(wse);
+			
+			returnMap.put("code", 1);
+		}catch (Exception e) {
+			returnMap.put("code", 0);
+			e.printStackTrace();
+		}
+		
+		return returnMap;
+    }
 
 	public static long getDistanceMin(String str1, String str2) throws Exception{
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

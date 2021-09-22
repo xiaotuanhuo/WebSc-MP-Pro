@@ -75,7 +75,7 @@ public class SendRecordService {
 			}
 //		}else if(user.getRoleId().equals("5")){
 			//医生
-			if(sendtype == 4001){
+			else if(sendtype == 4001){
 				//接收订单
 				record.setMemo("医生-" + user.getUserName() + " 已接单！订单机构：" + doc.getOrgName() + ",患者：" + doc.getPatientName() + ",手术时间：" + doc.getOperateStartTime());
 				//获取订单对应区域管理员
@@ -122,7 +122,7 @@ public class SendRecordService {
 			}
 //		}else if(user.getRoleId().equals("8") || user.getRoleId().equals("9")){
 			//订单录入人员
-			if(sendtype == 1001){
+			else if(sendtype == 1001){
 				//发布订单
 				record.setMemo("录入员" + user.getUserName() + "发布新订单");
 				//通知区域所有管理员

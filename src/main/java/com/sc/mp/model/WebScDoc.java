@@ -111,6 +111,8 @@ public class WebScDoc implements Serializable {
 	private String photo;
 	
 	private String qxRadio;
+	private String isHistroy;
+	private String ssscVal;
 
 	public String getDocumentId() {
 		return documentId;
@@ -630,6 +632,14 @@ public class WebScDoc implements Serializable {
 
 	public void setSssc(Integer sssc) {
 		this.sssc = sssc;
+		if(sssc != null){
+			int hour = sssc / 60;
+			int min = sssc % 60;
+			if(min < 10)
+				this.ssscVal = hour + ":0" + min;
+			else
+				this.ssscVal = hour + ":" + min;
+		}
 	}
 
 	public String getJmjs() {
@@ -879,5 +889,21 @@ public class WebScDoc implements Serializable {
 
 	public void setQxRadio(String qxRadio) {
 		this.qxRadio = qxRadio;
+	}
+
+	public String getIsHistroy() {
+		return isHistroy;
+	}
+
+	public void setIsHistroy(String isHistroy) {
+		this.isHistroy = isHistroy;
+	}
+
+	public String getSsscVal() {
+		return ssscVal;
+	}
+
+	public void setSsscVal(String ssscVal) {
+		this.ssscVal = ssscVal;
 	}
 }

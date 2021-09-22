@@ -105,6 +105,7 @@
     	<result column="area" jdbcType="VARCHAR" property="area"/>
     	<result column="patient_type" jdbcType="VARCHAR" property="patient_type"/>
     	<result column="operation_type" jdbcType="VARCHAR" property="operation_type"/>
+    	<result column="avg_evaluate" jdbcType="NUMERIC" property="fAvgEvaluate"/>
     </resultMap>
     
     <resultMap id="BaseResultMap_Org" type="com.sc.mp.model.WebScOrganization">
@@ -837,10 +838,10 @@
 			doc.operate_start_time,
 			doc.operate_end_time,
 			DATE_FORMAT(doc.create_date, '%Y-%m-%d %H:%k:%s') as create_date,
-			doc.hospital_evaluate,
-			doc.hospital_evaluate_memo,
-			doc.doctor_evaluate,
-			doc.doctor_evaluate_memo,
+			(select score from WSC_EVALUATE where kind = '0' and document_id = doc.document_id limit 1) as hospital_evaluate,
+			(select remark from WSC_EVALUATE where kind = '0' and document_id = doc.document_id limit 1) as hospital_evaluate_memo,
+			(select score from WSC_EVALUATE where kind = '1' and document_id = doc.document_id limit 1) as doctor_evaluate,
+			(select remark from WSC_EVALUATE where kind = '1' and document_id = doc.document_id limit 1) as doctor_evaluate_memo,
 			doc.old_document_state,
 			doc.delete_reason,
 			doc.transfer_user_id,
@@ -890,21 +891,19 @@
     	left join WSC_ORGANIZATION org on doc.org_id = org.org_id 
     	where 1=1 
     	]]>	
-      	<if test="roleId != null and roleId == '2' and applyUserId != null">
+      	<if test="roleId != null and (roleId == '2'.toString() or roleId == '9'.toString()) and applyUserId != null">
     		<![CDATA[
       			and (	
       					org.org_id in (
-	      					select org_id 
-	      					from WSC_USER t_u 
-	      					left join WSC_ORGANIZATION t_o on t_u.role_type_id = t_o.org_pid 
-	      					where t_u.user_id = #{applyUserId,jdbcType=VARCHAR} 
-	      				) or org.org_id in (
 	      					select role_type_id from WSC_USER where user_id = #{applyUserId,jdbcType=VARCHAR} 
 	      				)
       				)
       		]]>		
     	</if>
-    	<if test="roleId != null and roleId == '4' and qaUserId != null">
+    	<if test="roleId != null and roleId == '8'.toString() and applyUserId != null">
+      		and doc.apply_user_id = #{applyUserId,jdbcType=VARCHAR} 
+    	</if>
+    	<if test="roleId != null and roleId == '4'.toString() and qaUserId != null">
     		<![CDATA[
       			and (
       					doc.qa_user_id = #{qaUserId,jdbcType=VARCHAR} 
@@ -951,15 +950,25 @@
       	<if test="patientName != null and patientName != ''">
       		and doc.patient_name like concat(#{patientName,jdbcType=VARCHAR}, '%')
       	</if>
-      	<if test="doctorEvaluate != null and doctorEvaluate == -1">
-      		and doc.doctor_evaluate is not null
+      	<if test="isHistroy == null">
+			and doc.operate_start_time > DATE_FORMAT(DATE_SUB(NOW(),interval 2 month), '%Y-%m-%d %H:%k:%s') 
       	</if>
       	) tmpTab 
       	where 1=1 
       	<if test="qaUserName != null and qaUserName != ''">
       		and qa_user_name like concat(#{qaUserName,jdbcType=VARCHAR}, '%')
       	</if>
-      	order by operate_start_time desc 
+      	<if test="doctorEvaluate != null and doctorEvaluate == -1">
+      		and (doctor_evaluate is null or doctor_evaluate = -1)
+      	</if>
+     	<choose>
+            <when test="isHistroy == null">
+      			order by operate_start_time asc 
+      		</when>
+            <otherwise>
+            	order by operate_start_time desc 
+         	</otherwise>
+        </choose>
       	limit 100
     </select>
     
@@ -1010,7 +1019,8 @@
     		   wu.city,
     		   wu.area,
     		   wu.patient_type,
-    		   wu.operation_type
+    		   wu.operation_type,
+    		   wu.avg_evaluate 
     	from WSC_USER wu
     	where role_id = '5'
     	and province = #{province,jdbcType=VARCHAR} 
@@ -1058,7 +1068,7 @@
     	and role_id = #{roleId,jdbcType=VARCHAR}
     	]]>
     	<if test="userName != null and userName != ''">
-      		and user_name = #{userName,jdbcType=VARCHAR} 
+      		and user_name LIKE CONCAT(#{userName,jdbcType=VARCHAR}, '%') 
       	</if>
     </select>
     
@@ -1940,4 +1950,10 @@
 		  ) a LEFT JOIN WSC_USER b ON a.user_id = b.user_id LEFT JOIN WSC_ORGANIZATION wo on a.org_id = wo.org_id GROUP BY a.org_id order by count desc
     </select>
     <!-- 医生日 月 年 自定义日期 手术量详情统计 end -->
+    
+    <insert id="insertWscEvaluate" parameterType="com.sc.mp.model.WebScEvaluate">
+    	insert into WSC_EVALUATE(document_id, org_id, user_id, kind, score, remark, label_id) 
+    	values(#{documentId,jdbcType=VARCHAR}, #{orgId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{kind,jdbcType=VARCHAR}, #{score,jdbcType=NUMERIC}, #{remark,jdbcType=VARCHAR}, #{labelId,jdbcType=VARCHAR})
+    </insert>
+    
 </mapper>

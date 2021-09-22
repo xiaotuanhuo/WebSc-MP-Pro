@@ -9,12 +9,15 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sc.mp.mapper.DocMapper;
 import com.sc.mp.model.StateCount;
 import com.sc.mp.model.WebScDoc;
+import com.sc.mp.model.WebScEvaluate;
 import com.sc.mp.model.WebScOrganization;
 import com.sc.mp.model.WebScUser;
 import com.sc.mp.model.WebScUser_Distribution;
@@ -23,6 +26,7 @@ import com.sc.mp.util.DistrictUtil;
 
 @Service
 public class DocService {
+	private static final Logger log = LoggerFactory.getLogger(DocService.class);
 	@Resource
 	private DocMapper docMapper;
 	
@@ -85,6 +89,8 @@ public class DocService {
     			sc.setiCount_4(sc.getiCount_4() + 1);
     		}else if(td.getDocumentState().equals("9")){
     			sc.setiCount_9(sc.getiCount_9() + 1);
+    		}else if(td.getDocumentState().equals("5") && (td.getDoctorEvaluate() == 0 || td.getDoctorEvaluate() == -1)){
+    			sc.setiCount_de(sc.getiCount_de() + 1);
     		}
     	}
     	
@@ -124,6 +130,7 @@ public class DocService {
 	    	Map<String, String> searchMap = new HashMap<String, String>();
 	    	searchMap.put("qaName", qaName);
 	    	searchMap.put("province", user.getProvince());
+	    	log.info("当前用户            province:" + user.getProvince() + " city:" + user.getCity() + " area:" + user.getArea());
 	    	if(user.getCity() != null && !user.getCity().equals("")){
 	    		searchMap.put("city", user.getCity());
 	    	}
@@ -235,5 +242,9 @@ public class DocService {
     
     public List<WebScUser> getQaUserInfo(Map<String, String> searchMap){
     	return docMapper.getQaUserInfo(searchMap);
+    }
+    
+    public int insertWscEvaluate(WebScEvaluate wse) {
+    	return docMapper.insertWscEvaluate(wse);
     }
 }

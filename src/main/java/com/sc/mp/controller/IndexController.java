@@ -32,11 +32,14 @@ import com.sc.mp.bean.PageResultBean;
 import com.sc.mp.bean.ResultBean;
 import com.sc.mp.config.DequeManager;
 import com.sc.mp.config.SessionContext;
+import com.sc.mp.model.StateCount;
 import com.sc.mp.model.WebScCalendar;
+import com.sc.mp.model.WebScDoc;
 import com.sc.mp.model.WebScOrganization;
 import com.sc.mp.model.WebScRecord;
 import com.sc.mp.model.WebScUser;
 import com.sc.mp.service.StatService;
+import com.sc.mp.service.DocService;
 import com.sc.mp.service.UserService;
 import com.sc.mp.util.ScConstant;
 import com.sc.mp.util.WxUtil;
@@ -51,6 +54,9 @@ public class IndexController {
 	private StatService statService;
 	@Resource
 	private WxUtil wxUtil;
+	
+	@Resource
+	DocService docService;
 	
 	@Autowired
 	private SessionContext context;
@@ -270,6 +276,8 @@ public class IndexController {
 		HttpSession session = request.getSession();
 		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
 		String retPage = loginPage;
+		WebScDoc docCountQuery = new WebScDoc();	
+		
 		if (user.getRoleId().equals(superRoleId)) {
 			retPage = superPage;
 			// 统计年月日手术量
@@ -277,15 +285,33 @@ public class IndexController {
 			model.addAttribute("statsYMD", map);
 		} else if (user.getRoleId().equals(regionalRoleId)) {
 			retPage = regionalPage;
+			//订单统计用
+			docCountQuery.setProvince(user.getProvince());
+			docCountQuery.setCity(user.getCity());
+			docCountQuery.setArea(user.getArea());
 		} else if (user.getRoleId().equals(doctorRoleId)) {
 			Map<String, Integer> map = userService.statsForDc(user.getUserId().toString());
 			model.addAttribute("statsDc", map);
 			retPage = doctorPage;
+			//订单统计用
+			docCountQuery.setQaUserId(String.valueOf(user.getUserId()));
+			docCountQuery.setProvince(user.getProvince());
+			docCountQuery.setCity(user.getCity());
 		} else {
 			session.invalidate();
 			model.addAttribute("msg", ScConstant.NO_AUTH);
 		}
 		model.addAttribute("user", user);
+		
+		//订单统计用
+		StateCount statecount = docService.getStateCount(docCountQuery);
+		if(user.getRoleId().equals(regionalRoleId)){
+			model.addAttribute("scount_wait", statecount.getiCount_0() + statecount.getiCount_1() + statecount.getiCount_2() + statecount.getiCount_4() + statecount.getiCount_9());
+		}else if(user.getRoleId().equals(doctorRoleId)){
+			model.addAttribute("scount_wait", statecount.getiCount_2() + statecount.getiCount_3());
+		}
+		model.addAttribute("scount_de", statecount.getiCount_de());
+		
 		return retPage;
 	}
 	

@@ -5,15 +5,15 @@
 var uploadSuccesFlag = "FAIL";
 var thisimg;
 
-function previewImg(){
-	
-    wx.ready(function(){
-        wx.previewImage({
-            current: thisimg[0], // 当前显示图片的http链接
-            urls: thisimg // 需要预览的图片http链接列表
-        });
-    });
-}
+//function previewImg(){
+//	
+//    wx.ready(function(){
+//        wx.previewImage({
+//            current: thisimg[0], // 当前显示图片的http链接
+//            urls: thisimg // 需要预览的图片http链接列表
+//        });
+//    });
+//}
 
 function imgUpload(body){
 	var ua = navigator.userAgent.toLowerCase();  
@@ -78,7 +78,7 @@ function imgUpload(body){
 	                                
 	                                var html = '<div id="photo_' + photoIdx + '" name="'+ data.fileName +'" class="file-iteme" style="width: 149px; height: 180px; float: left;"">';
 	            	         		html += '<div style="float: left;position: absolute;" id="delPhotoBtn' + photoIdx + '" onclick="deletePhoto(' + photoIdx + ')"><i class="icon-2x icon-times"></i></div>';
-	            	        		html += '<img style="width: 150px;height: 180px;" src="/getPhotoByFileName?id=' + doc.documentId + '&FileName='+ data.fileName +'">';
+	            	        		html += '<img style="width: 150px;height: 180px;" src="/getPhotoByFileName?id=' + doc.documentId + '&FileName='+ data.fileName +'" onclick="previewImg(this)">';
 	            	        		html += '</div>';
 	
 	                                body.find('#photo_list').append(html);
@@ -152,7 +152,7 @@ function imgUpload(body){
         							
         							var html = '<div id="photo_' + photoIdx + '" name="'+ data.fileName +'" class="file-iteme" style="width: 149px; height: 180px; float: left;"">';
 	            	         		html += '<div style="float: left;position: absolute;" id="delPhotoBtn' + photoIdx + '" onclick="deletePhoto(' + photoIdx + ')"><i class="icon-2x icon-times"></i></div>';
-	            	        		html += '<img style="width: 150px;height: 180px;" src="/getPhotoByFileName?id=' + doc.documentId + '&FileName='+ data.fileName +'">';
+	            	        		html += '<img style="width: 150px;height: 180px;" src="/getPhotoByFileName?id=' + doc.documentId + '&FileName='+ data.fileName +'" onclick="previewImg(this)">';
 	            	        		html += '</div>';
 	
 	                                body.find('#photo_list').append(html);
