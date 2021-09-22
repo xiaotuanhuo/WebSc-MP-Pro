@@ -49,11 +49,18 @@ import com.sc.mp.service.AccessTokenService;
 public class WxUtil {
 	private static final Logger log = LoggerFactory.getLogger(WxUtil.class);
 	
-	@Value("${wx.corpid}")
 	public static String sCorpid;
-	
-	@Value("${wx.corpsecret}")
 	public static String sCorpsecret;
+	
+	// 静态变量赋值
+	@Value("${wx.corpid}")
+	public static void setsCorpid(String sCorpid) {
+		WxUtil.sCorpid = sCorpid;
+	}
+	@Value("${wx.corpsecret}")
+	public static void setsCorpsecret(String sCorpsecret) {
+		WxUtil.sCorpsecret = sCorpsecret;
+	}
 	
 //	public static String sCorpid = "ww0a5757d175c0cfc6";
 //	
