@@ -177,9 +177,9 @@
         v.on("click", ".add-new", function(a) {
         	var today = new Date().toLocaleDateString();
         	var selectedDay = (new Date(Date.parse(v.find("input.data1").val()))).toLocaleDateString();
-        	if (selectedDay < today) {
-        		return false;
-        	}
+//        	if (selectedDay < today) {
+//        		return false;
+//        	}
         	a.preventDefault();
         	$("h6.popup-title").text(v.find("input.data1").val());
         	$("#picktime_begin").val("00:00");
