@@ -49,20 +49,29 @@ public class XcxScheduleTask {
 	
 	@Scheduled(cron = "${statistics-org-operative-cron-expression}")
 	public void statisticsOrgOperative() {
-		List<WebScOrganization> organizations = organizationMapper.getOrgs();
-		for (WebScOrganization webScOrganization : organizations) {
-			List<String> operativeIds = webScDocOperativeMapper.getCommonlyUsedOperative(webScOrganization.getOrgId(), 10);
-			for (String operativeId : operativeIds) {
-				WebScOperative operative = operativeMapper.selectOperativeById(operativeId);
-				
-				if(StringUtil.isNull(operative)) {
-					WebOrgOperatives webOrgOperative = new WebOrgOperatives();
-					webOrgOperative.setOrgId(webScOrganization.getOrgId());
-					webOrgOperative.setOperativeId(operativeId);
-					webOrgOperative.setOperativeName(operative.getOperativeName());
-					webOrgOperativesMapper.insert(webOrgOperative);
+		logger.info("------机构常用手术更新任务已启动------");
+		try {
+			List<WebScOrganization> organizations = organizationMapper.getOrgs();
+			for (WebScOrganization webScOrganization : organizations) {
+				List<String> operativeIds = webScDocOperativeMapper.getCommonlyUsedOperative(webScOrganization.getOrgId(), 10);
+				for (String operativeId : operativeIds) {
+					WebScOperative operative = operativeMapper.selectOperativeById(operativeId);
+					
+					if(StringUtil.isNotNull(operative)) {
+						WebOrgOperatives webOrgOperatives = webOrgOperativesMapper.selectOrgOperative(webScOrganization.getOrgId(), operativeId);
+						if (StringUtil.isNull(webOrgOperatives)) {
+							WebOrgOperatives webOrgOperative = new WebOrgOperatives();
+							webOrgOperative.setOrgId(webScOrganization.getOrgId());
+							webOrgOperative.setOperativeId(operativeId);
+							webOrgOperative.setOperativeName(operative.getOperativeName());
+							webOrgOperativesMapper.insert(webOrgOperative);
+						}
+					}
 				}
 			}
+		} catch (Exception e) {
+			logger.error("机构常用手术更新时出错，"+e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	

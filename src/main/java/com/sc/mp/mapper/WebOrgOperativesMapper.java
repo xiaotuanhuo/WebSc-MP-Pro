@@ -9,6 +9,10 @@ import com.sc.mp.model.WebOrgOperatives;
 
 public interface WebOrgOperativesMapper {
 	
+	@Select("SELECT * FROM WSC_ORG_OPERATIVES WHERE org_id=#{orgId} AND operative_id=#{operativeId} LIMIT 1")
+	WebOrgOperatives selectOrgOperative(
+			@Param("orgId") String orgId, @Param("operativeId") String operativeId); 
+	
 	@Select("SELECT * FROM WSC_ORG_OPERATIVES WHERE org_id=#{orgId} LIMIT ${limit}")
 	List<WebOrgOperatives> selectOrgOperatives(@Param("orgId") String orgId, @Param("limit") int limit); 
 	

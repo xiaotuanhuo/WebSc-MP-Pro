@@ -55,8 +55,8 @@ public class MpApplicationTest {
 
 	@Test
 	public void test() {
-		List<OperationCount> ocs = docMapper.xcxStatsByYearForOrgan("0mT9ShO7ME", "上海美星医疗美容门诊部", "2020-03-18");
-		System.out.println(ocs);
+//		List<OperationCount> ocs = docMapper.xcxStatsByYearForOrgan("0mT9ShO7ME", "上海美星医疗美容门诊部", "2020-03-18");
+//		System.out.println(ocs);
 		
 //		List<OperationCount> ocs = docMapper.xcxStatsByMonthForOrgan("0mT9ShO7ME", "上海美星医疗美容门诊部", "2021-03-18");
 //		System.out.println(ocs);
@@ -68,7 +68,7 @@ public class MpApplicationTest {
 //		System.out.println(organizations);
 		
 		
-//		splitOperative();
+		splitOperative();
 //		
 //		List<String> operatives = webScDocOperativeMapper.getCommonlyUsedOperative("0Bd3dgEU1w", 20);
 //		System.out.println(operatives);
@@ -92,46 +92,48 @@ public class MpApplicationTest {
 			for (WebScDoc webScDoc : docs) {
 				String operatives[] = webScDoc.getOperativeId().split(",");
 				for (int i = 0; i < operatives.length; i++) {
-					if (!"1".equals(webScDocOperativeMapper.isExist(webScDoc.getDocumentId()+"_"+operatives[i]))) {
-						WebScDocOperative webScDocOperative = new WebScDocOperative();
-						webScDocOperative.setAdminMemo(webScDoc.getAdminMemo());
-						webScDocOperative.setAdminUserId(webScDoc.getAdminUserId());
-						webScDocOperative.setAnestheticId(webScDoc.getAnestheticId());
-						webScDocOperative.setApplyUserId(webScDoc.getApplyUserId());
-						webScDocOperative.setCreateDate(nowDate);
-						webScDocOperative.setDeleteReason(webScDoc.getDeleteReason());
-						webScDocOperative.setDoctorEvaluate(webScDoc.getDoctorEvaluate());
-						webScDocOperative.setDoctorEvaluateMemo(webScDoc.getDoctorEvaluateMemo());
-						webScDocOperative.setDocumentId(webScDoc.getDocumentId());
-						webScDocOperative.setDocumentOperativeId(webScDoc.getDocumentId()+"_"+operatives[i]);
-						webScDocOperative.setDocumentState(webScDoc.getDocumentState());
-						webScDocOperative.setDocumentTitle(webScDoc.getDocumentTitle());
-						webScDocOperative.setDocumentType(webScDoc.getDocumentType());
-						webScDocOperative.setHospitalEvaluate(webScDoc.getHospitalEvaluate());
-						webScDocOperative.setHospitalEvaluateMemo(webScDoc.getHospitalEvaluateMemo());
-						webScDocOperative.setHospitalMemo(webScDoc.getHospitalMemo());
-						webScDocOperative.setMemo(webScDoc.getMemo());
-						webScDocOperative.setOldDocumentState(webScDoc.getOldDocumentState());
-						webScDocOperative.setOperateAide(webScDoc.getOperateQide());
-						webScDocOperative.setOperateEndTime(webScDoc.getOperateEndTime());
-						webScDocOperative.setOperateStartTime(webScDoc.getOperateStartTime());
-						webScDocOperative.setOperateUser(webScDoc.getOperateUser());
-						webScDocOperative.setOperationtypeId(webScDoc.getOperationtypeId());
-						webScDocOperative.setOperativeId(operatives[i]);
-						webScDocOperative.setOrgId(webScDoc.getOrgId());
-						webScDocOperative.setPatientAge(webScDoc.getPatientAge());
-						webScDocOperative.setPatientBednum(webScDoc.getPatientBednum());
-						webScDocOperative.setPatientName(webScDoc.getPatientName());
-						webScDocOperative.setPatientNum(webScDoc.getPatientNum());
-						webScDocOperative.setPatientSex(webScDoc.getPatientSex());
-						webScDocOperative.setPatienttypeId(webScDoc.getPatienttypeId());
-						webScDocOperative.setQaMemo(webScDoc.getQaMemo());
-						webScDocOperative.setQaTeamId(webScDoc.getQaTeamId());
-						webScDocOperative.setQaUserId(webScDoc.getQaUserId());
-						webScDocOperative.setQxRadio(webScDoc.getQxRadio());
-						webScDocOperative.setTransferUserId(webScDoc.getTransferUserId());
-						
-						webScDocOperativeMapper.insert(webScDocOperative);
+					if (StringUtil.isNotEmpty(operatives[i])) {
+						if (!"1".equals(webScDocOperativeMapper.isExist(webScDoc.getDocumentId()+"_"+operatives[i]))) {
+							WebScDocOperative webScDocOperative = new WebScDocOperative();
+							webScDocOperative.setAdminMemo(webScDoc.getAdminMemo());
+							webScDocOperative.setAdminUserId(webScDoc.getAdminUserId());
+							webScDocOperative.setAnestheticId(webScDoc.getAnestheticId());
+							webScDocOperative.setApplyUserId(webScDoc.getApplyUserId());
+							webScDocOperative.setCreateDate(nowDate);
+							webScDocOperative.setDeleteReason(webScDoc.getDeleteReason());
+							webScDocOperative.setDoctorEvaluate(webScDoc.getDoctorEvaluate());
+							webScDocOperative.setDoctorEvaluateMemo(webScDoc.getDoctorEvaluateMemo());
+							webScDocOperative.setDocumentId(webScDoc.getDocumentId());
+							webScDocOperative.setDocumentOperativeId(webScDoc.getDocumentId()+"_"+operatives[i]);
+							webScDocOperative.setDocumentState(webScDoc.getDocumentState());
+							webScDocOperative.setDocumentTitle(webScDoc.getDocumentTitle());
+							webScDocOperative.setDocumentType(webScDoc.getDocumentType());
+							webScDocOperative.setHospitalEvaluate(webScDoc.getHospitalEvaluate());
+							webScDocOperative.setHospitalEvaluateMemo(webScDoc.getHospitalEvaluateMemo());
+							webScDocOperative.setHospitalMemo(webScDoc.getHospitalMemo());
+							webScDocOperative.setMemo(webScDoc.getMemo());
+							webScDocOperative.setOldDocumentState(webScDoc.getOldDocumentState());
+							webScDocOperative.setOperateAide(webScDoc.getOperateQide());
+							webScDocOperative.setOperateEndTime(webScDoc.getOperateEndTime());
+							webScDocOperative.setOperateStartTime(webScDoc.getOperateStartTime());
+							webScDocOperative.setOperateUser(webScDoc.getOperateUser());
+							webScDocOperative.setOperationtypeId(webScDoc.getOperationtypeId());
+							webScDocOperative.setOperativeId(operatives[i]);
+							webScDocOperative.setOrgId(webScDoc.getOrgId());
+							webScDocOperative.setPatientAge(webScDoc.getPatientAge());
+							webScDocOperative.setPatientBednum(webScDoc.getPatientBednum());
+							webScDocOperative.setPatientName(webScDoc.getPatientName());
+							webScDocOperative.setPatientNum(webScDoc.getPatientNum());
+							webScDocOperative.setPatientSex(webScDoc.getPatientSex());
+							webScDocOperative.setPatienttypeId(webScDoc.getPatienttypeId());
+							webScDocOperative.setQaMemo(webScDoc.getQaMemo());
+							webScDocOperative.setQaTeamId(webScDoc.getQaTeamId());
+							webScDocOperative.setQaUserId(webScDoc.getQaUserId());
+							webScDocOperative.setQxRadio(webScDoc.getQxRadio());
+							webScDocOperative.setTransferUserId(webScDoc.getTransferUserId());
+							
+							webScDocOperativeMapper.insert(webScDocOperative);
+						}
 					}
 				}
 			}
