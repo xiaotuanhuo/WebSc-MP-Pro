@@ -98,6 +98,10 @@ public class UserService {
 			log.info(ScConstant.PASSWORD_ERROR + password);
 			return null;
 		}
+		if (user.getStatus().equals(ScConstant.INACTIVE)) {
+			// 用户已被锁定时 不能登录 返回该用户 控制器内判断
+			return user;
+		}
 		if (user.getArea() != null) {
 			user.setDistrictName(DistrictUtil.getDistrictByCode(user.getProvince()).getName() + "-"
 					+ DistrictUtil.getDistrictByCode(user.getCity()).getName() + "-"
@@ -438,6 +442,10 @@ public class UserService {
 	public WebScUser getUserByOpenid(String openid) {
 		WebScUser user = userMapper.selectUserByOpenid(openid);
 		if (user != null) {
+			// 判断用户是否已被锁定 如果锁定 返回该用户 控制器拦截登录
+			if (user.getStatus().equals(ScConstant.INACTIVE)) {
+				return user;
+			}
 			if (user.getArea() != null) {
 				user.setDistrictName(DistrictUtil.getDistrictByCode(user.getProvince()).getName() + "-"
 						+ DistrictUtil.getDistrictByCode(user.getCity()).getName() + "-"
@@ -613,4 +621,5 @@ public class UserService {
 	public List<WebScUser> getAllDoctor() {
 		return userMapper.selectDoctors();
 	}
+
 }

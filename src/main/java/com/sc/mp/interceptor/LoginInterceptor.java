@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sc.mp.bean.ResultBean;
 import com.sc.mp.config.DequeManager;
 import com.sc.mp.config.SessionContext;
+import com.sc.mp.mapper.UserMapper;
 import com.sc.mp.model.WebScUser;
 import com.sc.mp.util.ScConstant;
 import com.sc.mp.util.WebHelper;
@@ -35,8 +36,12 @@ public class LoginInterceptor implements HandlerInterceptor {
 	
 	@Autowired
 	private SessionContext context;
+	
 	@Autowired
 	private DequeManager manager;
+	
+	@Autowired
+	private UserMapper userMapper;
 	
 	@Value("${sc.wx.login}")
 	private String wxLogin;			// 医生角色登录后首页
@@ -62,7 +67,13 @@ public class LoginInterceptor implements HandlerInterceptor {
 			response.sendRedirect("/login?code=" + code + "&state=" + state);
 			return false;
 		}
-		
+		user = userMapper.selectByPrimaryKey(user.getUserId());
+		if (user.getStatus().equals(ScConstant.INACTIVE)) {
+			// 用户被锁定后 不能登录
+			log.info("用户已锁定：" + user.getLoginName());
+			response.sendRedirect("/login?code=" + code + "&state=" + state);
+			return false;
+		}
 		String loginName = user.getLoginName();
 		log.info("===当前用户loginName：==" + loginName);
 		String sessionId = session.getId();

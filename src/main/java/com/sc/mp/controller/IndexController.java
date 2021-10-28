@@ -102,7 +102,8 @@ public class IndexController {
 	public String logout(HttpServletRequest request, RedirectAttributes ra) {
 		HttpSession session = request.getSession();
 		WebScUser user = (WebScUser) session.getAttribute(ScConstant.USER_SESSION_KEY);
-		
+		// 退出登录时清空企业微信绑定信息
+		userService.unbind(user);
 		if (context.getSession(session.getId()) != null) {
 			context.delSession(session);
 		}
@@ -193,10 +194,16 @@ public class IndexController {
 			model.addAttribute("openid", wxUser.getWxOpenid());
 			return "login";
 		}
-		
-		
 		WebScUser user = userService.getUserByOpenid(wxUser.getWxOpenid());
 		if (user != null) {
+			if (user.getStatus().equals(ScConstant.INACTIVE)) {
+				// 企业微信绑定的用户已被锁定时 无法直接登录
+				request.getSession().invalidate();
+				model.addAttribute("wxUserid", wxUser.getWxUserid());
+				model.addAttribute("openid", wxUser.getWxOpenid());
+				log.info("用户已锁定：" + user.getLoginName());
+				return "login";
+			}
 			// 当前企业微信已绑定系统用户
 			session.setAttribute(ScConstant.USER_SESSION_KEY, user);
 			session.setAttribute("kickout", false);
@@ -208,7 +215,6 @@ public class IndexController {
 			log.info("get_login openid=" + wxUser.getWxOpenid());
 			return "login";
 		}
-//		return "login";
 	}
 	
 	/**
@@ -229,6 +235,14 @@ public class IndexController {
 		// 登录校验
 		WebScUser user = userService.selectByLoginInfo(username, password);
 		if (user != null) {
+			// 判断用户是否已被锁定 锁定状态的用户无法登录
+			if (user.getStatus().equals(ScConstant.INACTIVE)) {
+				session.invalidate();
+				model.addAttribute("wxUserid", wxUserid);
+				model.addAttribute("openid", openid);
+				model.addAttribute("msg", ScConstant.USER_INACTIVE);
+				return "login";
+			}
 			log.info("to_login=" + openid);
 			if (user.getRoleId().equals(superRoleId) || user.getRoleId().equals(regionalRoleId)
 					|| user.getRoleId().equals(doctorRoleId)) {

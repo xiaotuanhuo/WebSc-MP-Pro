@@ -52,4 +52,9 @@ public class ScConstant {
 	public final static String DEL_FAIL = "删除失败";
 	public final static int MANY_LOGIN_CODE = 9;	// 多用户登录
 	public final static String MANY_LOGIN_MSG = "当前用户已在其他地方登录 请重新登录";	// 多用户登录
+	public final static String USER_INACTIVE = "用户已锁定";
+	
+	// 用户状态
+	public static final String INACTIVE = "0";
+	public static final String ACTIVE = "1";
 }
